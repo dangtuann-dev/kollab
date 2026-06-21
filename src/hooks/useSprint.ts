@@ -67,7 +67,7 @@ export function useSprint(projectId: string) {
 
   const startSprintMutation = useMutation<any, Error, { sprintId: string; start_date: string; end_date: string }>({
     mutationFn: async (vars) => {
-      // Set status to active
+      // Đổi trạng thái sprint thành hoạt động (active)
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({
@@ -95,7 +95,7 @@ export function useSprint(projectId: string) {
 
   const completeSprintMutation = useMutation<any, Error, string>({
     mutationFn: async (sprintId) => {
-      // Set status to completed
+      // Đổi trạng thái sprint thành đã hoàn thành (completed)
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({ status: 'completed' })

@@ -18,10 +18,10 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
     )
   }
 
-  // Find max value to scale the bars
+  // Tìm giá trị lớn nhất để chia tỷ lệ cột
   const maxVal = Math.max(...data.map((d) => d.completedPoints), 10)
 
-  // Chart dimensions
+  // Kích thước của biểu đồ
   const width = 500
   const height = 260
   const padding = 40
@@ -29,7 +29,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
   const chartWidth = width - padding * 2
   const chartHeight = height - padding * 2
 
-  // Bar configs
+  // Cấu hình thanh cột
   const barWidth = Math.min(45, chartWidth / (data.length * 2 || 1))
   const spacing = (chartWidth - barWidth * data.length) / (data.length + 1 || 1)
 
@@ -42,7 +42,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
 
       <div className="relative w-full overflow-x-auto">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[400px]">
-          {/* Grid lines */}
+          {/* Các đường lưới */}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
             const y = padding + ratio * chartHeight
             const val = Math.round(maxVal * (1 - ratio))
@@ -68,7 +68,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
             )
           })}
 
-          {/* Bars */}
+          {/* Các thanh cột */}
           {data.map((d, index) => {
             const x = padding + spacing + index * (barWidth + spacing)
             const barHeight = (d.completedPoints / maxVal) * chartHeight
@@ -76,7 +76,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
 
             return (
               <g key={index} className="group">
-                {/* Bar Rect */}
+                {/* Hình chữ nhật của cột */}
                 <rect
                   x={x}
                   y={y}
@@ -86,7 +86,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
                   className="fill-primary-500 hover:fill-primary-600 transition-colors"
                 />
                 
-                {/* Value tooltip label above bar */}
+                {/* Nhãn giá trị hiển thị phía trên cột */}
                 <text
                   x={x + barWidth / 2}
                   y={y - 6}
@@ -96,7 +96,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
                   {d.completedPoints} SP
                 </text>
 
-                {/* X Axis Label */}
+                {/* Nhãn trục X */}
                 <text
                   x={x + barWidth / 2}
                   y={height - padding + 16}

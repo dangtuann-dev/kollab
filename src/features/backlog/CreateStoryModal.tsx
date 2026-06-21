@@ -66,7 +66,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ projectId, i
 
   const fibonacciPoints = [0, 1, 2, 3, 5, 8, 13, 21]
   const members = project?.members || []
-  // Filter only planning/active sprints for assigning new stories
+  // Chỉ lọc các sprint đang lên kế hoạch hoặc đang hoạt động để phân bổ các story mới
   const availableSprints = sprints.filter((s) => s.status !== 'completed')
 
   return (
@@ -116,7 +116,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ projectId, i
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Priority select */}
+          {/* Bộ chọn mức độ ưu tiên */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-neutral-700">Priority</label>
             <select
@@ -130,7 +130,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ projectId, i
             </select>
           </div>
 
-          {/* Story Points select */}
+          {/* Bộ chọn điểm Story Points */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-neutral-700">Story Points (Fibonacci)</label>
             <select
@@ -148,7 +148,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ projectId, i
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Assignee select */}
+          {/* Bộ chọn người được giao */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-neutral-700">Assignee</label>
             <select
@@ -164,7 +164,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ projectId, i
             </select>
           </div>
 
-          {/* Sprint select */}
+          {/* Bộ chọn Sprint */}
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-medium text-neutral-700">Sprint Allocation</label>
             <select

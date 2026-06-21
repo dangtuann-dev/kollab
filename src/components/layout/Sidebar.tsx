@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         isMobile && 'w-full h-full'
       )}
     >
-      {/* Brand Header */}
+      {/* Tên thương hiệu và Header */}
       <div className="flex items-center justify-between h-16 px-5 border-b border-neutral-200">
         <Link
           to="/projects"
@@ -116,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           {!isCollapsed && <span className="text-lg tracking-tight font-sans">AgileFlow</span>}
         </Link>
         
-        {/* Toggle Collapse Button (Desktop Only) */}
+        {/* Nút thu gọn/mở rộng Sidebar (Chỉ dành cho màn hình lớn Desktop) */}
         {!isMobile && (
           <button
             onClick={toggleSidebar}
@@ -127,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         )}
       </div>
 
-      {/* Project Selector (Only show if project route active) */}
+      {/* Bộ chọn dự án (Chỉ hiển thị khi đang trong một dự án) */}
       {projectId && !isCollapsed && projects.length > 0 && (
         <div className="px-4 py-3 border-b border-neutral-100">
           <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5 px-1">
@@ -148,10 +148,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         </div>
       )}
 
-      {/* Nav List */}
+      {/* Danh sách thanh điều hướng */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {mainNavItems.map((item) => {
-          // Disable project-specific routes if no active project
+          // Vô hiệu hóa các route đặc thù của dự án nếu chưa chọn dự án nào
           if (item.requireProject && !projectId) return null
 
           return (
@@ -184,7 +184,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         })}
       </nav>
 
-      {/* Footer Profile */}
+      {/* Thông tin tài khoản ở chân Sidebar */}
       <div className="p-4 border-t border-neutral-200 bg-neutral-50/50">
         <div className={cn('flex items-center gap-3', isCollapsed && 'justify-center')}>
           <Avatar

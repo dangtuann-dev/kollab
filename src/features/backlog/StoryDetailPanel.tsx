@@ -28,7 +28,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
 
   const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'comments'>('details')
   
-  // Details form edit state
+  // Trạng thái chỉnh sửa của biểu mẫu chi tiết
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [acceptanceCriteria, setAcceptanceCriteria] = useState('')
@@ -36,12 +36,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
   const [priority, setPriority] = useState<'critical' | 'high' | 'medium' | 'low'>('medium')
   const [assigneeId, setAssigneeId] = useState('')
 
-  // New task/comment inputs
+  // Các ô nhập Task mới / Comment mới
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskHours, setNewTaskHours] = useState(0)
   const [newCommentText, setNewCommentText] = useState('')
 
-  // Sync edits when story changes
+  // Đồng bộ hóa các giá trị chỉnh sửa khi story thay đổi
   useEffect(() => {
     if (story) {
       setTitle(story.title || '')
@@ -54,14 +54,14 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     }
   }, [story])
 
-  // Get project members for assignee dropdown
+  // Lấy danh sách thành viên dự án cho bộ chọn người giao việc
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
-    enabled: false, // Eagerly loaded in hook, retrieve from cache
+    enabled: false, // Đã được tải trước đó ở hook khác, lấy trực tiếp từ cache
   })
   const members: ProjectMember[] = (project as any)?.members || []
 
-  // 1. Fetch Sub-tasks
+  // 1. Lấy danh sách các Task con (Sub-tasks)
   const { data: tasks = [], isLoading: loadingTasks } = useQuery({
     queryKey: ['tasks', story?.id],
     queryFn: async () => {
@@ -81,7 +81,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     enabled: !!story?.id && activeTab === 'tasks',
   })
 
-  // 2. Fetch Comments
+  // 2. Lấy danh sách các Bình luận (Comments)
   const { data: comments = [], isLoading: loadingComments } = useQuery({
     queryKey: ['comments', story?.id],
     queryFn: async () => {
@@ -101,11 +101,11 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     enabled: !!story?.id && activeTab === 'comments',
   })
 
-  // 3. Real-time Channel for Comments
+  // 3. Thiết lập kênh Real-time để cập nhật Comments tức thời
   useEffect(() => {
     if (!story?.id || activeTab !== 'comments') return
 
-    // Subscribe to comments updates
+    // Đăng ký cập nhật thay đổi đối với bảng comments
     const channel = supabase
       .channel(`comments-story-${story.id}`)
       .on(
@@ -122,12 +122,13 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
       )
       .subscribe()
 
+    // Hủy đăng ký kênh khi unmount component
     return () => {
       supabase.removeChannel(channel)
     }
   }, [story?.id, activeTab, queryClient])
 
-  // Mutations
+  // Các mutation thay đổi dữ liệu
   const updateStoryDetails = useMutation<any, Error, void>({
     mutationFn: async () => {
       if (!story?.id) return
@@ -232,12 +233,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
 
   return (
     <>
-      {/* Backdrop */}
+      {/* Lớp nền mờ phía sau */}
       <div className="fixed inset-0 z-30 bg-neutral-900/30 backdrop-blur-xs" onClick={onClose} />
 
-      {/* Slide-out Panel */}
+      {/* Panel trượt ra từ bên phải */}
       <div className="fixed inset-y-0 right-0 z-40 w-full max-w-lg bg-white border-l border-neutral-250 shadow-2xl flex flex-col h-full font-sans animate-slide-in-right">
-        {/* Header */}
+        {/* Tiêu đề */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-150">
           <div className="flex flex-col">
             <span className="text-[10px] font-bold text-neutral-400">
@@ -255,7 +256,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           </button>
         </div>
 
-        {/* Tab Bar */}
+        {/* Thanh tab lựa chọn phân hệ */}
         <div className="flex border-b border-neutral-150 text-sm font-semibold text-neutral-600 bg-neutral-50/50">
           <button
             onClick={() => setActiveTab('details')}
@@ -286,9 +287,9 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           </button>
         </div>
 
-        {/* Panel Content (Scrollable) */}
+        {/* Nội dung của Panel (Có thể cuộn) */}
         <div className="flex-1 overflow-y-auto p-5">
-          {/* TAB 1: DETAILS */}
+          {/* TAB 1: CHI TIẾT */}
           {activeTab === 'details' && (
             <div className="flex flex-col gap-4">
               <Input
@@ -369,12 +370,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             </div>
           )}
 
-          {/* TAB 2: SUB-TASKS */}
+          {/* TAB 2: CÔNG VIỆC CON */}
           {activeTab === 'tasks' && (
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-semibold text-neutral-700">Story Tasks</h4>
 
-              {/* Tasks Add Box */}
+              {/* Hộp thêm Task mới */}
               <div className="flex gap-2">
                 <Input
                   placeholder="New task title..."
@@ -391,7 +392,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                 </Button>
               </div>
 
-              {/* Tasks List */}
+              {/* Danh sách Task */}
               {loadingTasks ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
@@ -434,12 +435,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             </div>
           )}
 
-          {/* TAB 3: COMMENTS */}
+          {/* TAB 3: BÌNH LUẬN */}
           {activeTab === 'comments' && (
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-semibold text-neutral-700">Discussion</h4>
 
-              {/* Comments display */}
+              {/* Khung hiển thị các bình luận */}
               {loadingComments ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
@@ -471,7 +472,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                 </div>
               )}
 
-              {/* Post comment input */}
+              {/* Ô nhập bình luận mới */}
               <div className="flex flex-col gap-2 mt-2">
                 <textarea
                   rows={2}

@@ -29,7 +29,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
 
   return (
     <div className="bg-white border border-neutral-200/80 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between gap-4 group">
-      {/* Left side: details */}
+      {/* Phía bên trái: thông tin chi tiết */}
       <div className="flex-1 min-w-0 flex flex-col gap-1.5" onClick={() => onOpenDetails(story)}>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-bold text-neutral-400 bg-neutral-100 rounded px-1.5 py-0.5">
@@ -65,7 +65,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
         </div>
       </div>
 
-      {/* Right side: actions dropdown */}
+      {/* Phía bên phải: menu dropdown thao tác */}
       <div className="relative">
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -89,7 +89,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                 <span>View / Edit Details</span>
               </button>
 
-              {/* Move to Sprint option */}
+              {/* Tùy chọn chuyển vào Sprint */}
               {isPO && activeSprints.length > 0 && (
                 <div className="border-t border-neutral-100 my-1 pt-1">
                   <div className="px-3 py-1 text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
@@ -125,7 +125,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                 </div>
               )}
 
-              {/* Delete option */}
+              {/* Tùy chọn xóa */}
               {isPO && (
                 <div className="border-t border-neutral-100 mt-1 pt-1">
                   <button

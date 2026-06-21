@@ -42,7 +42,7 @@ export function useBacklog(projectId: string) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('User not authenticated')
 
-      // Get next order index
+      // Lấy chỉ số thứ tự (order index) tiếp theo
       const existingCount = storiesQuery.data?.length || 0
 
       const { data, error } = await ((supabase
@@ -116,7 +116,7 @@ export function useBacklog(projectId: string) {
       if (vars.status) {
         updates.status = vars.status
       } else {
-        // If moving back to backlog, status becomes backlog. If moving to sprint, becomes todo
+        // Nếu chuyển về backlog, status chuyển thành backlog. Nếu chuyển vào sprint, status chuyển thành todo
         updates.status = vars.sprintId ? 'todo' : 'backlog'
       }
 

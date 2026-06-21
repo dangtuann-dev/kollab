@@ -14,10 +14,10 @@ export const ReportsPage: React.FC = () => {
 
   const { sprints, isLoading: loadingSprints } = useSprint(projectIdStr)
   
-  // Track selected sprint for detail views
+  // Theo dõi sprint được chọn để xem chi tiết
   const [selectedSprintId, setSelectedSprintId] = useState<string>('')
 
-  // Fetch reports data
+  // Lấy dữ liệu báo cáo
   const { burndownData, velocityData, sprintSummary, activeSprintName } = useReports(
     projectIdStr,
     selectedSprintId || undefined
@@ -34,19 +34,19 @@ export const ReportsPage: React.FC = () => {
     )
   }
 
-  // Filter sprints that have dates for reporting (active or completed)
+  // Lọc các sprint có ngày hoạt động để làm báo cáo (đang hoạt động hoặc đã hoàn thành)
   const reportableSprints = sprints.filter((s) => s.status !== 'planning')
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {/* Header Actions */}
+      {/* Các thao tác ở tiêu đề */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Analytics & Reports</h2>
           <p className="text-xs text-neutral-500 mt-0.5">Analyze team performance, delivery speed, and burndown rates.</p>
         </div>
 
-        {/* Sprint Selector */}
+        {/* Bộ chọn Sprint */}
         {reportableSprints.length > 0 && (
           <div className="flex items-center gap-2 border border-neutral-200 bg-white rounded-lg px-3.5 py-2 text-xs font-semibold text-neutral-600 shadow-sm self-start">
             <ListFilter className="h-4 w-4 text-neutral-400" />
@@ -69,10 +69,10 @@ export const ReportsPage: React.FC = () => {
         )}
       </div>
 
-      {/* Sprint Summary Metrics */}
+      {/* Các chỉ số tóm tắt của Sprint */}
       <SprintSummary summary={sprintSummary} />
 
-      {/* Charts Section */}
+      {/* Phần các Biểu đồ */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <BurndownChart data={burndownData} />
         <VelocityChart data={velocityData} />

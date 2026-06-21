@@ -26,20 +26,20 @@ export const BacklogPage: React.FC = () => {
   const { stories, isLoading: loadingStories, moveStory, deleteStory } = useBacklog(projectIdStr)
   const { sprints, createSprint, startSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
 
-  // Modals & Panels State
+  // Trạng thái của các Modal và Side Panel
   const [isCreateStoryOpen, setIsCreateStoryOpen] = useState(false)
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  // Filters State
+  // Trạng thái bộ lọc
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
   const [assigneeFilter, setAssigneeFilter] = useState<string>('all')
   const [sortBy, setSortBy] = useState<string>('order')
 
-  // Collapsed sprints state
+  // Trạng thái thu gọn/mở rộng Sprint
   const [collapsedSprints, setCollapsedSprints] = useState<Record<string, boolean>>({})
 
-  // Create new sprint helper
+  // Hàm hỗ trợ tạo sprint mới
   const handleCreateSprint = async () => {
     const name = `Sprint ${sprints.length + 1}`
     const goal = 'Sprint Goal definition'
@@ -50,7 +50,7 @@ export const BacklogPage: React.FC = () => {
     }
   }
 
-  // Start sprint helper
+  // Hàm hỗ trợ kích hoạt (start) sprint
   const handleStartSprint = async (sprintId: string) => {
     const today = new Date().toISOString().split('T')[0]
     const twoWeeksLater = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -65,7 +65,7 @@ export const BacklogPage: React.FC = () => {
     setCollapsedSprints((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  // Filter & Sort stories
+  // Lọc và sắp xếp các câu chuyện (stories)
   const getFilteredAndSortedStories = (items: Story[]) => {
     return items
       .filter((story) => {
@@ -83,7 +83,7 @@ export const BacklogPage: React.FC = () => {
       })
   }
 
-  // Slices
+  // Cắt dữ liệu (phân nhóm các stories)
   const backlogStories = getFilteredAndSortedStories(stories.filter((s) => s.sprint_id === null))
   const activeSprints = sprints.filter((s) => s.status !== 'completed')
 
@@ -100,7 +100,7 @@ export const BacklogPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {/* Header Actions */}
+      {/* Các thao tác ở tiêu đề */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Project Backlog</h2>
@@ -121,10 +121,10 @@ export const BacklogPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter and Sorting bar */}
+      {/* Thanh bộ lọc và sắp xếp */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 border border-neutral-200 rounded-xl shadow-sm text-xs font-semibold text-neutral-600">
         <div className="flex flex-wrap items-center gap-3">
-          {/* Priority filter */}
+          {/* Bộ lọc mức độ ưu tiên */}
           <div className="flex items-center gap-1.5 border-r border-neutral-200 pr-3 mr-1">
             <ListFilter className="h-3.5 w-3.5 text-neutral-400" />
             <span>Priority:</span>
@@ -141,7 +141,7 @@ export const BacklogPage: React.FC = () => {
             </select>
           </div>
 
-          {/* Assignee filter */}
+          {/* Bộ lọc người được giao */}
           <div className="flex items-center gap-1.5">
             <span>Assignee:</span>
             <select
@@ -159,7 +159,7 @@ export const BacklogPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Sorting selector */}
+        {/* Bộ chọn sắp xếp */}
         <div className="flex items-center gap-1.5">
           <ArrowUpDown className="h-3.5 w-3.5 text-neutral-400" />
           <span>Sort by:</span>
@@ -175,7 +175,7 @@ export const BacklogPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Sprints backlog section (Jira-style) */}
+      {/* Phần danh sách Sprint Backlog (kiểu giao diện Jira) */}
       <div className="flex flex-col gap-4">
         {activeSprints.map((sprint) => {
           const sprintStories = getFilteredAndSortedStories(stories.filter((s) => s.sprint_id === sprint.id))
@@ -184,7 +184,7 @@ export const BacklogPage: React.FC = () => {
 
           return (
             <div key={sprint.id} className="bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm">
-              {/* Sprint Header */}
+              {/* Tiêu đề của Sprint */}
               <div className="flex items-center justify-between p-4 bg-neutral-50/50 border-b border-neutral-100">
                 <div className="flex items-center gap-2">
                   <button
@@ -220,7 +220,7 @@ export const BacklogPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Sprint Stories */}
+              {/* Danh sách các story trong Sprint */}
               {!isCollapsed && (
                 <div className="p-4 flex flex-col gap-2.5">
                   {sprintStories.length === 0 ? (
@@ -249,7 +249,7 @@ export const BacklogPage: React.FC = () => {
         })}
       </div>
 
-      {/* Product Backlog Section */}
+      {/* Phần danh sách Product Backlog */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
           <h3 className="text-sm font-bold text-neutral-800">Product Backlog</h3>
@@ -289,7 +289,7 @@ export const BacklogPage: React.FC = () => {
         )}
       </div>
 
-      {/* Modals and Side panels */}
+      {/* Các Modal và Side panel */}
       <CreateStoryModal
         projectId={projectIdStr}
         isOpen={isCreateStoryOpen}

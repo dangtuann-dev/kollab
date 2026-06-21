@@ -7,7 +7,7 @@ interface AuthState {
   user: User | null
   session: Session | null
   isLoading: boolean
-  role: UserRole | null // User role in current project
+  role: UserRole | null // Vai trò của người dùng trong dự án hiện tại
   setUser: (user: User | null) => void
   setSession: (session: Session | null) => void
   setLoading: (isLoading: boolean) => void
@@ -31,7 +31,7 @@ export const useAuthStore = create<AuthState>()(
       }),
       {
         name: 'agileflow-auth-storage',
-        partialize: (state) => ({ session: state.session, user: state.user }), // Don't persist role as it is project-specific
+        partialize: (state) => ({ session: state.session, user: state.user }), // Không lưu trữ role vì nó mang tính chất đặc thù của từng dự án
       }
     )
   )

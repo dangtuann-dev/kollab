@@ -4,19 +4,18 @@ import { supabase } from '../../lib/supabase'
 import { useAuthStore } from '../../stores'
 
 export function useAuth() {
-  const queryClient = useQueryClient()
   const { setSession, setLoading, clearAuth } = useAuthStore()
+  const queryClient = useQueryClient()
 
-  // Hook to monitor session updates on mount
   useEffect(() => {
-    // 1. Get initial session
+    // 1. Lấy session ban đầu
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error) throw error
         setSession(session)
-      } catch (err: any) {
-        console.error('Error fetching initial session:', err.message)
+      } catch (err) {
+        console.error('Error getting initial session:', err)
         clearAuth()
       } finally {
         setLoading(false)
@@ -25,21 +24,21 @@ export function useAuth() {
 
     getInitialSession()
 
-    // 2. Subscribe to auth state updates
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session)
-      setLoading(false)
-
-      if (event === 'SIGNED_OUT') {
-        clearAuth()
-        queryClient.clear()
+    // 2. Thiết lập trình lắng nghe sự kiện thay đổi trạng thái xác thực
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session)
+        setLoading(false)
+        if (!session) {
+          clearAuth()
+          queryClient.clear()
+        }
       }
-    })
+    )
 
+    // Dọn dẹp listener khi unmount component
     return () => {
       subscription.unsubscribe()
     }
   }, [setSession, setLoading, clearAuth, queryClient])
-
-  return {}
 }

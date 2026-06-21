@@ -8,35 +8,33 @@ export const AppLayout: React.FC = () => {
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-neutral-50 font-sans">
-      {/* Sidebar - Desktop */}
+      {/* Sidebar - Dành cho màn hình máy tính (Desktop) */}
       <div className="hidden md:block shrink-0">
         <Sidebar />
       </div>
 
-      {/* Sidebar - Mobile drawer */}
+      {/* Sidebar - Dành cho màn hình di động (Mobile drawer) */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 md:hidden flex">
-          {/* Backdrop blur overlay */}
+          {/* Lớp nền mờ backdrop */}
           <div
             className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs"
             onClick={() => setMobileMenuOpen(false)}
           />
           <div className="relative z-50 w-72 h-full flex flex-col">
-            <Sidebar isMobile onClose={() => setMobileMenuOpen(false)} />
+            <Sidebar onClose={() => setMobileMenuOpen(false)} />
           </div>
         </div>
       )}
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        {/* Header */}
+      {/* Vùng hiển thị nội dung chính */}
+      <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
+        {/* Thanh tiêu đề phía trên (Header) */}
         <Header onOpenMobileMenu={() => setMobileMenuOpen(true)} />
 
-        {/* Page Body */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto h-full">
-            <Outlet />
-          </div>
+        {/* Khung cuộn chứa nội dung trang động (Dynamic page content) */}
+        <main className="flex-1 overflow-y-auto px-4 md:px-8 py-6 md:py-8 bg-neutral-50/50">
+          <Outlet />
         </main>
       </div>
     </div>

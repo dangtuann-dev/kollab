@@ -21,7 +21,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     { id: 'done', name: 'Done', accentColor: 'bg-success-500' },
   ]
 
-  // Native Drag and Drop handlers
+  // Bộ xử lý kéo thả (Drag and Drop) thuần
   const handleDragStart = (e: React.DragEvent, storyId: string) => {
     e.dataTransfer.setData('text/plain', storyId)
     e.dataTransfer.effectAllowed = 'move'
@@ -39,8 +39,8 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     e.preventDefault()
   }
 
-  // Calculate WIP limits for In Progress column
-  // WIP Limit warning: alert if any user has > 3 stories in 'in_progress'
+  // Tính toán giới hạn số lượng công việc đang xử lý (WIP) cho cột In Progress
+  // Cảnh báo giới hạn WIP: cảnh báo nếu bất kỳ thành viên nào có > 3 story trong cột 'in_progress'
   const getWIPWarnings = () => {
     const inProgressStories = stories.filter((s) => s.status === 'in_progress')
     const userStoryCounts: Record<string, { name: string; count: number }> = {}
@@ -62,7 +62,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   return (
     <div className="flex flex-col gap-4 font-sans">
-      {/* WIP Warning Banner */}
+      {/* Banner Cảnh báo Giới hạn WIP */}
       {wipWarnings.length > 0 && (
         <div className="flex flex-col gap-1.5 p-3.5 bg-warning-50 border border-warning-200 rounded-xl text-xs text-warning-800 font-semibold">
           {wipWarnings.map((warning, index) => (
@@ -76,7 +76,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
         </div>
       )}
 
-      {/* Columns Grid */}
+      {/* Lưới các cột Kanban */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-start min-h-[500px]">
         {columns.map((col) => {
           const colStories = stories.filter((s) => s.status === col.id)
@@ -88,7 +88,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
               onDrop={(e) => handleDrop(e, col.id)}
               className="bg-neutral-100/70 border border-neutral-200/50 rounded-xl p-3 flex flex-col gap-3 min-h-[450px] transition-all"
             >
-              {/* Header */}
+              {/* Tiêu đề cột */}
               <div className="flex items-center justify-between border-b border-neutral-200/50 pb-2.5 px-1">
                 <div className="flex items-center gap-2">
                   <span className={`h-2.5 w-2.5 rounded-full ${col.accentColor}`} />
@@ -99,7 +99,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
                 </span>
               </div>
 
-              {/* Cards List */}
+              {/* Danh sách thẻ công việc */}
               <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[60vh] pr-0.5">
                 {colStories.length === 0 ? (
                   <div className="border border-dashed border-neutral-300 rounded-lg py-10 text-center text-[11px] text-neutral-400">

@@ -19,12 +19,12 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
   const { role } = useAuthStore()
   const isSM = role === 'scrum_master'
 
-  // Calculate metrics
+  // Tính toán các chỉ số đo lường
   const totalStories = stories.length
   const completedStories = stories.filter((s) => s.status === 'done').length
   const progressPercent = totalStories > 0 ? Math.round((completedStories / totalStories) * 100) : 0
 
-  // Calculate days remaining
+  // Tính số ngày còn lại
   const getDaysRemaining = () => {
     if (!sprint.end_date) return null
     const end = new Date(sprint.end_date)
@@ -39,7 +39,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
   return (
     <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 font-sans">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        {/* Title & Status */}
+        {/* Tiêu đề & Trạng thái */}
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">{sprint.name}</h2>
           <Badge variant="success" size="sm">
@@ -54,7 +54,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
           )}
         </div>
 
-        {/* Action Button */}
+        {/* Nút hành động */}
         {isSM && (
           <Button
             variant="secondary"
@@ -68,7 +68,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
         )}
       </div>
 
-      {/* Goal */}
+      {/* Mục tiêu */}
       {sprint.goal && (
         <div className="flex items-start gap-2 text-xs text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
           <Goal className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
@@ -78,7 +78,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
         </div>
       )}
 
-      {/* Progress Bar */}
+      {/* Thanh tiến độ */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs font-semibold text-neutral-500">
           <span>Sprint Completion</span>

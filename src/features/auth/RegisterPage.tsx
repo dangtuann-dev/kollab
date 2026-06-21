@@ -92,7 +92,7 @@ export const RegisterPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/20 to-neutral-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white border border-neutral-100 shadow-glass rounded-2xl p-8 flex flex-col gap-6">
         
-        {/* Brand Header */}
+        {/* Tiêu đề thương hiệu */}
         <div className="flex flex-col items-center text-center gap-2">
           <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
             <Activity className="h-6 w-6" />
@@ -101,7 +101,7 @@ export const RegisterPage: React.FC = () => {
           <p className="text-sm text-neutral-500">Get started with AgileFlow team workspace</p>
         </div>
 
-        {/* Global Error message */}
+        {/* Thông báo lỗi chung */}
         {errorMessage && (
           <div className="flex items-center gap-2.5 p-3.5 bg-danger-50 border border-danger-200 rounded-lg text-xs text-danger-700 font-medium">
             <AlertCircle className="h-4.5 w-4.5 text-danger-500 shrink-0" />
@@ -109,7 +109,7 @@ export const RegisterPage: React.FC = () => {
           </div>
         )}
 
-        {/* Form */}
+        {/* Biểu mẫu đăng ký */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
             label="Full Name"

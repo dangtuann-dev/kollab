@@ -31,7 +31,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans">
       
-      {/* Col 1: Completion Metrics */}
+      {/* Cột 1: Chỉ số hoàn thành */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
         <div>
           <h3 className="text-sm font-bold text-neutral-800">Sprint Delivery</h3>
@@ -61,7 +61,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
         </div>
       </div>
 
-      {/* Col 2: Cycle Time */}
+      {/* Cột 2: Thời gian chu kỳ */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col justify-between">
         <div>
           <h3 className="text-sm font-bold text-neutral-800">Cycle Efficiency</h3>
@@ -81,7 +81,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
         </div>
       </div>
 
-      {/* Col 3: Top Contributors */}
+      {/* Cột 3: Đóng góp hàng đầu */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-3">
         <div>
           <h3 className="text-sm font-bold text-neutral-800">Top Contributors</h3>
