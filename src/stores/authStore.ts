@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthState>()(
         clearAuth: () => set({ user: null, session: null, role: null }),
       }),
       {
-        name: 'agileflow-auth-storage',
+        name: 'kollab-auth-storage',
         partialize: (state) => ({ session: state.session, user: state.user }), // Không lưu trữ role vì nó mang tính chất đặc thù của từng dự án
       }
     )

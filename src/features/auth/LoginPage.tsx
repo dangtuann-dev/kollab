@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Mail, Lock, Eye, EyeOff, Activity, AlertCircle } from 'lucide-react'
+import { Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { Input } from '../../components/ui/Input'
 import { Button } from '../../components/ui/Button'
@@ -63,10 +63,15 @@ export const LoginPage: React.FC = () => {
         
         {/* Tiêu đề thương hiệu */}
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
-            <Activity className="h-6 w-6" />
+          <div className="h-14 w-14 shrink-0">
+            <svg viewBox="0 0 100 100" className="h-full w-full">
+              <rect width="100" height="100" rx="22" fill="#09090b"/>
+              <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+              <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+              <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+            </svg>
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Chào mừng bạn đến với AgileFlow</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Chào mừng bạn đến với Kollab</h2>
           <p className="text-sm text-neutral-500">Đăng nhập để quản lý các sprint Agile/Scrum của bạn</p>
         </div>
 

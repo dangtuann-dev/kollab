@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Mail, ArrowLeft, Activity, CheckCircle2 } from 'lucide-react'
+import { Mail, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { Input } from '../../components/ui/Input'
 import { Button } from '../../components/ui/Button'
 import { supabase } from '../../lib/supabase'
@@ -54,8 +54,13 @@ export const ForgotPasswordPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/20 to-neutral-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white border border-neutral-100 shadow-glass rounded-2xl p-8 flex flex-col gap-6">
         <div className="flex flex-col items-center text-center gap-2">
-          <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
-            <Activity className="h-6 w-6" />
+          <div className="h-14 w-14 shrink-0">
+            <svg viewBox="0 0 100 100" className="h-full w-full">
+              <rect width="100" height="100" rx="22" fill="#09090b"/>
+              <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+              <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+              <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+            </svg>
           </div>
           <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Đặt lại mật khẩu</h2>
           <p className="text-sm text-neutral-500">Nhập email của bạn và chúng tôi sẽ gửi liên kết đặt lại mật khẩu</p>

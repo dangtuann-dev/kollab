@@ -9,7 +9,6 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
-  Activity,
   FolderKanban,
 } from 'lucide-react'
 import { useUiStore, useAuthStore, useProjectStore } from '../../stores'
@@ -110,10 +109,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           className="flex items-center gap-2.5 font-bold text-neutral-900 focus:outline-none"
           onClick={onClose}
         >
-          <div className="h-9 w-9 rounded-lg bg-primary-600 flex items-center justify-center text-white shadow-sm shrink-0">
-            <Activity className="h-5 w-5" />
+          <div className="h-9 w-9 shrink-0">
+            <svg viewBox="0 0 100 100" className="h-full w-full">
+              <rect width="100" height="100" rx="22" fill="#09090b"/>
+              <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+              <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+              <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+            </svg>
           </div>
-          {!isCollapsed && <span className="text-lg tracking-tight font-sans">AgileFlow</span>}
+          {!isCollapsed && <span className="text-lg tracking-tight font-bold font-sans">Kollab</span>}
         </Link>
         
         {/* Nút thu gọn/mở rộng Sidebar (Chỉ dành cho màn hình lớn Desktop) */}

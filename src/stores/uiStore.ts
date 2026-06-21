@@ -63,7 +63,7 @@ export const useUiStore = create<UiState>()(
         }),
       }),
       {
-        name: 'agileflow-ui-storage',
+        name: 'kollab-ui-storage',
         partialize: (state) => ({ sidebarCollapsed: state.sidebarCollapsed, theme: state.theme }),
       }
     )

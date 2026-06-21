@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Search, FolderKanban, LogOut } from 'lucide-react'
+import { Plus, Search, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProjects } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
@@ -34,11 +34,16 @@ export const ProjectsPage: React.FC = () => {
         {/* Navigation / Header */}
         <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-sm shrink-0">
-              <FolderKanban className="h-5.5 w-5.5" />
+            <div className="h-10 w-10 shrink-0">
+              <svg viewBox="0 0 100 100" className="h-full w-full">
+                <rect width="100" height="100" rx="22" fill="#09090b"/>
+                <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
+                <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+                <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+              </svg>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Không gian làm việc AgileFlow</h1>
+              <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Không gian làm việc Kollab</h1>
               <p className="text-xs text-neutral-500">Đã đăng nhập bằng {user?.email}</p>
             </div>
           </div>
