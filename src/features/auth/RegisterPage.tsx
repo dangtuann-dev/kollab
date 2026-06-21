@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as zod from 'zod'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { User, Mail, Lock, Eye, EyeOff, Activity, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { Input } from '../../components/ui/Input'
@@ -25,6 +25,7 @@ const registerSchema = zod.object({
 type RegisterFormInputs = zod.infer<typeof registerSchema>
 
 export const RegisterPage: React.FC = () => {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -45,7 +46,7 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true)
     setErrorMessage(null)
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: resData, error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -59,7 +60,13 @@ export const RegisterPage: React.FC = () => {
         throw error
       }
 
-      setIsSuccess(true)
+      if (resData?.session) {
+        // Nếu Confirm email tắt, Supabase trả về session ngay lập tức, chuyển hướng vào trang chủ
+        navigate('/projects', { replace: true })
+      } else {
+        // Nếu vẫn yêu cầu Confirm email, hiện màn hình thông báo kiểm tra hòm thư
+        setIsSuccess(true)
+      }
     } catch (err: any) {
       setErrorMessage(err.message || 'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.')
     } finally {
