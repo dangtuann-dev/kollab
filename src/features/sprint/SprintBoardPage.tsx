@@ -77,7 +77,7 @@ export const SprintBoardPage: React.FC = () => {
 
   const handleCompleteSprint = async () => {
     if (!activeSprint) return
-    if (confirm('Are you sure you want to complete this sprint? Remaining incomplete stories will be moved back to the backlog.')) {
+    if (confirm('Bạn có chắc chắn muốn hoàn thành sprint này không? Những story chưa hoàn thành còn lại sẽ được chuyển về backlog.')) {
       try {
         // Chuyển các story chưa hoàn thành quay lại Backlog
         const incompleteStories = activeStories.filter((s) => s.status !== 'done')
@@ -97,7 +97,7 @@ export const SprintBoardPage: React.FC = () => {
     return (
       <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-2">
         <Spinner size="lg" />
-        <p className="text-xs text-neutral-500 font-semibold">Loading Sprint Board...</p>
+        <p className="text-xs text-neutral-500 font-semibold">Đang tải Bảng Sprint...</p>
       </div>
     )
   }
@@ -123,15 +123,15 @@ export const SprintBoardPage: React.FC = () => {
         </>
       ) : (
         <EmptyState
-          title="No Active Sprint"
+          title="Không có Sprint đang hoạt động"
           description={
             role === 'scrum_master'
-              ? "There is no active sprint right now. Go to the project backlog to plan and start a new sprint."
-              : "There is no active sprint right now. Ask your Scrum Master to activate a sprint."
+              ? "Hiện tại không có sprint nào đang hoạt động. Đi tới backlog của dự án để lập kế hoạch và bắt đầu một sprint mới."
+              : "Hiện tại không có sprint nào đang hoạt động. Hãy yêu cầu Scrum Master của bạn kích hoạt một sprint."
           }
           action={
             <Link to={`/projects/${projectIdStr}/backlog`}>
-              <Button leftIcon={<ListTodo className="h-4.5 w-4.5" />}>Go to Backlog</Button>
+              <Button leftIcon={<ListTodo className="h-4.5 w-4.5" />}>Đi tới Backlog</Button>
             </Link>
           }
         />

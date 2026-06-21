@@ -10,8 +10,8 @@ import { Button } from '../../components/ui/Button'
 import { useToast } from '../../stores/toastStore'
 
 const loginSchema = zod.object({
-  email: zod.string().min(1, 'Email is required').email('Please enter a valid email address'),
-  password: zod.string().min(8, 'Password must be at least 8 characters'),
+  email: zod.string().min(1, 'Email là bắt buộc').email('Vui lòng nhập địa chỉ email hợp lệ'),
+  password: zod.string().min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
 })
 
 type LoginFormInputs = zod.infer<typeof loginSchema>
@@ -48,10 +48,10 @@ export const LoginPage: React.FC = () => {
         throw error
       }
 
-      toast.success('Signed in successfully!')
+      toast.success('Đăng nhập thành công!')
       navigate(from, { replace: true })
     } catch (err: any) {
-      setErrorMessage(err.message || 'Incorrect email or password. Please try again.')
+      setErrorMessage(err.message || 'Email hoặc mật khẩu không chính xác. Vui lòng thử lại.')
     } finally {
       setIsLoading(false)
     }
@@ -66,8 +66,8 @@ export const LoginPage: React.FC = () => {
           <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
             <Activity className="h-6 w-6" />
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Welcome to AgileFlow</h2>
-          <p className="text-sm text-neutral-500">Sign in to manage your Agile/Scrum sprints</p>
+          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Chào mừng bạn đến với AgileFlow</h2>
+          <p className="text-sm text-neutral-500">Đăng nhập để quản lý các sprint Agile/Scrum của bạn</p>
         </div>
 
         {/* Thông báo lỗi chung */}
@@ -81,7 +81,7 @@ export const LoginPage: React.FC = () => {
         {/* Biểu mẫu đăng nhập */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
-            label="Email Address"
+            label="Địa chỉ Email"
             type="email"
             placeholder="you@example.com"
             error={errors.email?.message}
@@ -93,7 +93,7 @@ export const LoginPage: React.FC = () => {
 
           <div className="flex flex-col gap-1">
             <Input
-              label="Password"
+              label="Mật khẩu"
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               error={errors.password?.message}
@@ -117,7 +117,7 @@ export const LoginPage: React.FC = () => {
                 to="/forgot-password"
                 className="text-xs font-semibold text-primary-600 hover:text-primary-700 focus:outline-none"
               >
-                Forgot password?
+                Quên mật khẩu?
               </Link>
             </div>
           </div>
@@ -127,17 +127,17 @@ export const LoginPage: React.FC = () => {
             className="w-full mt-2"
             isLoading={isLoading}
           >
-            Sign In
+            Đăng nhập
           </Button>
         </form>
 
         <div className="text-center text-sm text-neutral-500 border-t border-neutral-100 pt-4">
-          Don't have an account?{' '}
+          Chưa có tài khoản?{' '}
           <Link
             to="/register"
             className="font-semibold text-primary-600 hover:text-primary-700"
           >
-            Sign up
+            Đăng ký
           </Link>
         </div>
       </div>

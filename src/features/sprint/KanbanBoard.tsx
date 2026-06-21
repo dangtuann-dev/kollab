@@ -15,10 +15,10 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   onOpenDetails,
 }) => {
   const columns: { id: StoryStatus; name: string; accentColor: string }[] = [
-    { id: 'todo', name: 'To Do', accentColor: 'bg-primary-500' },
-    { id: 'in_progress', name: 'In Progress', accentColor: 'bg-purple-500' },
-    { id: 'review', name: 'In Review', accentColor: 'bg-warning-500' },
-    { id: 'done', name: 'Done', accentColor: 'bg-success-500' },
+    { id: 'todo', name: 'Cần làm', accentColor: 'bg-primary-500' },
+    { id: 'in_progress', name: 'Đang làm', accentColor: 'bg-purple-500' },
+    { id: 'review', name: 'Đang đánh giá', accentColor: 'bg-warning-500' },
+    { id: 'done', name: 'Hoàn thành', accentColor: 'bg-success-500' },
   ]
 
   // Bộ xử lý kéo thả (Drag and Drop) thuần
@@ -69,7 +69,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             <div key={index} className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-warning-600 shrink-0" />
               <span>
-                WIP Warning: <span className="underline">{warning.name}</span> has {warning.count} stories In Progress. (Scrum recommendation: max 3 stories).
+                Cảnh báo WIP: <span className="underline">{warning.name}</span> đang thực hiện {warning.count} story. (Khuyến nghị Scrum: tối đa 3 story).
               </span>
             </div>
           ))}
@@ -103,7 +103,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
               <div className="flex flex-col gap-2.5 overflow-y-auto max-h-[60vh] pr-0.5">
                 {colStories.length === 0 ? (
                   <div className="border border-dashed border-neutral-300 rounded-lg py-10 text-center text-[11px] text-neutral-400">
-                    Drag items here
+                    Kéo thả thẻ vào đây
                   </div>
                 ) : (
                   colStories.map((story) => (

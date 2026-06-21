@@ -23,7 +23,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
   if (!summary) {
     return (
       <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-450">
-        No active sprint summary data.
+        Không có dữ liệu tóm tắt sprint đang hoạt động.
       </div>
     )
   }
@@ -34,15 +34,15 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
       {/* Cột 1: Chỉ số hoàn thành */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
         <div>
-          <h3 className="text-sm font-bold text-neutral-800">Sprint Delivery</h3>
-          <p className="text-[11px] text-neutral-450 mt-0.5">Summary of sprint stories and points.</p>
+          <h3 className="text-sm font-bold text-neutral-800">Kết quả Sprint</h3>
+          <p className="text-[11px] text-neutral-450 mt-0.5">Tóm tắt các story và điểm số của sprint.</p>
         </div>
 
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between text-xs">
             <span className="text-neutral-500 font-semibold flex items-center gap-1.5">
               <CheckCircle2 className="h-4 w-4 text-success-500" />
-              Completed Stories
+              Story đã hoàn thành
             </span>
             <span className="font-bold text-neutral-850">
               {summary.completedStories} / {summary.totalStories}
@@ -52,7 +52,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
           <div className="flex items-center justify-between text-xs">
             <span className="text-neutral-500 font-semibold flex items-center gap-1.5">
               <Award className="h-4 w-4 text-primary-500" />
-              Completed Points
+              Điểm đã hoàn thành
             </span>
             <span className="font-bold text-neutral-850">
               {summary.completedPoints} / {summary.totalPoints} SP
@@ -64,8 +64,8 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
       {/* Cột 2: Thời gian chu kỳ */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col justify-between">
         <div>
-          <h3 className="text-sm font-bold text-neutral-800">Cycle Efficiency</h3>
-          <p className="text-[11px] text-neutral-450 mt-0.5">Performance indices and execution speed.</p>
+          <h3 className="text-sm font-bold text-neutral-800">Hiệu suất chu kỳ</h3>
+          <p className="text-[11px] text-neutral-450 mt-0.5">Chỉ số hiệu suất và tốc độ thực thi.</p>
         </div>
 
         <div className="flex items-center gap-3 my-2">
@@ -74,9 +74,9 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
           </div>
           <div>
             <p className="text-2xl font-extrabold text-neutral-850">
-              {summary.averageCycleTime} <span className="text-xs font-semibold text-neutral-450">Days</span>
+              {summary.averageCycleTime} <span className="text-xs font-semibold text-neutral-455 text-neutral-400">Ngày</span>
             </p>
-            <p className="text-[10px] text-neutral-400 font-medium mt-0.5">Average resolution time per story</p>
+            <p className="text-[10px] text-neutral-400 font-medium mt-0.5">Thời gian giải quyết trung bình mỗi story</p>
           </div>
         </div>
       </div>
@@ -84,12 +84,12 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
       {/* Cột 3: Đóng góp hàng đầu */}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-3">
         <div>
-          <h3 className="text-sm font-bold text-neutral-800">Top Contributors</h3>
-          <p className="text-[11px] text-neutral-450 mt-0.5">Team members with highest points delivered.</p>
+          <h3 className="text-sm font-bold text-neutral-800">Thành viên đóng góp hàng đầu</h3>
+          <p className="text-[11px] text-neutral-450 mt-0.5">Các thành viên có số điểm bàn giao cao nhất.</p>
         </div>
 
         {summary.topContributors.length === 0 ? (
-          <p className="text-xs text-neutral-405 py-4">No stories completed yet.</p>
+          <p className="text-xs text-neutral-400 py-4">Chưa có story nào hoàn thành.</p>
         ) : (
           <div className="flex flex-col gap-2.5">
             {summary.topContributors.map((c, i) => (

@@ -23,7 +23,7 @@ export const ForgotPasswordPage: React.FC = () => {
       if (error) throw error
       setIsSuccess(true)
     } catch (err: any) {
-      setErrorMsg(err.message || 'Something went wrong. Please try again.')
+      setErrorMsg(err.message || 'Đã xảy ra lỗi. Vui lòng thử lại.')
     } finally {
       setIsLoading(false)
     }
@@ -37,13 +37,13 @@ export const ForgotPasswordPage: React.FC = () => {
             <CheckCircle2 className="h-8 w-8" />
           </div>
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-bold text-neutral-900 font-sans">Check your email</h2>
+            <h2 className="text-xl font-bold text-neutral-900 font-sans">Kiểm tra email của bạn</h2>
             <p className="text-sm text-neutral-500 leading-relaxed px-2">
-              If an account exists for {email}, we've sent password reset instructions.
+              Nếu tài khoản tồn tại cho {email}, chúng tôi đã gửi hướng dẫn đặt lại mật khẩu.
             </p>
           </div>
           <Link to="/login" className="w-full">
-            <Button className="w-full">Back to Login</Button>
+            <Button className="w-full">Quay lại Đăng nhập</Button>
           </Link>
         </div>
       </div>
@@ -57,8 +57,8 @@ export const ForgotPasswordPage: React.FC = () => {
           <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
             <Activity className="h-6 w-6" />
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Reset Password</h2>
-          <p className="text-sm text-neutral-500">Enter your email and we'll send you a link to reset your password</p>
+          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Đặt lại mật khẩu</h2>
+          <p className="text-sm text-neutral-500">Nhập email của bạn và chúng tôi sẽ gửi liên kết đặt lại mật khẩu</p>
         </div>
 
         {errorMsg && (
@@ -69,7 +69,7 @@ export const ForgotPasswordPage: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Input
-            label="Email Address"
+            label="Địa chỉ Email"
             type="email"
             placeholder="you@example.com"
             required
@@ -80,7 +80,7 @@ export const ForgotPasswordPage: React.FC = () => {
           />
 
           <Button type="submit" className="w-full mt-2" isLoading={isLoading}>
-            Send Reset Link
+            Gửi liên kết đặt lại
           </Button>
         </form>
 
@@ -90,7 +90,7 @@ export const ForgotPasswordPage: React.FC = () => {
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-700"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Login
+            Quay lại Đăng nhập
           </Link>
         </div>
       </div>

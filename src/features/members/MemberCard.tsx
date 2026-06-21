@@ -51,7 +51,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             </span>
             {isOwnCard && (
               <span className="text-[10px] font-bold text-neutral-400 bg-neutral-100 px-1.5 py-0.5 rounded">
-                You
+                Bạn
               </span>
             )}
           </div>
@@ -79,7 +79,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
               <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
               <div className="absolute right-0 mt-1 w-48 bg-white border border-neutral-150 rounded-lg shadow-lg z-20 py-1.5 origin-top-right animate-slide-up text-xs font-semibold text-neutral-700">
                 <div className="px-3 py-1 text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
-                  Change Role
+                  Thay đổi vai trò
                 </div>
                 {member.role !== 'product_owner' && (
                   <button
@@ -110,14 +110,14 @@ export const MemberCard: React.FC<MemberCardProps> = ({
                   <button
                     onClick={() => {
                       setMenuOpen(false)
-                      if (confirm(`Remove ${member.profile?.full_name || 'user'} from this project?`)) {
+                      if (confirm(`Xóa ${member.profile?.full_name || 'thành viên'} khỏi dự án này?`)) {
                         onRemove(member.id)
                       }
                     }}
                     className="w-full flex items-center gap-2 px-3 py-1.5 text-danger-600 hover:bg-danger-50 transition-colors text-left"
                   >
                     <UserMinus className="h-3.5 w-3.5" />
-                    <span>Remove Member</span>
+                    <span>Xóa thành viên</span>
                   </button>
                 </div>
               </div>

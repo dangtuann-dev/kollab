@@ -40,7 +40,7 @@ export function useBacklog(projectId: string) {
   }>({
     mutationFn: async (vars) => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('User not authenticated')
+      if (!user) throw new Error('Người dùng chưa đăng nhập')
 
       // Lấy chỉ số thứ tự (order index) tiếp theo
       const existingCount = storiesQuery.data?.length || 0
@@ -67,11 +67,11 @@ export function useBacklog(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Story created successfully!')
+      toast.success('Tạo User Story thành công!')
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to create story')
+      toast.error(err.message || 'Tạo User Story thất bại')
     },
   })
 
@@ -92,7 +92,7 @@ export function useBacklog(projectId: string) {
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to update story')
+      toast.error(err.message || 'Cập nhật story thất bại')
     },
   })
 
@@ -102,11 +102,11 @@ export function useBacklog(projectId: string) {
       if (error) throw error
     },
     onSuccess: () => {
-      toast.success('Story deleted')
+      toast.success('Đã xóa story')
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to delete story')
+      toast.error(err.message || 'Xóa story thất bại')
     },
   })
 
@@ -134,7 +134,7 @@ export function useBacklog(projectId: string) {
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to move story')
+      toast.error(err.message || 'Di chuyển story thất bại')
     },
   })
 

@@ -57,11 +57,11 @@ export function useSprint(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Sprint created successfully!')
+      toast.success('Tạo Sprint thành công!')
       queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to create sprint')
+      toast.error(err.message || 'Tạo Sprint thất bại')
     },
   })
 
@@ -83,13 +83,13 @@ export function useSprint(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Sprint started!')
+      toast.success('Đã bắt đầu Sprint!')
       queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
       queryClient.invalidateQueries({ queryKey: ['activeSprint', projectId] })
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to start sprint')
+      toast.error(err.message || 'Bắt đầu Sprint thất bại')
     },
   })
 
@@ -107,13 +107,13 @@ export function useSprint(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Sprint completed!')
+      toast.success('Đã hoàn thành Sprint!')
       queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
       queryClient.invalidateQueries({ queryKey: ['activeSprint', projectId] })
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to complete sprint')
+      toast.error(err.message || 'Hoàn thành Sprint thất bại')
     },
   })
 

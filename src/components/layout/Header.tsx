@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
             className="flex items-center gap-1 hover:text-neutral-800 transition-colors"
           >
             <FolderKanban className="h-4 w-4" />
-            <span className="hidden sm:inline">Projects</span>
+            <span className="hidden sm:inline">Dự án</span>
           </Link>
 
           {currentProject && projectId && (
@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
               <div className="absolute right-0 mt-2 w-56 bg-white border border-neutral-150 rounded-xl shadow-lg z-20 py-2 animate-slide-up origin-top-right">
                 <div className="px-4 py-2.5 border-b border-neutral-100">
                   <p className="text-sm font-semibold text-neutral-800 truncate">
-                    {user?.user_metadata?.full_name || 'Guest User'}
+                    {user?.user_metadata?.full_name || 'Khách'}
                   </p>
                   <p className="text-xs text-neutral-500 truncate mt-0.5">{user?.email}</p>
                 </div>
@@ -97,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                     className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 transition-colors"
                   >
                     <Settings className="h-4 w-4 text-neutral-400" />
-                    <span>Workspace Settings</span>
+                    <span>Cài đặt Không gian làm việc</span>
                   </Link>
                 </div>
 
@@ -110,7 +110,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
                     className="w-full flex items-center gap-2 px-4 py-2 text-sm text-danger-600 hover:bg-danger-50/50 transition-colors text-left"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span>Log Out</span>
+                    <span>Đăng xuất</span>
                   </button>
                 </div>
               </div>

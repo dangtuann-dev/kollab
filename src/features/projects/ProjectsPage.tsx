@@ -38,13 +38,13 @@ export const ProjectsPage: React.FC = () => {
               <FolderKanban className="h-5.5 w-5.5" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-neutral-900 tracking-tight">AgileFlow Workspaces</h1>
-              <p className="text-xs text-neutral-500">Signed in as {user?.email}</p>
+              <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Không gian làm việc AgileFlow</h1>
+              <p className="text-xs text-neutral-500">Đã đăng nhập bằng {user?.email}</p>
             </div>
           </div>
           
           <Button variant="ghost" size="sm" onClick={handleLogout} leftIcon={<LogOut className="h-4 w-4" />}>
-            Log Out
+            Đăng xuất
           </Button>
         </div>
 
@@ -53,7 +53,7 @@ export const ProjectsPage: React.FC = () => {
           <div className="relative flex-1 max-w-md">
             <Input
               type="text"
-              placeholder="Search projects..."
+              placeholder="Tìm kiếm dự án..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="h-4.5 w-4.5 text-neutral-400" />}
@@ -66,7 +66,7 @@ export const ProjectsPage: React.FC = () => {
             leftIcon={<Plus className="h-4.5 w-4.5" />}
             className="shadow-sm"
           >
-            New Project
+            Dự án mới
           </Button>
         </div>
 
@@ -75,16 +75,16 @@ export const ProjectsPage: React.FC = () => {
           <SkeletonGrid count={6} />
         ) : filteredProjects.length === 0 ? (
           <EmptyState
-            title={searchQuery ? 'No matching projects found' : 'No projects yet'}
+            title={searchQuery ? 'Không tìm thấy dự án phù hợp' : 'Chưa có dự án nào'}
             description={
               searchQuery
-                ? `We couldn't find any projects matching "${searchQuery}". Try adjusting your keywords.`
-                : "Get started by creating your first agile project workspace. You'll be able to invite developers and manage sprints."
+                ? `Không thể tìm thấy bất kỳ dự án nào khớp với "${searchQuery}". Hãy thử điều chỉnh từ khóa.`
+                : "Bắt đầu bằng cách tạo không gian làm việc dự án agile đầu tiên của bạn. Bạn sẽ có thể mời các lập trình viên và quản lý sprint."
             }
             action={
               !searchQuery && (
                 <Button onClick={() => setIsModalOpen(true)} leftIcon={<Plus className="h-4.5 w-4.5" />}>
-                  Create First Project
+                  Tạo dự án đầu tiên
                 </Button>
               )
             }

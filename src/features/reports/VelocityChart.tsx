@@ -13,7 +13,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
   if (data.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-450">
-        No completed sprints yet to calculate velocity.
+        Chưa có sprint nào hoàn thành để tính toán velocity.
       </div>
     )
   }
@@ -36,8 +36,8 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
   return (
     <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 font-sans">
       <div>
-        <h3 className="text-sm font-bold text-neutral-800">Team Velocity Chart</h3>
-        <p className="text-[11px] text-neutral-450 mt-0.5">Track the sum of completed story points across recent sprints.</p>
+        <h3 className="text-sm font-bold text-neutral-800">Biểu đồ Tốc độ nhóm (Velocity)</h3>
+        <p className="text-[11px] text-neutral-450 mt-0.5">Theo dõi tổng số điểm story point đã hoàn thành qua các sprint gần đây.</p>
       </div>
 
       <div className="relative w-full overflow-x-auto">
@@ -113,7 +113,7 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data }) => {
 
       <div className="flex items-center justify-center gap-1.5 text-[11px] font-semibold text-neutral-500 border-t border-neutral-100 pt-3">
         <div className="h-3 w-3 bg-primary-500 rounded" />
-        <span>Completed Story Points</span>
+        <span>Điểm Story Point đã hoàn thành</span>
       </div>
     </div>
   )

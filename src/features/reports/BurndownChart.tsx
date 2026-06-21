@@ -13,8 +13,8 @@ interface BurndownChartProps {
 export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
   if (data.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-450">
-        No active sprint data available for burndown.
+      <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-455 text-neutral-400">
+        Không có dữ liệu sprint đang hoạt động cho biểu đồ burndown.
       </div>
     )
   }
@@ -48,8 +48,8 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
   return (
     <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 font-sans">
       <div>
-        <h3 className="text-sm font-bold text-neutral-800">Sprint Burndown Chart</h3>
-        <p className="text-[11px] text-neutral-450 mt-0.5">Track remaining effort against the ideal completion rate.</p>
+        <h3 className="text-sm font-bold text-neutral-800">Biểu đồ Sprint Burndown</h3>
+        <p className="text-[11px] text-neutral-450 mt-0.5">Theo dõi nỗ lực còn lại so với tỷ lệ hoàn thành lý tưởng.</p>
       </div>
 
       <div className="relative w-full overflow-x-auto">
@@ -136,11 +136,11 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
       <div className="flex items-center justify-center gap-5 text-[11px] font-semibold text-neutral-500 border-t border-neutral-100 pt-3">
         <div className="flex items-center gap-1.5">
           <div className="h-0.5 w-6 border-t-2 border-dashed border-neutral-300" />
-          <span>Ideal Burndown</span>
+          <span>Đường lý thuyết</span>
         </div>
         <div className="flex items-center gap-1.5">
           <div className="h-0.5 w-6 border-t-[3.5px] border-primary-500 rounded-full" />
-          <span>Actual Remaining</span>
+          <span>Thực tế còn lại</span>
         </div>
       </div>
     </div>

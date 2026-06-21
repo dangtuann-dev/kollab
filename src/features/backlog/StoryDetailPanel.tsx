@@ -150,11 +150,11 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
       return data
     },
     onSuccess: () => {
-      toast.success('Story details saved!')
+      toast.success('Đã lưu chi tiết story!')
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to save story details')
+      toast.error(err.message || 'Lưu chi tiết story thất bại')
     },
   })
 
@@ -265,7 +265,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             }`}
           >
             <Save className="h-4 w-4 inline mr-1.5" />
-            Details
+            Chi tiết
           </button>
           <button
             onClick={() => setActiveTab('tasks')}
@@ -274,7 +274,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             }`}
           >
             <ListTodo className="h-4 w-4 inline mr-1.5" />
-            Tasks
+            Công việc
           </button>
           <button
             onClick={() => setActiveTab('comments')}
@@ -283,7 +283,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             }`}
           >
             <MessageSquare className="h-4 w-4 inline mr-1.5" />
-            Comments
+            Bình luận
           </button>
         </div>
 
@@ -293,13 +293,13 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           {activeTab === 'details' && (
             <div className="flex flex-col gap-4">
               <Input
-                label="Story Title"
+                label="Tiêu đề Story"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Description</label>
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Mô tả</label>
                 <textarea
                   rows={4}
                   value={description}
@@ -309,7 +309,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Acceptance Criteria</label>
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Tiêu chí nghiệm thu</label>
                 <textarea
                   rows={4}
                   value={acceptanceCriteria}
@@ -320,21 +320,21 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Priority</label>
+                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Độ ưu tiên</label>
                   <select
                     value={priority}
                     onChange={(e: any) => setPriority(e.target.value)}
-                    className="block w-full rounded-lg border border-neutral-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="block w-full rounded-lg border border-neutral-350 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
-                    <option value="critical">🔴 Critical</option>
-                    <option value="high">🟠 High</option>
-                    <option value="medium">🟡 Medium</option>
-                    <option value="low">🟢 Low</option>
+                    <option value="critical">🔴 Khẩn cấp</option>
+                    <option value="high">🟠 Cao</option>
+                    <option value="medium">🟡 Trung bình</option>
+                    <option value="low">🟢 Thấp</option>
                   </select>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Story Points</label>
+                  <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Story point</label>
                   <input
                     type="number"
                     value={storyPoints}
@@ -345,13 +345,13 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Assignee</label>
+                <label className="text-xs font-semibold text-neutral-500 uppercase tracking-wider">Người thực hiện</label>
                 <select
                   value={assigneeId}
                   onChange={(e) => setAssigneeId(e.target.value)}
                   className="block w-full rounded-lg border border-neutral-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
-                  <option value="">Unassigned</option>
+                  <option value="">Chưa phân công</option>
                   {members.map((member: ProjectMember) => (
                     <option key={member.id} value={member.user_id}>
                       {member.profile?.full_name || member.user_id}
@@ -365,7 +365,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                 isLoading={updateStoryDetails.isPending}
                 className="mt-4"
               >
-                Save Details
+                Lưu chi tiết
               </Button>
             </div>
           )}
@@ -373,12 +373,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           {/* TAB 2: CÔNG VIỆC CON */}
           {activeTab === 'tasks' && (
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-semibold text-neutral-700">Story Tasks</h4>
+              <h4 className="text-sm font-semibold text-neutral-700">Công việc của Story</h4>
 
               {/* Hộp thêm Task mới */}
               <div className="flex gap-2">
                 <Input
-                  placeholder="New task title..."
+                  placeholder="Tiêu đề công việc mới..."
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   className="py-1.5"
@@ -388,7 +388,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                   isLoading={createTask.isPending}
                   className="shrink-0"
                 >
-                  Add
+                  Thêm
                 </Button>
               </div>
 
@@ -398,7 +398,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
                 </div>
               ) : tasks.length === 0 ? (
-                <p className="text-xs text-neutral-400 text-center py-6">No tasks added to this story yet.</p>
+                <p className="text-xs text-neutral-400 text-center py-6">Chưa có công việc nào được thêm vào story này.</p>
               ) : (
                 <div className="flex flex-col gap-2 mt-2">
                   {tasks.map((task) => (
@@ -438,7 +438,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           {/* TAB 3: BÌNH LUẬN */}
           {activeTab === 'comments' && (
             <div className="flex flex-col gap-4">
-              <h4 className="text-sm font-semibold text-neutral-700">Discussion</h4>
+              <h4 className="text-sm font-semibold text-neutral-700">Thảo luận</h4>
 
               {/* Khung hiển thị các bình luận */}
               {loadingComments ? (
@@ -446,7 +446,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
                 </div>
               ) : comments.length === 0 ? (
-                <p className="text-xs text-neutral-400 text-center py-6">No comments yet. Start the conversation!</p>
+                <p className="text-xs text-neutral-400 text-center py-6">Chưa có bình luận nào. Hãy bắt đầu cuộc trò chuyện!</p>
               ) : (
                 <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-1">
                   {comments.map((comment) => (
@@ -476,7 +476,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
               <div className="flex flex-col gap-2 mt-2">
                 <textarea
                   rows={2}
-                  placeholder="Post an update or reply..."
+                  placeholder="Đăng cập nhật hoặc trả lời..."
                   value={newCommentText}
                   onChange={(e) => setNewCommentText(e.target.value)}
                   className="block w-full rounded-lg border border-neutral-350 py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -487,7 +487,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                     isLoading={createComment.isPending}
                     size="sm"
                   >
-                    Post Comment
+                    Đăng bình luận
                   </Button>
                 </div>
               </div>

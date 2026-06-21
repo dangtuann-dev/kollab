@@ -43,7 +43,7 @@ export const MembersPage: React.FC = () => {
     return (
       <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-2">
         <Spinner size="lg" />
-        <p className="text-xs text-neutral-500 font-semibold">Loading members directory...</p>
+        <p className="text-xs text-neutral-500 font-semibold">Đang tải danh sách thành viên...</p>
       </div>
     )
   }
@@ -53,13 +53,13 @@ export const MembersPage: React.FC = () => {
       {/* Header Actions */}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
-          <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Team Members</h2>
-          <p className="text-xs text-neutral-500 mt-0.5">Manage project collaborators, invite new developers, and allocate roles.</p>
+          <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Thành viên nhóm</h2>
+          <p className="text-xs text-neutral-500 mt-0.5">Quản lý những người cộng tác dự án, mời các lập trình viên mới và phân bổ vai trò.</p>
         </div>
 
         {isPO && (
           <Button size="sm" onClick={() => setIsInviteOpen(true)} leftIcon={<Plus className="h-4.5 w-4.5" />}>
-            Invite Member
+            Mời thành viên
           </Button>
         )}
       </div>
@@ -69,7 +69,7 @@ export const MembersPage: React.FC = () => {
         {/* Search */}
         <div className="relative flex-1 max-w-md">
           <Input
-            placeholder="Search by name or email..."
+            placeholder="Tìm kiếm theo tên hoặc email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             leftIcon={<Search className="h-4.5 w-4.5 text-neutral-400" />}
@@ -80,13 +80,13 @@ export const MembersPage: React.FC = () => {
         {/* Role Filter */}
         <div className="flex items-center gap-2 border border-neutral-200 bg-white rounded-lg px-3.5 py-2 text-xs font-semibold text-neutral-600 shadow-sm self-start">
           <ListFilter className="h-4 w-4 text-neutral-400" />
-          <span>Role:</span>
+          <span>Vai trò:</span>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
           >
-            <option value="all">All Roles</option>
+            <option value="all">Tất cả vai trò</option>
             <option value="product_owner">Product Owner</option>
             <option value="scrum_master">Scrum Master</option>
             <option value="developer">Developer</option>
@@ -97,16 +97,16 @@ export const MembersPage: React.FC = () => {
       {/* Member Cards Grid */}
       {filteredMembers.length === 0 ? (
         <EmptyState
-          title={searchQuery || roleFilter !== 'all' ? 'No members found' : 'No team members'}
+          title={searchQuery || roleFilter !== 'all' ? 'Không tìm thấy thành viên nào' : 'Chưa có thành viên nào'}
           description={
             searchQuery || roleFilter !== 'all'
-              ? 'Try modifying your search queries or filtering criteria.'
-              : 'Invite colleagues to collaborate on this sprint workspace.'
+              ? 'Hãy thử thay đổi từ khóa tìm kiếm hoặc tiêu chí bộ lọc.'
+              : 'Mời các đồng nghiệp tham gia cộng tác trong không gian làm việc này.'
           }
           action={
             isPO && !searchQuery && roleFilter === 'all' ? (
               <Button onClick={() => setIsInviteOpen(true)} leftIcon={<Plus className="h-4.5 w-4.5" />}>
-                Invite First Colleague
+                Mời đồng nghiệp đầu tiên
               </Button>
             ) : null
           }

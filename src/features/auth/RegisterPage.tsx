@@ -9,16 +9,16 @@ import { Input } from '../../components/ui/Input'
 import { Button } from '../../components/ui/Button'
 
 const registerSchema = zod.object({
-  fullName: zod.string().min(2, 'Name must be at least 2 characters'),
-  email: zod.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  fullName: zod.string().min(2, 'Tên phải có ít nhất 2 ký tự'),
+  email: zod.string().min(1, 'Email là bắt buộc').email('Vui lòng nhập địa chỉ email hợp lệ'),
   password: zod
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number'),
-  confirmPassword: zod.string().min(1, 'Please confirm your password'),
+    .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+    .regex(/[A-Z]/, 'Mật khẩu phải chứa ít nhất một chữ cái viết hoa')
+    .regex(/[0-9]/, 'Mật khẩu phải chứa ít nhất một chữ số'),
+  confirmPassword: zod.string().min(1, 'Vui lòng xác nhận mật khẩu của bạn'),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords do not match',
+  message: 'Mật khẩu xác nhận không khớp',
   path: ['confirmPassword'],
 })
 
@@ -61,7 +61,7 @@ export const RegisterPage: React.FC = () => {
 
       setIsSuccess(true)
     } catch (err: any) {
-      setErrorMessage(err.message || 'An error occurred during registration. Please try again.')
+      setErrorMessage(err.message || 'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.')
     } finally {
       setIsLoading(false)
     }
@@ -75,13 +75,13 @@ export const RegisterPage: React.FC = () => {
             <CheckCircle2 className="h-8 w-8" />
           </div>
           <div className="flex flex-col gap-2">
-            <h2 className="text-xl font-bold text-neutral-900">Verify your email</h2>
+            <h2 className="text-xl font-bold text-neutral-900">Xác thực email của bạn</h2>
             <p className="text-sm text-neutral-500 leading-relaxed px-2">
-              We've sent a verification link to your email address. Please check your inbox (and spam folder) to activate your account.
+              Chúng tôi đã gửi liên kết xác thực đến địa chỉ email của bạn. Vui lòng kiểm tra hộp thư đến (và thư mục spam) để kích hoạt tài khoản.
             </p>
           </div>
           <Link to="/login" className="w-full">
-            <Button className="w-full">Back to Login</Button>
+            <Button className="w-full">Quay lại Đăng nhập</Button>
           </Link>
         </div>
       </div>
@@ -97,8 +97,8 @@ export const RegisterPage: React.FC = () => {
           <div className="h-12 w-12 rounded-xl bg-primary-600 flex items-center justify-center text-white shadow-md shadow-primary-200">
             <Activity className="h-6 w-6" />
           </div>
-          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Create an Account</h2>
-          <p className="text-sm text-neutral-500">Get started with AgileFlow team workspace</p>
+          <h2 className="text-2xl font-bold text-neutral-900 tracking-tight mt-2">Tạo tài khoản</h2>
+          <p className="text-sm text-neutral-500">Bắt đầu với không gian làm việc của nhóm AgileFlow</p>
         </div>
 
         {/* Thông báo lỗi chung */}
@@ -112,7 +112,7 @@ export const RegisterPage: React.FC = () => {
         {/* Biểu mẫu đăng ký */}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
-            label="Full Name"
+            label="Họ và Tên"
             type="text"
             placeholder="John Doe"
             error={errors.fullName?.message}
@@ -123,7 +123,7 @@ export const RegisterPage: React.FC = () => {
           />
 
           <Input
-            label="Email Address"
+            label="Địa chỉ Email"
             type="email"
             placeholder="you@example.com"
             error={errors.email?.message}
@@ -134,7 +134,7 @@ export const RegisterPage: React.FC = () => {
           />
 
           <Input
-            label="Password"
+            label="Mật khẩu"
             type={showPassword ? 'text' : 'password'}
             placeholder="••••••••"
             error={errors.password?.message}
@@ -155,7 +155,7 @@ export const RegisterPage: React.FC = () => {
           />
 
           <Input
-            label="Confirm Password"
+            label="Xác nhận mật khẩu"
             type={showConfirmPassword ? 'text' : 'password'}
             placeholder="••••••••"
             error={errors.confirmPassword?.message}
@@ -180,17 +180,17 @@ export const RegisterPage: React.FC = () => {
             className="w-full mt-2"
             isLoading={isLoading}
           >
-            Register
+            Đăng ký
           </Button>
         </form>
 
         <div className="text-center text-sm text-neutral-500 border-t border-neutral-100 pt-4">
-          Already have an account?{' '}
+          Đã có tài khoản?{' '}
           <Link
             to="/login"
             className="font-semibold text-primary-600 hover:text-primary-700"
           >
-            Sign in
+            Đăng nhập
           </Link>
         </div>
       </div>

@@ -86,14 +86,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                 className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50 transition-colors text-left font-semibold"
               >
                 <Edit2 className="h-3.5 w-3.5 text-neutral-400" />
-                <span>View / Edit Details</span>
+                <span>Xem / Sửa chi tiết</span>
               </button>
 
               {/* Tùy chọn chuyển vào Sprint */}
               {isPO && activeSprints.length > 0 && (
                 <div className="border-t border-neutral-100 my-1 pt-1">
                   <div className="px-3 py-1 text-[9px] font-bold text-neutral-400 uppercase tracking-wider">
-                    Move to Sprint
+                    Di chuyển sang Sprint
                   </div>
                   {story.sprint_id && (
                     <button
@@ -131,14 +131,14 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                   <button
                     onClick={() => {
                       setMenuOpen(false)
-                      if (confirm('Are you sure you want to delete this story?')) {
+                      if (confirm('Bạn có chắc chắn muốn xóa story này?')) {
                         onDelete(story.id)
                       }
                     }}
                     className="w-full flex items-center gap-2 px-3 py-1.5 text-xs text-danger-600 hover:bg-danger-50 transition-colors text-left font-semibold"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
-                    <span>Delete Story</span>
+                    <span>Xóa Story</span>
                   </button>
                 </div>
               )}

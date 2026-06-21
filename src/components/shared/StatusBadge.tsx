@@ -13,19 +13,19 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       variant: 'neutral' as const,
     },
     todo: {
-      label: 'To Do',
+      label: 'Cần làm',
       variant: 'info' as const,
     },
     in_progress: {
-      label: 'In Progress',
+      label: 'Đang làm',
       variant: 'purple' as const,
     },
     review: {
-      label: 'In Review',
+      label: 'Đang đánh giá',
       variant: 'warning' as const,
     },
     done: {
-      label: 'Done',
+      label: 'Hoàn thành',
       variant: 'success' as const,
     },
   }

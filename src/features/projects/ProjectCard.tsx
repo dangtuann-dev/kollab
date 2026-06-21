@@ -51,7 +51,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
         {/* Mô tả */}
         <p className="text-xs text-neutral-500 line-clamp-3 leading-relaxed">
-          {project.description || 'No description provided.'}
+          {project.description || 'Chưa có mô tả.'}
         </p>
       </div>
 
@@ -61,7 +61,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           <div className="flex items-center gap-1 text-[11px] font-semibold text-neutral-400">
             <Calendar className="h-3.5 w-3.5" />
             <span>
-              {project.start_date ? new Date(project.start_date).toLocaleDateString() : 'TBD'}
+              {project.start_date ? new Date(project.start_date).toLocaleDateString() : 'Chưa xác định'}
             </span>
           </div>
 

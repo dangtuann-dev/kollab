@@ -43,13 +43,13 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">{sprint.name}</h2>
           <Badge variant="success" size="sm">
-            Active Sprint
+            Sprint đang hoạt động
           </Badge>
           
           {daysRemaining !== null && (
             <span className="text-xs text-neutral-500 font-semibold flex items-center gap-1 bg-neutral-100 px-2 py-0.5 rounded-full">
               <Calendar className="h-3.5 w-3.5 text-neutral-400" />
-              {daysRemaining === 0 ? 'Ends today' : `${daysRemaining} day${daysRemaining > 1 ? 's' : ''} left`}
+              {daysRemaining === 0 ? 'Kết thúc hôm nay' : `Còn lại ${daysRemaining} ngày`}
             </span>
           )}
         </div>
@@ -63,7 +63,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
             leftIcon={<CheckCircle2 className="h-4 w-4 text-success-600" />}
             className="py-1 px-3 text-xs"
           >
-            Complete Sprint
+            Hoàn thành Sprint
           </Button>
         )}
       </div>
@@ -73,7 +73,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
         <div className="flex items-start gap-2 text-xs text-neutral-600 bg-neutral-50 p-3 rounded-lg border border-neutral-100">
           <Goal className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold text-neutral-700">Sprint Goal:</span> {sprint.goal}
+            <span className="font-bold text-neutral-700">Mục tiêu Sprint:</span> {sprint.goal}
           </div>
         </div>
       )}
@@ -81,9 +81,9 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
       {/* Thanh tiến độ */}
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between text-xs font-semibold text-neutral-500">
-          <span>Sprint Completion</span>
+          <span>Tiến độ hoàn thành Sprint</span>
           <span>
-            {completedStories}/{totalStories} Stories ({progressPercent}%)
+            {completedStories}/{totalStories} Story ({progressPercent}%)
           </span>
         </div>
         <div className="w-full bg-neutral-100 rounded-full h-2">

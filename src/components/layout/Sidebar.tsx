@@ -50,13 +50,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
 
   const mainNavItems = [
     {
-      name: 'Projects Overview',
+      name: 'Tổng quan dự án',
       to: '/projects',
       icon: <FolderKanban className="h-5 w-5 shrink-0" />,
       requireProject: false,
     },
     {
-      name: 'Sprint Board',
+      name: 'Bảng Sprint',
       to: projectId ? `/projects/${projectId}/board` : '/projects',
       icon: <Target className="h-5 w-5 shrink-0" />,
       requireProject: true,
@@ -68,19 +68,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
       requireProject: true,
     },
     {
-      name: 'Members',
+      name: 'Thành viên',
       to: projectId ? `/projects/${projectId}/members` : '/projects',
       icon: <Users className="h-5 w-5 shrink-0" />,
       requireProject: true,
     },
     {
-      name: 'Reports',
+      name: 'Báo cáo',
       to: projectId ? `/projects/${projectId}/reports` : '/projects',
       icon: <BarChart3 className="h-5 w-5 shrink-0" />,
       requireProject: true,
     },
     {
-      name: 'Settings',
+      name: 'Cài đặt',
       to: projectId ? `/projects/${projectId}/settings` : '/projects',
       icon: <Settings className="h-5 w-5 shrink-0" />,
       requireProject: true,
@@ -131,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
       {projectId && !isCollapsed && projects.length > 0 && (
         <div className="px-4 py-3 border-b border-neutral-100">
           <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5 px-1">
-            Current Workspace
+            Dự án hiện tại
           </label>
           <select
             value={projectId}
@@ -143,7 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
                 {proj.name}
               </option>
             ))}
-            <option value="all">Change project...</option>
+            <option value="all">Đổi dự án...</option>
           </select>
         </div>
       )}
@@ -195,7 +195,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-neutral-800 truncate">
-                {user?.user_metadata?.full_name || 'Guest User'}
+                {user?.user_metadata?.full_name || 'Khách'}
               </p>
               {projectId && role && (
                 <p className="text-xs text-primary-600 font-medium truncate mt-0.5">
@@ -203,7 +203,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
                 </p>
               )}
               {!projectId && (
-                <p className="text-[10px] text-neutral-400 truncate mt-0.5">Not inside project</p>
+                <p className="text-[10px] text-neutral-400 truncate mt-0.5">Chưa vào dự án</p>
               )}
             </div>
           )}
@@ -211,7 +211,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
             <button
               onClick={handleLogout}
               className="text-neutral-400 hover:text-danger-600 rounded p-1 hover:bg-neutral-100 transition-colors focus:outline-none"
-              title="Logout"
+              title="Đăng xuất"
             >
               <LogOut className="h-4.5 w-4.5" />
             </button>

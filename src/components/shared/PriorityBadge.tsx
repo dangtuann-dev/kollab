@@ -10,22 +10,22 @@ interface PriorityBadgeProps {
 export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority }) => {
   const configs = {
     critical: {
-      label: 'Critical',
+      label: 'Khẩn cấp',
       variant: 'danger' as const,
       icon: <AlertOctagon className="h-3 w-3 mr-1 shrink-0" />,
     },
     high: {
-      label: 'High',
+      label: 'Cao',
       variant: 'warning' as const,
       icon: <ChevronUp className="h-3 w-3 mr-1 shrink-0" />,
     },
     medium: {
-      label: 'Medium',
+      label: 'Trung bình',
       variant: 'purple' as const,
       icon: <ChevronRight className="h-3 w-3 mr-1 shrink-0" />,
     },
     low: {
-      label: 'Low',
+      label: 'Thấp',
       variant: 'neutral' as const,
       icon: <ChevronDown className="h-3 w-3 mr-1 shrink-0" />,
     },

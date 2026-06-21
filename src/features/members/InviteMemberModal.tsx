@@ -9,7 +9,7 @@ import { useMembers } from '../../hooks/useMembers'
 import type { UserRole } from '../../types'
 
 const inviteSchema = zod.object({
-  email: zod.string().min(1, 'Email is required').email('Please enter a valid email address'),
+  email: zod.string().min(1, 'Email là bắt buộc').email('Vui lòng nhập địa chỉ email hợp lệ'),
   role: zod.enum(['product_owner', 'scrum_master', 'developer']),
 })
 
@@ -53,21 +53,21 @@ export const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Invite Team Member"
+      title="Mời thành viên nhóm"
       footer={
         <div className="flex justify-end gap-2">
           <Button variant="secondary" onClick={onClose} disabled={isInviting}>
-            Cancel
+            Hủy
           </Button>
           <Button type="submit" form="invite-member-form" isLoading={isInviting}>
-            Send Invite
+            Gửi lời mời
           </Button>
         </div>
       }
     >
       <form id="invite-member-form" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <Input
-          label="User Email Address"
+          label="Địa chỉ Email người dùng"
           placeholder="colleague@example.com"
           type="email"
           error={errors.email?.message}
@@ -77,15 +77,15 @@ export const InviteMemberModal: React.FC<InviteMemberModalProps> = ({
         />
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-medium text-neutral-700">Project Role</label>
+          <label className="text-sm font-medium text-neutral-700">Vai trò trong dự án</label>
           <select
             disabled={isInviting}
             className="block w-full rounded-lg border border-neutral-300 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:bg-neutral-50"
             {...register('role')}
           >
-            <option value="developer">Developer (Commit effort, update task statuses)</option>
-            <option value="scrum_master">Scrum Master (Manage sprints, charts, obstacles)</option>
-            <option value="product_owner">Product Owner (Manage backlog stories, priority)</option>
+            <option value="developer">Developer (Cam kết nỗ lực, cập nhật trạng thái công việc)</option>
+            <option value="scrum_master">Scrum Master (Quản lý sprint, biểu đồ, trở ngại)</option>
+            <option value="product_owner">Product Owner (Quản lý các story trong backlog, độ ưu tiên)</option>
           </select>
         </div>
       </form>

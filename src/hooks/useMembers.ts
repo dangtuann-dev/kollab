@@ -35,7 +35,7 @@ export function useMembers(projectId: string) {
 
       if (profileError) throw profileError
       if (!profile) {
-        throw new Error('User does not exist in the system')
+        throw new Error('Người dùng không tồn tại trong hệ thống')
       }
 
       // 2. Thêm vào bảng project_members
@@ -51,19 +51,19 @@ export function useMembers(projectId: string) {
 
       if (error) {
         if (error.code === '23505') {
-          throw new Error('User is already a member of this project')
+          throw new Error('Người dùng đã là thành viên của dự án này')
         }
         throw error
       }
       return { data, profile }
     },
     onSuccess: (result) => {
-      toast.success(`Invited ${result.profile.full_name} successfully!`)
+      toast.success(`Đã mời thành viên ${result.profile.full_name} thành công!`)
       queryClient.invalidateQueries({ queryKey: ['members', projectId] })
       queryClient.invalidateQueries({ queryKey: ['project', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to invite member')
+      toast.error(err.message || 'Mời thành viên thất bại')
     },
   })
 
@@ -80,12 +80,12 @@ export function useMembers(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Member role updated')
+      toast.success('Đã cập nhật vai trò của thành viên')
       queryClient.invalidateQueries({ queryKey: ['members', projectId] })
       queryClient.invalidateQueries({ queryKey: ['project', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to update member role')
+      toast.error(err.message || 'Cập nhật vai trò thành viên thất bại')
     },
   })
 
@@ -95,12 +95,12 @@ export function useMembers(projectId: string) {
       if (error) throw error
     },
     onSuccess: () => {
-      toast.success('Member removed from project')
+      toast.success('Đã xóa thành viên khỏi dự án')
       queryClient.invalidateQueries({ queryKey: ['members', projectId] })
       queryClient.invalidateQueries({ queryKey: ['project', projectId] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to remove member')
+      toast.error(err.message || 'Xóa thành viên thất bại')
     },
   })
 
