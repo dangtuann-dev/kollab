@@ -27,8 +27,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
   const { user } = useAuthStore()
 
   const [activeTab, setActiveTab] = useState<'details' | 'tasks' | 'comments'>('details')
-  
-  // Trạng thái chỉnh sửa của biểu mẫu chi tiết
+
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [acceptanceCriteria, setAcceptanceCriteria] = useState('')
@@ -36,12 +35,10 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
   const [priority, setPriority] = useState<'critical' | 'high' | 'medium' | 'low'>('medium')
   const [assigneeId, setAssigneeId] = useState('')
 
-  // Các ô nhập Task mới / Comment mới
   const [newTaskTitle, setNewTaskTitle] = useState('')
   const [newTaskHours, setNewTaskHours] = useState(0)
   const [newCommentText, setNewCommentText] = useState('')
 
-  // Đồng bộ hóa các giá trị chỉnh sửa khi story thay đổi
   useEffect(() => {
     if (story) {
       setTitle(story.title || '')
@@ -54,14 +51,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     }
   }, [story])
 
-  // Lấy danh sách thành viên dự án cho bộ chọn người giao việc
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
-    enabled: false, // Đã được tải trước đó ở hook khác, lấy trực tiếp từ cache
+    enabled: false, 
   })
   const members: ProjectMember[] = (project as any)?.members || []
 
-  // 1. Lấy danh sách các Task con (Sub-tasks)
   const { data: tasks = [], isLoading: loadingTasks } = useQuery({
     queryKey: ['tasks', story?.id],
     queryFn: async () => {
@@ -72,7 +67,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           *,
           assignee:profiles(*)
         `)
-        .eq('story_id', story.id)
+        .eq('user_story_id', story.id)
         .order('created_at', { ascending: true }) as any)
 
       if (error) throw error
@@ -81,7 +76,6 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     enabled: !!story?.id && activeTab === 'tasks',
   })
 
-  // 2. Lấy danh sách các Bình luận (Comments)
   const { data: comments = [], isLoading: loadingComments } = useQuery({
     queryKey: ['comments', story?.id],
     queryFn: async () => {
@@ -92,7 +86,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           *,
           author:profiles(*)
         `)
-        .eq('story_id', story.id)
+        .eq('user_story_id', story.id)
         .order('created_at', { ascending: true }) as any)
 
       if (error) throw error
@@ -101,11 +95,9 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
     enabled: !!story?.id && activeTab === 'comments',
   })
 
-  // 3. Thiết lập kênh Real-time để cập nhật Comments tức thời
   useEffect(() => {
     if (!story?.id || activeTab !== 'comments') return
 
-    // Đăng ký cập nhật thay đổi đối với bảng comments
     const channel = supabase
       .channel(`comments-story-${story.id}`)
       .on(
@@ -114,7 +106,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           event: '*',
           schema: 'public',
           table: 'comments',
-          filter: `story_id=eq.${story.id}`,
+          filter: `user_story_id=eq.${story.id}`,
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ['comments', story.id] })
@@ -122,18 +114,16 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
       )
       .subscribe()
 
-    // Hủy đăng ký kênh khi unmount component
     return () => {
       supabase.removeChannel(channel)
     }
   }, [story?.id, activeTab, queryClient])
 
-  // Các mutation thay đổi dữ liệu
   const updateStoryDetails = useMutation<any, Error, void>({
     mutationFn: async () => {
       if (!story?.id) return
       const { data, error } = await ((supabase
-        .from('stories') as any)
+        .from('user_stories') as any)
         .update({
           title,
           description,
@@ -164,9 +154,9 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
       const { data, error } = await ((supabase
         .from('tasks') as any)
         .insert({
-          story_id: story.id,
+          user_story_id: story.id,
           title: newTaskTitle,
-          estimated_hours: newTaskHours,
+          estimate_hours: newTaskHours,
           status: 'todo',
         })
         .select()
@@ -213,8 +203,8 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
       const { data, error } = await ((supabase
         .from('comments') as any)
         .insert({
-          story_id: story.id,
-          author_id: user.id,
+          user_story_id: story.id,
+          user_id: user.id,
           content: newCommentText,
         })
         .select()
@@ -233,12 +223,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
 
   return (
     <>
-      {/* Lớp nền mờ phía sau */}
+      {}
       <div className="fixed inset-0 z-30 bg-neutral-900/30 backdrop-blur-xs" onClick={onClose} />
 
-      {/* Panel trượt ra từ bên phải */}
+      {}
       <div className="fixed inset-y-0 right-0 z-40 w-full max-w-lg bg-white border-l border-neutral-250 shadow-2xl flex flex-col h-full font-sans animate-slide-in-right">
-        {/* Tiêu đề */}
+        {}
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-150">
           <div className="flex flex-col">
             <span className="text-[10px] font-bold text-neutral-400">
@@ -256,7 +246,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           </button>
         </div>
 
-        {/* Thanh tab lựa chọn phân hệ */}
+        {}
         <div className="flex border-b border-neutral-150 text-sm font-semibold text-neutral-600 bg-neutral-50/50">
           <button
             onClick={() => setActiveTab('details')}
@@ -287,9 +277,9 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
           </button>
         </div>
 
-        {/* Nội dung của Panel (Có thể cuộn) */}
+        {}
         <div className="flex-1 overflow-y-auto p-5">
-          {/* TAB 1: CHI TIẾT */}
+          {}
           {activeTab === 'details' && (
             <div className="flex flex-col gap-4">
               <Input
@@ -370,12 +360,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             </div>
           )}
 
-          {/* TAB 2: CÔNG VIỆC CON */}
+          {}
           {activeTab === 'tasks' && (
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-semibold text-neutral-700">Công việc của Story</h4>
 
-              {/* Hộp thêm Task mới */}
+              {}
               <div className="flex gap-2">
                 <Input
                   placeholder="Tiêu đề công việc mới..."
@@ -392,7 +382,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                 </Button>
               </div>
 
-              {/* Danh sách Task */}
+              {}
               {loadingTasks ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
@@ -435,12 +425,12 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
             </div>
           )}
 
-          {/* TAB 3: BÌNH LUẬN */}
+          {}
           {activeTab === 'comments' && (
             <div className="flex flex-col gap-4">
               <h4 className="text-sm font-semibold text-neutral-700">Thảo luận</h4>
 
-              {/* Khung hiển thị các bình luận */}
+              {}
               {loadingComments ? (
                 <div className="flex justify-center p-4">
                   <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
@@ -472,7 +462,7 @@ export const StoryDetailPanel: React.FC<StoryDetailPanelProps> = ({
                 </div>
               )}
 
-              {/* Ô nhập bình luận mới */}
+              {}
               <div className="flex flex-col gap-2 mt-2">
                 <textarea
                   rows={2}

@@ -9,7 +9,7 @@ DROP FUNCTION IF EXISTS public.get_project_role(uuid, uuid);
 
 DROP TABLE IF EXISTS public.comments CASCADE;
 DROP TABLE IF EXISTS public.tasks CASCADE;
-DROP TABLE IF EXISTS public.stories CASCADE;
+DROP TABLE IF EXISTS public.user_stories CASCADE;
 DROP TABLE IF EXISTS public.sprints CASCADE;
 DROP TABLE IF EXISTS public.project_members CASCADE;
 DROP TABLE IF EXISTS public.projects CASCADE;
@@ -122,9 +122,9 @@ CREATE UNIQUE INDEX unique_active_sprint ON public.sprints (project_id)
 WHERE (status = 'active');
 
 --------------------------------------------------------------------------------
--- 5. Stories Table (User Stories / Product Backlog Items)
+-- 5. User Stories Table (User Stories / Product Backlog Items)
 --------------------------------------------------------------------------------
-CREATE TABLE public.stories (
+CREATE TABLE public.user_stories (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     project_id uuid NOT NULL REFERENCES public.projects(id) ON DELETE CASCADE,
     sprint_id uuid REFERENCES public.sprints(id) ON DELETE SET NULL,
@@ -133,7 +133,7 @@ CREATE TABLE public.stories (
     acceptance_criteria text,
     story_points integer CHECK (story_points >= 0),
     priority text NOT NULL CHECK (priority IN ('critical', 'high', 'medium', 'low')) DEFAULT 'medium',
-    status text NOT NULL CHECK (status IN ('backlog', 'todo', 'in_progress', 'review', 'done')) DEFAULT 'backlog',
+    status text NOT NULL CHECK (status IN ('backlog', 'sprint', 'done')) DEFAULT 'backlog',
     assignee_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
     reporter_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
     order_index integer NOT NULL DEFAULT 0,
@@ -142,16 +142,16 @@ CREATE TABLE public.stories (
 );
 
 --------------------------------------------------------------------------------
--- 6. Tasks Table (Sub-tasks of Story)
+-- 6. Tasks Table (Sub-tasks of User Story)
 --------------------------------------------------------------------------------
 CREATE TABLE public.tasks (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    story_id uuid NOT NULL REFERENCES public.stories(id) ON DELETE CASCADE,
+    user_story_id uuid NOT NULL REFERENCES public.user_stories(id) ON DELETE CASCADE,
     title text NOT NULL,
     description text,
     status text NOT NULL CHECK (status IN ('todo', 'in_progress', 'done')) DEFAULT 'todo',
     assignee_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
-    estimated_hours numeric(5,2) DEFAULT 0.00,
+    estimate_hours numeric(5,2) DEFAULT 0.00,
     actual_hours numeric(5,2) DEFAULT 0.00,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
@@ -162,8 +162,8 @@ CREATE TABLE public.tasks (
 --------------------------------------------------------------------------------
 CREATE TABLE public.comments (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-    story_id uuid NOT NULL REFERENCES public.stories(id) ON DELETE CASCADE,
-    author_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    user_story_id uuid NOT NULL REFERENCES public.user_stories(id) ON DELETE CASCADE,
+    user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     content text NOT NULL,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
@@ -183,7 +183,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER update_profiles_modtime BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_projects_modtime BEFORE UPDATE ON public.projects FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_sprints_modtime BEFORE UPDATE ON public.sprints FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER update_stories_modtime BEFORE UPDATE ON public.stories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_user_stories_modtime BEFORE UPDATE ON public.user_stories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_tasks_modtime BEFORE UPDATE ON public.tasks FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_comments_modtime BEFORE UPDATE ON public.comments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -193,11 +193,11 @@ CREATE TRIGGER update_comments_modtime BEFORE UPDATE ON public.comments FOR EACH
 CREATE INDEX idx_project_members_user ON public.project_members(user_id);
 CREATE INDEX idx_project_members_project ON public.project_members(project_id);
 CREATE INDEX idx_sprints_project ON public.sprints(project_id);
-CREATE INDEX idx_stories_project ON public.stories(project_id);
-CREATE INDEX idx_stories_sprint ON public.stories(sprint_id);
-CREATE INDEX idx_stories_assignee ON public.stories(assignee_id);
-CREATE INDEX idx_tasks_story ON public.tasks(story_id);
-CREATE INDEX idx_comments_story ON public.comments(story_id);
+CREATE INDEX idx_user_stories_project ON public.user_stories(project_id);
+CREATE INDEX idx_user_stories_sprint ON public.user_stories(sprint_id);
+CREATE INDEX idx_user_stories_assignee ON public.user_stories(assignee_id);
+CREATE INDEX idx_tasks_user_story ON public.tasks(user_story_id);
+CREATE INDEX idx_comments_user_story ON public.comments(user_story_id);
 
 --------------------------------------------------------------------------------
 -- Row Level Security (RLS) Policies
@@ -206,7 +206,7 @@ ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.project_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sprints ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.stories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.user_stories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tasks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 
@@ -259,24 +259,24 @@ CREATE POLICY "Allow Scrum Master and Product Owner to manage sprints"
         EXISTS (SELECT 1 FROM public.projects p WHERE p.id = project_id AND p.owner_id = auth.uid())
     ));
 
--- 5. Stories Policies
-CREATE POLICY "Allow members to view stories" 
-    ON public.stories FOR SELECT 
+-- 5. User Stories Policies
+CREATE POLICY "Allow members to view user_stories" 
+    ON public.user_stories FOR SELECT 
     USING (auth.role() = 'authenticated' AND public.is_project_member(project_id, auth.uid()));
 
-CREATE POLICY "Allow PO to insert/delete stories" 
-    ON public.stories FOR INSERT 
+CREATE POLICY "Allow PO to insert/delete user_stories" 
+    ON public.user_stories FOR INSERT 
     WITH CHECK (auth.role() = 'authenticated' AND (
         public.get_project_role(project_id, auth.uid()) = 'product_owner' OR
         EXISTS (SELECT 1 FROM public.projects p WHERE p.id = project_id AND p.owner_id = auth.uid())
     ));
 
-CREATE POLICY "Allow members to update stories" 
-    ON public.stories FOR UPDATE 
+CREATE POLICY "Allow members to update user_stories" 
+    ON public.user_stories FOR UPDATE 
     USING (auth.role() = 'authenticated' AND public.is_project_member(project_id, auth.uid()));
 
-CREATE POLICY "Allow PO to delete stories" 
-    ON public.stories FOR DELETE 
+CREATE POLICY "Allow PO to delete user_stories" 
+    ON public.user_stories FOR DELETE 
     USING (auth.role() = 'authenticated' AND (
         public.get_project_role(project_id, auth.uid()) = 'product_owner' OR
         EXISTS (SELECT 1 FROM public.projects p WHERE p.id = project_id AND p.owner_id = auth.uid())
@@ -286,43 +286,43 @@ CREATE POLICY "Allow PO to delete stories"
 CREATE POLICY "Allow members to view tasks" 
     ON public.tasks FOR SELECT 
     USING (auth.role() = 'authenticated' AND EXISTS (
-        SELECT 1 FROM public.stories s 
-        WHERE s.id = story_id AND public.is_project_member(s.project_id, auth.uid())
+        SELECT 1 FROM public.user_stories s 
+        WHERE s.id = user_story_id AND public.is_project_member(s.project_id, auth.uid())
     ));
 
 CREATE POLICY "Allow members to manage tasks" 
     ON public.tasks FOR ALL 
     USING (auth.role() = 'authenticated' AND EXISTS (
-        SELECT 1 FROM public.stories s 
-        WHERE s.id = story_id AND public.is_project_member(s.project_id, auth.uid())
+        SELECT 1 FROM public.user_stories s 
+        WHERE s.id = user_story_id AND public.is_project_member(s.project_id, auth.uid())
     ));
 
 -- 7. Comments Policies
 CREATE POLICY "Allow members to view comments" 
     ON public.comments FOR SELECT 
     USING (auth.role() = 'authenticated' AND EXISTS (
-        SELECT 1 FROM public.stories s 
-        WHERE s.id = story_id AND public.is_project_member(s.project_id, auth.uid())
+        SELECT 1 FROM public.user_stories s 
+        WHERE s.id = user_story_id AND public.is_project_member(s.project_id, auth.uid())
     ));
 
 CREATE POLICY "Allow members to create comments" 
     ON public.comments FOR INSERT 
-    WITH CHECK (auth.role() = 'authenticated' AND author_id = auth.uid() AND EXISTS (
-        SELECT 1 FROM public.stories s 
-        WHERE s.id = story_id AND public.is_project_member(s.project_id, auth.uid())
+    WITH CHECK (auth.role() = 'authenticated' AND user_id = auth.uid() AND EXISTS (
+        SELECT 1 FROM public.user_stories s 
+        WHERE s.id = user_story_id AND public.is_project_member(s.project_id, auth.uid())
     ));
 
 CREATE POLICY "Allow author to update their comments" 
     ON public.comments FOR UPDATE 
-    USING (auth.role() = 'authenticated' AND author_id = auth.uid());
+    USING (auth.role() = 'authenticated' AND user_id = auth.uid());
 
 CREATE POLICY "Allow author or PO to delete comments" 
     ON public.comments FOR DELETE 
     USING (auth.role() = 'authenticated' AND (
-        author_id = auth.uid() OR
+        user_id = auth.uid() OR
         EXISTS (
-            SELECT 1 FROM public.stories s 
+            SELECT 1 FROM public.user_stories s 
             JOIN public.projects p ON s.project_id = p.id
-            WHERE s.id = story_id AND (p.owner_id = auth.uid() OR public.get_project_role(p.id, auth.uid()) = 'product_owner')
+            WHERE s.id = user_story_id AND (p.owner_id = auth.uid() OR public.get_project_role(p.id, auth.uid()) = 'product_owner')
         )
     ));

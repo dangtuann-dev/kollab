@@ -19,7 +19,7 @@ export function useProjects() {
         .from('project_members')
         .select(`
           role,
-          project:projects(*, project_members(*, profile:profiles(*)))
+          project:projects(*, project_members(*, profile:profiles(*)), sprints(*))
         `)
         .eq('user_id', user.id) as any)
 
@@ -28,17 +28,21 @@ export function useProjects() {
         throw error
       }
 
-      // Định dạng dữ liệu: kết hợp chi tiết dự án với vai trò của thành viên
       const formatted = (data || [])
         .filter((item: any) => item.project !== null)
-        .map((item: any) => ({
-          ...item.project,
-          userRole: item.role as UserRole,
-          members: (item.project.project_members || []).map((m: any) => ({
-            ...m,
-            profile: m.profile
-          }))
-        }))
+        .map((item: any) => {
+          const activeSprintsCount = (item.project.sprints || [])
+            .filter((s: any) => s.status === 'active').length
+          return {
+            ...item.project,
+            userRole: item.role as UserRole,
+            activeSprintsCount,
+            members: (item.project.project_members || []).map((m: any) => ({
+              ...m,
+              profile: m.profile
+            }))
+          }
+        })
 
       setProjects(formatted)
       return formatted as any[]
@@ -50,7 +54,6 @@ export function useProjects() {
     mutationFn: async (vars) => {
       if (!user) throw new Error('You must be signed in to create projects')
 
-      // 1. Thêm dự án mới
       const { data: project, error: projectError } = await ((supabase
         .from('projects') as any)
         .insert({
@@ -66,7 +69,6 @@ export function useProjects() {
 
       if (projectError) throw projectError
 
-      // 2. Thêm chủ sở hữu làm thành viên dự án (Product Owner)
       const { error: memberError } = await (supabase
         .from('project_members') as any)
         .insert({
@@ -128,7 +130,6 @@ export function useProject(projectId?: string) {
     queryFn: async () => {
       if (!projectId || !user) return null
 
-      // 1. Lấy thông tin chi tiết của dự án
       const { data: project, error: projectError } = await (supabase
         .from('projects')
         .select('*')
@@ -137,7 +138,6 @@ export function useProject(projectId?: string) {
 
       if (projectError) throw projectError
 
-      // 2. Lấy danh sách thành viên dự án và hồ sơ (profile) của họ
       const { data: members, error: membersError } = await (supabase
         .from('project_members')
         .select(`
@@ -148,7 +148,6 @@ export function useProject(projectId?: string) {
 
       if (membersError) throw membersError
 
-      // 3. Tìm vai trò của người dùng hiện tại
       const currentMember = members.find((m: any) => m.user_id === user.id)
       const userRole = currentMember ? (currentMember.role as UserRole) : null
       setProjectRole(userRole)

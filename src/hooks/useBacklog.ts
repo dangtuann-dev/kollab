@@ -11,11 +11,11 @@ export function useBacklog(projectId: string) {
     queryKey: ['stories', projectId],
     queryFn: async () => {
       const { data, error } = await (supabase
-        .from('stories')
+        .from('user_stories')
         .select(`
           *,
-          assignee:profiles!stories_assignee_id_fkey(*),
-          reporter:profiles!stories_reporter_id_fkey(*)
+          assignee:profiles!user_stories_assignee_id_fkey(*),
+          reporter:profiles!user_stories_reporter_id_fkey(*)
         `)
         .eq('project_id', projectId)
         .order('order_index', { ascending: true }) as any)
@@ -42,11 +42,10 @@ export function useBacklog(projectId: string) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Người dùng chưa đăng nhập')
 
-      // Lấy chỉ số thứ tự (order index) tiếp theo
       const existingCount = storiesQuery.data?.length || 0
 
       const { data, error } = await ((supabase
-        .from('stories') as any)
+        .from('user_stories') as any)
         .insert({
           project_id: projectId,
           title: vars.title,
@@ -57,7 +56,7 @@ export function useBacklog(projectId: string) {
           assignee_id: vars.assignee_id || null,
           sprint_id: vars.sprint_id || null,
           reporter_id: user.id,
-          status: vars.sprint_id ? 'todo' : 'backlog',
+          status: vars.sprint_id ? 'sprint' : 'backlog',
           order_index: existingCount,
         })
         .select()
@@ -79,7 +78,7 @@ export function useBacklog(projectId: string) {
     mutationFn: async (vars) => {
       const { id, ...updates } = vars
       const { data, error } = await ((supabase
-        .from('stories') as any)
+        .from('user_stories') as any)
         .update(updates as any)
         .eq('id', id)
         .select()
@@ -98,7 +97,7 @@ export function useBacklog(projectId: string) {
 
   const deleteStoryMutation = useMutation<any, Error, string>({
     mutationFn: async (storyId) => {
-      const { error } = await (supabase.from('stories') as any).delete().eq('id', storyId)
+      const { error } = await (supabase.from('user_stories') as any).delete().eq('id', storyId)
       if (error) throw error
     },
     onSuccess: () => {
@@ -116,12 +115,11 @@ export function useBacklog(projectId: string) {
       if (vars.status) {
         updates.status = vars.status
       } else {
-        // Nếu chuyển về backlog, status chuyển thành backlog. Nếu chuyển vào sprint, status chuyển thành todo
-        updates.status = vars.sprintId ? 'todo' : 'backlog'
+        updates.status = vars.sprintId ? 'sprint' : 'backlog'
       }
 
       const { data, error } = await ((supabase
-        .from('stories') as any)
+        .from('user_stories') as any)
         .update(updates)
         .eq('id', vars.storyId)
         .select()

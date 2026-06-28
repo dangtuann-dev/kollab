@@ -9,6 +9,7 @@ interface ProjectCardProps {
   project: Project & {
     userRole?: UserRole
     members?: any[]
+    activeSprintsCount?: number
   }
 }
 
@@ -34,10 +35,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
     <div
       onClick={handleCardClick}
-      className="bg-white rounded-xl border border-neutral-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between h-[210px] group border-l-4 border-l-primary-500 hover:border-l-primary-600"
+      className="bg-white rounded-xl border border-neutral-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[220px] group border-l-4 border-l-primary-500 hover:border-l-primary-600"
     >
       <div className="flex flex-col gap-2">
-        {/* Tiêu đề Tên & Vai trò */}
         <div className="flex items-start justify-between gap-3">
           <h3 className="text-base font-bold text-neutral-900 truncate group-hover:text-primary-600 transition-colors">
             {project.name}
@@ -49,23 +49,25 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           )}
         </div>
 
-        {/* Mô tả */}
         <p className="text-xs text-neutral-500 line-clamp-3 leading-relaxed">
           {project.description || 'Chưa có mô tả.'}
         </p>
       </div>
-
       <div className="flex flex-col gap-3.5 border-t border-neutral-100/80 pt-3.5 mt-auto">
-        {/* Thông tin ngày ở footer + avatar các thành viên */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-[11px] font-semibold text-neutral-400">
-            <Calendar className="h-3.5 w-3.5" />
-            <span>
-              {project.start_date ? new Date(project.start_date).toLocaleDateString() : 'Chưa xác định'}
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-neutral-400">
+              <Calendar className="h-3.5 w-3.5" />
+              <span>
+                Tạo ngày: {project.created_at ? new Date(project.created_at).toLocaleDateString('vi-VN') : 'Chưa xác định'}
+              </span>
+            </div>
+            <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-md w-fit">
+              {project.activeSprintsCount || 0} sprint active
             </span>
           </div>
 
-          <AvatarGroup max={3}>
+          <AvatarGroup max={4}>
             {memberProfiles.map((profile) => (
               <Avatar
                 key={profile.id}
