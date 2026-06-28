@@ -57,6 +57,7 @@ CREATE TABLE public.projects (
     id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
     name text NOT NULL,
     description text,
+    color text NOT NULL DEFAULT '#3b82f6',
     owner_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
     status text NOT NULL CHECK (status IN ('active', 'archived')) DEFAULT 'active',
     start_date date,

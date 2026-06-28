@@ -968,13 +968,14 @@ def create_report():
             
     # 2.3 projects
     add_table_title(doc, "Bảng 2.3", "Cấu trúc chi tiết bảng projects")
-    table_proj = create_styled_table(doc, rows=10, cols=5, col_widths=[3.0, 3.0, 3.0, 1.5, 5.0])
+    table_proj = create_styled_table(doc, rows=11, cols=5, col_widths=[3.0, 3.0, 3.0, 1.5, 5.0])
     for i, h in enumerate(struct_headers):
         fill_cell(table_proj.cell(0, i), h, bold=True, align=WD_ALIGN_PARAGRAPH.CENTER, size_pt=11, bg_color="F2F2F2")
     proj_rows = [
         ["id", "uuid", "PRIMARY KEY", "PK", "Mã định danh duy nhất của dự án"],
         ["name", "text", "NOT NULL", "", "Tên dự án"],
         ["description", "text", "NULL", "", "Mô tả mục tiêu dự án"],
+        ["color", "text", "DEFAULT '#3b82f6'", "", "Mã màu Hex nhận diện dự án"],
         ["owner_id", "uuid", "REFERENCES profiles(id)", "FK", "Mã người tạo dự án"],
         ["status", "text", "CHECK (active, archived)", "", "Trạng thái hoạt động của dự án"],
         ["start_date", "date", "NULL", "", "Ngày bắt đầu dự án"],

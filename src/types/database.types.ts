@@ -52,6 +52,7 @@ export interface Database {
           id: string
           name: string
           description: string | null
+          color: string
           owner_id: string
           status: 'active' | 'archived'
           start_date: string | null
@@ -63,6 +64,7 @@ export interface Database {
           id?: string
           name: string
           description?: string | null
+          color?: string
           owner_id: string
           status?: 'active' | 'archived'
           start_date?: string | null
@@ -74,6 +76,7 @@ export interface Database {
           id?: string
           name?: string
           description?: string | null
+          color?: string
           owner_id?: string
           status?: 'active' | 'archived'
           start_date?: string | null

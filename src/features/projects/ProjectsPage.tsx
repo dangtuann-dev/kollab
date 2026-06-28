@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Plus, Search, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { useProjects } from '../../hooks/useProjects'
+import { useProjects, useDeleteProject } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
 import { ProjectCard } from './ProjectCard'
-import { CreateProjectModal } from './CreateProjectModal'
+import { ProjectFormModal } from './ProjectFormModal'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
 import { EmptyState } from '../../components/shared/EmptyState'
@@ -15,12 +15,24 @@ export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const { projects, isLoading } = useProjects()
+  const { deleteProject } = useDeleteProject()
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingProject, setEditingProject] = useState<any>(undefined)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     navigate('/login')
+  }
+
+  const handleEdit = (project: any) => {
+    setEditingProject(project)
+    setIsModalOpen(true)
+  }
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false)
+    setEditingProject(undefined)
   }
 
   const filteredProjects = projects.filter((project) =>
@@ -31,7 +43,6 @@ export const ProjectsPage: React.FC = () => {
     <div className="min-h-screen bg-neutral-50 p-4 md:p-8 font-sans">
       <div className="max-w-6xl mx-auto flex flex-col gap-8">
         
-        {/* Navigation / Header */}
         <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 shrink-0">
@@ -53,7 +64,6 @@ export const ProjectsPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Action Bar */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="relative flex-1 max-w-md">
             <Input
@@ -75,7 +85,6 @@ export const ProjectsPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Content Section */}
         {isLoading ? (
           <SkeletonGrid count={6} />
         ) : filteredProjects.length === 0 ? (
@@ -97,14 +106,18 @@ export const ProjectsPage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard
+                key={project.id}
+                project={project}
+                onEdit={handleEdit}
+                onDelete={deleteProject}
+              />
             ))}
           </div>
         )}
       </div>
 
-      {/* Creation Modal */}
-      <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <ProjectFormModal isOpen={isModalOpen} onClose={handleCloseModal} project={editingProject} />
     </div>
   )
 }

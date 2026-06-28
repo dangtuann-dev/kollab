@@ -164,3 +164,39 @@ export function useProject(projectId?: string) {
     enabled: !!projectId && !!user,
   })
 }
+
+export function useDeleteProject() {
+  const queryClient = useQueryClient()
+  const { user } = useAuthStore()
+  const toast = useToast()
+
+  const deleteProjectMutation = useMutation<void, Error, string>({
+    mutationFn: async (projectId) => {
+      const { error } = await supabase
+        .from('projects')
+        .delete()
+        .eq('id', projectId)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      toast.success('Xóa dự án thành công!')
+      queryClient.invalidateQueries({ queryKey: ['projects', user?.id] })
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Xóa dự án thất bại')
+    },
+  })
+
+  const deleteProject = async (projectId: string, projectName: string) => {
+    const confirmed = window.confirm(`Bạn có chắc chắn muốn xóa dự án "${projectName}" không? Hành động này không thể hoàn tác.`)
+    if (confirmed) {
+      await deleteProjectMutation.mutateAsync(projectId)
+    }
+  }
+
+  return {
+    deleteProject,
+    isDeleting: deleteProjectMutation.isPending,
+  }
+}

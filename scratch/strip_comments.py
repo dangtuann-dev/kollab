@@ -67,7 +67,9 @@ files_to_clean = [
     r"d:\kollab\src\components\shared\StatusBadge.tsx",
     r"d:\kollab\src\features\sprint\KanbanBoard.tsx",
     r"d:\kollab\src\hooks\useProjects.ts",
-    r"d:\kollab\src\features\projects\ProjectCard.tsx"
+    r"d:\kollab\src\features\projects\ProjectCard.tsx",
+    r"d:\kollab\src\features\projects\ProjectFormModal.tsx",
+    r"d:\kollab\src\features\projects\ProjectsPage.tsx"
 ]
 
 for fp in files_to_clean:

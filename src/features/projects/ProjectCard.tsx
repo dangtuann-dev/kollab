@@ -1,9 +1,10 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Calendar } from 'lucide-react'
+import { Calendar, Edit2, Trash2 } from 'lucide-react'
 import type { Project, UserRole } from '../../types'
 import { Badge } from '../../components/ui/Badge'
 import { Avatar, AvatarGroup } from '../../components/ui/Avatar'
+import { useAuthStore } from '../../stores'
 
 interface ProjectCardProps {
   project: Project & {
@@ -11,10 +12,13 @@ interface ProjectCardProps {
     members?: any[]
     activeSprintsCount?: number
   }
+  onEdit?: (project: Project) => void
+  onDelete?: (id: string, name: string) => void
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDelete }) => {
   const navigate = useNavigate()
+  const { user } = useAuthStore()
 
   const roleConfigs = {
     product_owner: { label: 'PO', variant: 'danger' as const },
@@ -23,6 +27,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   }
 
   const roleInfo = project.userRole ? roleConfigs[project.userRole] : null
+  const isOwner = project.owner_id === user?.id || project.userRole === 'product_owner'
 
   const handleCardClick = () => {
     navigate(`/projects/${project.id}/board`)
@@ -42,11 +47,37 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           <h3 className="text-base font-bold text-neutral-900 truncate group-hover:text-primary-600 transition-colors">
             {project.name}
           </h3>
-          {roleInfo && (
-            <Badge variant={roleInfo.variant} size="sm">
-              {roleInfo.label}
-            </Badge>
-          )}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {roleInfo && (
+              <Badge variant={roleInfo.variant} size="sm">
+                {roleInfo.label}
+              </Badge>
+            )}
+            {isOwner && (
+              <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onEdit?.(project)
+                  }}
+                  className="p-1 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors"
+                  title="Chỉnh sửa dự án"
+                >
+                  <Edit2 className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete?.(project.id, project.name)
+                  }}
+                  className="p-1 text-neutral-400 hover:text-danger-600 hover:bg-danger-50 rounded-md transition-colors"
+                  title="Xóa dự án"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         <p className="text-xs text-neutral-500 line-clamp-3 leading-relaxed">
