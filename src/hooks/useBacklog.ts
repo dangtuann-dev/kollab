@@ -3,14 +3,22 @@ import { supabase } from '../lib/supabase'
 import type { Story, StoryPriority, StoryStatus } from '../types'
 import { useToast } from '../stores/toastStore'
 
-export function useBacklog(projectId: string) {
+export function useBacklog(
+  projectId: string,
+  filters?: {
+    priority?: string
+    label?: string
+    assigneeId?: string
+    search?: string
+  }
+) {
   const queryClient = useQueryClient()
   const toast = useToast()
 
   const storiesQuery = useQuery({
-    queryKey: ['stories', projectId],
+    queryKey: ['stories', projectId, filters],
     queryFn: async () => {
-      const { data, error } = await (supabase
+      let query = supabase
         .from('user_stories')
         .select(`
           *,
@@ -18,7 +26,24 @@ export function useBacklog(projectId: string) {
           reporter:profiles!user_stories_reporter_id_fkey(*)
         `)
         .eq('project_id', projectId)
-        .order('order_index', { ascending: true }) as any)
+
+      if (filters?.priority && filters.priority !== 'all') {
+        query = query.eq('priority', filters.priority)
+      }
+
+      if (filters?.assigneeId && filters.assigneeId !== 'all') {
+        query = query.eq('assignee_id', filters.assigneeId)
+      }
+
+      if (filters?.search && filters.search.trim() !== '') {
+        query = query.ilike('title', `%${filters.search.trim()}%`)
+      }
+
+      if (filters?.label && filters.label !== 'all') {
+        query = query.ilike('labels', `%${filters.label}%`)
+      }
+
+      const { data, error } = await (query.order('order_index', { ascending: true }) as any)
 
       if (error) {
         console.error('Error fetching stories:', error.message)

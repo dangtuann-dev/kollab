@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { Plus, ListFilter, ArrowUpDown, Calendar, Play, ChevronDown, ChevronRight, Award } from 'lucide-react'
+import { Plus, ListFilter, ArrowUpDown, Calendar, Play, ChevronDown, ChevronRight, Award, Search } from 'lucide-react'
 import { useBacklog } from '../../hooks/useBacklog'
 import { useSprint } from '../../hooks/useSprint'
 import { useProject } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
 import { StoryCard } from './StoryCard'
-import { CreateStoryModal } from './CreateStoryModal'
+import { UserStoryFormModal } from './UserStoryFormModal'
 import { StoryDetailPanel } from './StoryDetailPanel'
 import { Button } from '../../components/ui/Button'
 import { Badge } from '../../components/ui/Badge'
@@ -23,18 +23,39 @@ export const BacklogPage: React.FC = () => {
   const isSM = role === 'scrum_master'
 
   const { data: project, isLoading: loadingProject } = useProject(projectIdStr)
-  const { stories, isLoading: loadingStories, moveStory, deleteStory } = useBacklog(projectIdStr)
   const { sprints, createSprint, startSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
 
-  const [isCreateStoryOpen, setIsCreateStoryOpen] = useState(false)
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false)
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
+  const [labelFilter, setLabelFilter] = useState<string>('all')
   const [assigneeFilter, setAssigneeFilter] = useState<string>('all')
+  const [searchQuery, setSearchQuery] = useState<string>('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('order')
 
   const [collapsedSprints, setCollapsedSprints] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  const {
+    stories,
+    isLoading: loadingStories,
+    moveStory,
+    deleteStory,
+  } = useBacklog(projectIdStr, {
+    priority: priorityFilter,
+    label: labelFilter,
+    assigneeId: assigneeFilter,
+    search: debouncedSearchQuery,
+  })
 
   const handleCreateSprint = async () => {
     const name = `Sprint ${sprints.length + 1}`
@@ -60,24 +81,18 @@ export const BacklogPage: React.FC = () => {
     setCollapsedSprints((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  const getFilteredAndSortedStories = (items: Story[]) => {
-    return items
-      .filter((story) => {
-        if (priorityFilter !== 'all' && story.priority !== priorityFilter) return false
-        if (assigneeFilter !== 'all' && story.assignee_id !== assigneeFilter) return false
-        return true
-      })
-      .sort((a, b) => {
-        if (sortBy === 'points') return (b.story_points || 0) - (a.story_points || 0)
-        if (sortBy === 'priority') {
-          const priorities = { critical: 4, high: 3, medium: 2, low: 1 }
-          return priorities[b.priority] - priorities[a.priority]
-        }
-        return a.order_index - b.order_index
-      })
+  const getSortedStories = (items: Story[]) => {
+    return [...items].sort((a, b) => {
+      if (sortBy === 'points') return (b.story_points || 0) - (a.story_points || 0)
+      if (sortBy === 'priority') {
+        const priorities = { critical: 4, high: 3, medium: 2, low: 1 }
+        return priorities[b.priority] - priorities[a.priority]
+      }
+      return a.order_index - b.order_index
+    })
   }
 
-  const backlogStories = getFilteredAndSortedStories(stories.filter((s) => s.sprint_id === null))
+  const backlogStories = getSortedStories(stories.filter((s) => s.sprint_id === null))
   const activeSprints = sprints.filter((s) => s.status !== 'completed')
 
   if (loadingProject || loadingStories || loadingSprints) {
@@ -90,10 +105,10 @@ export const BacklogPage: React.FC = () => {
   }
 
   const projectMembers = project?.members || []
+  const labelOptions = ['Feature', 'Bug', 'UI/UX', 'Refactor', 'Backend', 'Testing']
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {}
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Backlog dự án</h2>
@@ -107,77 +122,107 @@ export const BacklogPage: React.FC = () => {
             </Button>
           )}
           {isPO && (
-            <Button size="sm" onClick={() => setIsCreateStoryOpen(true)} leftIcon={<Plus className="h-4 w-4" />}>
+            <Button
+              size="sm"
+              onClick={() => {
+                setSelectedStory(null)
+                setIsFormModalOpen(true)
+              }}
+              leftIcon={<Plus className="h-4 w-4" />}
+            >
               Tạo Story
             </Button>
           )}
         </div>
       </div>
 
-      {}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 border border-neutral-200 rounded-xl shadow-sm text-xs font-semibold text-neutral-600">
-        <div className="flex flex-wrap items-center gap-3">
-          {}
-          <div className="flex items-center gap-1.5 border-r border-neutral-200 pr-3 mr-1">
-            <ListFilter className="h-3.5 w-3.5 text-neutral-400" />
-            <span>Độ ưu tiên:</span>
-            <select
-              value={priorityFilter}
-              onChange={(e) => setPriorityFilter(e.target.value)}
-              className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
-            >
-              <option value="all">Tất cả độ ưu tiên</option>
-              <option value="critical">Khẩn cấp</option>
-              <option value="high">Cao</option>
-              <option value="medium">Trung bình</option>
-              <option value="low">Thấp</option>
-            </select>
-          </div>
-
-          {}
-          <div className="flex items-center gap-1.5">
-            <span>Người thực hiện:</span>
-            <select
-              value={assigneeFilter}
-              onChange={(e) => setAssigneeFilter(e.target.value)}
-              className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer max-w-[120px]"
-            >
-              <option value="all">Tất cả thành viên</option>
-              {projectMembers.map((member: ProjectMember) => (
-                <option key={member.id} value={member.user_id}>
-                  {member.profile?.full_name || member.user_id}
-                </option>
-              ))}
-            </select>
-          </div>
+      <div className="flex flex-col gap-3 bg-white p-4 border border-neutral-200 rounded-xl shadow-sm">
+        <div className="flex items-center gap-2 border border-neutral-200 rounded-lg px-3 py-2 bg-neutral-50 focus-within:ring-2 focus-within:ring-primary-500 focus-within:bg-white transition-all">
+          <Search className="h-4 w-4 text-neutral-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="Tìm kiếm tiêu đề User Story..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-transparent border-none text-sm outline-none placeholder-neutral-400 text-neutral-800"
+          />
         </div>
 
-        {}
-        <div className="flex items-center gap-1.5">
-          <ArrowUpDown className="h-3.5 w-3.5 text-neutral-450 text-neutral-400" />
-          <span>Sắp xếp theo:</span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
-          >
-            <option value="order">Thứ tự</option>
-            <option value="priority">Mức độ ưu tiên</option>
-            <option value="points">Story point</option>
-          </select>
+        <div className="flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-neutral-600 pt-1">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-1.5 border-r border-neutral-200 pr-4">
+              <ListFilter className="h-3.5 w-3.5 text-neutral-400" />
+              <span>Độ ưu tiên:</span>
+              <select
+                value={priorityFilter}
+                onChange={(e) => setPriorityFilter(e.target.value)}
+                className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
+              >
+                <option value="all">Tất cả</option>
+                <option value="critical">Khẩn cấp</option>
+                <option value="high">Cao</option>
+                <option value="medium">Trung bình</option>
+                <option value="low">Thấp</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1.5 border-r border-neutral-200 pr-4">
+              <span>Nhãn dán:</span>
+              <select
+                value={labelFilter}
+                onChange={(e) => setLabelFilter(e.target.value)}
+                className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
+              >
+                <option value="all">Tất cả nhãn</option>
+                {labelOptions.map((lbl) => (
+                  <option key={lbl} value={lbl}>
+                    {lbl}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span>Người thực hiện:</span>
+              <select
+                value={assigneeFilter}
+                onChange={(e) => setAssigneeFilter(e.target.value)}
+                className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer max-w-[120px]"
+              >
+                <option value="all">Tất cả</option>
+                {projectMembers.map((member: ProjectMember) => (
+                  <option key={member.id} value={member.user_id}>
+                    {member.profile?.full_name || member.user_id}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <ArrowUpDown className="h-3.5 w-3.5 text-neutral-400" />
+            <span>Sắp xếp:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-transparent border-none text-neutral-800 font-bold focus:outline-none cursor-pointer"
+            >
+              <option value="order">Thứ tự</option>
+              <option value="priority">Độ ưu tiên</option>
+              <option value="points">Story point</option>
+            </select>
+          </div>
         </div>
       </div>
 
-      {}
       <div className="flex flex-col gap-4">
         {activeSprints.map((sprint) => {
-          const sprintStories = getFilteredAndSortedStories(stories.filter((s) => s.sprint_id === sprint.id))
+          const sprintStories = getSortedStories(stories.filter((s) => s.sprint_id === sprint.id))
           const sprintPoints = sprintStories.reduce((sum, s) => sum + (s.story_points || 0), 0)
           const isCollapsed = collapsedSprints[sprint.id] || false
 
           return (
             <div key={sprint.id} className="bg-white border border-neutral-200 rounded-xl overflow-hidden shadow-sm">
-              {}
               <div className="flex items-center justify-between p-4 bg-neutral-50/50 border-b border-neutral-100">
                 <div className="flex items-center gap-2">
                   <button
@@ -213,7 +258,6 @@ export const BacklogPage: React.FC = () => {
                 </div>
               </div>
 
-              {}
               {!isCollapsed && (
                 <div className="p-4 flex flex-col gap-2.5">
                   {sprintStories.length === 0 ? (
@@ -230,6 +274,10 @@ export const BacklogPage: React.FC = () => {
                           setSelectedStory(s)
                           setIsDetailOpen(true)
                         }}
+                        onEdit={(s) => {
+                          setSelectedStory(s)
+                          setIsFormModalOpen(true)
+                        }}
                         onMoveToSprint={(id, sprintId) => moveStory({ storyId: id, sprintId })}
                         onDelete={(id) => deleteStory(id)}
                       />
@@ -242,7 +290,6 @@ export const BacklogPage: React.FC = () => {
         })}
       </div>
 
-      {}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
         <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
           <h3 className="text-sm font-bold text-neutral-800">Backlog sản phẩm</h3>
@@ -257,7 +304,13 @@ export const BacklogPage: React.FC = () => {
             description="Tất cả các story đã được phân bổ cho các sprint đang hoạt động, hoặc bạn chưa tạo story nào."
             action={
               isPO && (
-                <Button onClick={() => setIsCreateStoryOpen(true)} leftIcon={<Plus className="h-4 w-4" />}>
+                <Button
+                  onClick={() => {
+                    setSelectedStory(null)
+                    setIsFormModalOpen(true)
+                  }}
+                  leftIcon={<Plus className="h-4 w-4" />}
+                >
                   Tạo User Story
                 </Button>
               )
@@ -274,6 +327,10 @@ export const BacklogPage: React.FC = () => {
                   setSelectedStory(s)
                   setIsDetailOpen(true)
                 }}
+                onEdit={(s) => {
+                  setSelectedStory(s)
+                  setIsFormModalOpen(true)
+                }}
                 onMoveToSprint={(id, sprintId) => moveStory({ storyId: id, sprintId })}
                 onDelete={(id) => deleteStory(id)}
               />
@@ -282,11 +339,14 @@ export const BacklogPage: React.FC = () => {
         )}
       </div>
 
-      {}
-      <CreateStoryModal
+      <UserStoryFormModal
         projectId={projectIdStr}
-        isOpen={isCreateStoryOpen}
-        onClose={() => setIsCreateStoryOpen(false)}
+        story={selectedStory}
+        isOpen={isFormModalOpen}
+        onClose={() => {
+          setIsFormModalOpen(false)
+          setSelectedStory(null)
+        }}
       />
 
       <StoryDetailPanel

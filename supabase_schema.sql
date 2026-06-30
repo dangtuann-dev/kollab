@@ -138,6 +138,7 @@ CREATE TABLE public.user_stories (
     assignee_id uuid REFERENCES public.profiles(id) ON DELETE SET NULL,
     reporter_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE RESTRICT,
     order_index integer NOT NULL DEFAULT 0,
+    labels text,
     created_at timestamptz NOT NULL DEFAULT now(),
     updated_at timestamptz NOT NULL DEFAULT now()
 );

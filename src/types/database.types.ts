@@ -194,6 +194,7 @@ export interface Database {
           assignee_id: string | null
           reporter_id: string
           order_index: number
+          labels: string | null
           created_at: string
           updated_at: string
         }
@@ -210,6 +211,7 @@ export interface Database {
           assignee_id?: string | null
           reporter_id: string
           order_index?: number
+          labels?: string | null
           created_at?: string
           updated_at?: string
         }
@@ -226,6 +228,7 @@ export interface Database {
           assignee_id?: string | null
           reporter_id?: string
           order_index?: number
+          labels?: string | null
           created_at?: string
           updated_at?: string
         }
