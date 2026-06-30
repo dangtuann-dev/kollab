@@ -22,20 +22,16 @@ export const SprintBoardPage: React.FC = () => {
 
   const { role } = useAuthStore()
 
-  // Tải trước dự án để cập nhật dữ liệu vào store
   useProject(projectIdStr)
   
   const { stories, isLoading: loadingStories, updateStory } = useBacklog(projectIdStr)
   const { activeSprint, completeSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
 
-  // Trạng thái của các Drawer / chi tiết
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
-  // Lọc các story thuộc về sprint đang hoạt động (active)
   const activeStories = stories.filter((s) => s.sprint_id === activeSprint?.id)
 
-  // Đăng ký nhận cập nhật Realtime cho các story của dự án/sprint này
   useEffect(() => {
     if (!activeSprint?.id) return
 
@@ -61,7 +57,7 @@ export const SprintBoardPage: React.FC = () => {
   }, [activeSprint?.id, projectIdStr, queryClient])
 
   const handleUpdateStatus = async (storyId: string, status: StoryStatus) => {
-    // Cập nhật cache kiểu lạc quan (optimistic) để trải nghiệm kéo thả mượt mà
+    
     queryClient.setQueryData(['stories', projectIdStr], (oldStories: Story[] | undefined) => {
       if (!oldStories) return oldStories
       return oldStories.map((story) => (story.id === storyId ? { ...story, status } : story))
@@ -70,7 +66,7 @@ export const SprintBoardPage: React.FC = () => {
     try {
       await updateStory({ id: storyId, status })
     } catch (err) {
-      // Hoàn tác trong trường hợp thất bại (tải lại dữ liệu)
+      
       queryClient.invalidateQueries({ queryKey: ['stories', projectIdStr] })
     }
   }
@@ -79,13 +75,12 @@ export const SprintBoardPage: React.FC = () => {
     if (!activeSprint) return
     if (confirm('Bạn có chắc chắn muốn hoàn thành sprint này không? Những story chưa hoàn thành còn lại sẽ được chuyển về backlog.')) {
       try {
-        // Chuyển các story chưa hoàn thành quay lại Backlog
+        
         const incompleteStories = activeStories.filter((s) => s.status !== 'done')
         for (const story of incompleteStories) {
           await updateStory({ id: story.id, sprint_id: null, status: 'backlog' })
         }
 
-        // Hoàn thành Sprint
         await completeSprint(activeSprint.id)
       } catch (err) {
         console.error(err)
@@ -137,7 +132,7 @@ export const SprintBoardPage: React.FC = () => {
         />
       )}
 
-      {/* Drawer trượt hiển thị chi tiết */}
+      {}
       <StoryDetailPanel
         story={selectedStory}
         projectId={projectIdStr}

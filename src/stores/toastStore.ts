@@ -17,12 +17,11 @@ export const useToastStore = create<ToastState>((set) => ({
   addToast: (message, type = 'info') => {
     const id = Math.random().toString(36).substring(7)
     set((state) => {
-      // Giữ tối đa 3 toast cùng lúc
+      
       const nextToasts = [...state.toasts, { id, message, type }].slice(-3)
       return { toasts: nextToasts }
     })
 
-    // Tự động tắt sau 4 giây
     setTimeout(() => {
       set((state) => ({
         toasts: state.toasts.filter((t) => t.id !== id),

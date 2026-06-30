@@ -59,24 +59,15 @@ def strip_comments(file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(cleaned)
 
-files_to_clean = [
-    r"d:\kollab\src\types\database.types.ts",
-    r"d:\kollab\src\types\index.ts",
-    r"d:\kollab\src\hooks\useBacklog.ts",
-    r"d:\kollab\src\features\backlog\StoryDetailPanel.tsx",
-    r"d:\kollab\src\components\shared\StatusBadge.tsx",
-    r"d:\kollab\src\features\sprint\KanbanBoard.tsx",
-    r"d:\kollab\src\hooks\useProjects.ts",
-    r"d:\kollab\src\features\projects\ProjectCard.tsx",
-    r"d:\kollab\src\features\projects\ProjectFormModal.tsx",
-    r"d:\kollab\src\features\projects\ProjectsPage.tsx"
-]
+files_to_clean = []
+src_dir = r"d:\kollab\src"
+for root, dirs, files in os.walk(src_dir):
+    for file in files:
+        if file.endswith(('.ts', '.tsx', '.js', '.jsx')):
+            files_to_clean.append(os.path.join(root, file))
 
 for fp in files_to_clean:
-    if os.path.exists(fp):
-        print(f"Cleaning comments from {fp}")
-        strip_comments(fp)
-    else:
-        print(f"File not found: {fp}")
+    print(f"Cleaning comments from {fp}")
+    strip_comments(fp)
 
 print("Comment stripping completed!")

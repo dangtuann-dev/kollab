@@ -1,6 +1,5 @@
 import React from 'react'
 
-// Component tạm thời cho trang cài đặt dự án (Workspace Settings)
 export const ProjectSettingsPage: React.FC = () => {
   return (
     <div className="bg-white p-6 rounded-xl border border-neutral-200">

@@ -30,12 +30,12 @@ export const TaskCard: React.FC<TaskCardProps> = ({ story, onClick }) => {
         priorityColors[story.priority] || priorityColors.medium
       } flex flex-col gap-3 group`}
     >
-      {/* Title */}
+      {}
       <h4 className="text-xs font-bold text-neutral-800 line-clamp-2 leading-relaxed group-hover:text-primary-600 transition-colors">
         {story.title}
       </h4>
 
-      {/* Footer info */}
+      {}
       <div className="flex items-center justify-between gap-2 border-t border-neutral-100 pt-2.5">
         <div className="flex items-center gap-1.5">
           {priorityIcons[story.priority]}

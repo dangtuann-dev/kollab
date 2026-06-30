@@ -19,10 +19,8 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     )
   }
 
-  // Tìm giá trị lớn nhất để chia tỷ lệ biểu đồ
   const maxVal = Math.max(...data.map((d) => Math.max(d.ideal, d.actual || 0)), 10)
 
-  // Kích thước của biểu đồ
   const width = 500
   const height = 260
   const padding = 40
@@ -30,7 +28,6 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
   const chartWidth = width - padding * 2
   const chartHeight = height - padding * 2
 
-  // Chuyển đổi tọa độ
   const points = data.map((d, index) => {
     const x = padding + (index / (data.length - 1 || 1)) * chartWidth
     const idealY = padding + chartHeight - (d.ideal / maxVal) * chartHeight
@@ -38,10 +35,8 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
     return { x, idealY, actualY, label: d.day }
   })
 
-  // Đường vẽ lý thuyết (Ideal line)
   const idealPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.idealY}`).join(' ')
 
-  // Đường vẽ thực tế (lọc bỏ các điểm null)
   const actualPoints = points.filter((p) => p.actualY !== null)
   const actualPath = actualPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.actualY}`).join(' ')
 
@@ -54,7 +49,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
 
       <div className="relative w-full overflow-x-auto">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[400px]">
-          {/* Các đường kẻ lưới */}
+          {}
           {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
             const y = padding + ratio * chartHeight
             const val = Math.round(maxVal * (1 - ratio))
@@ -80,9 +75,9 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             )
           })}
 
-          {/* Nhãn trục X */}
+          {}
           {points.map((p, index) => {
-            // Chỉ vẽ các nhãn cách quãng đối với sprint dài để tránh chồng chéo
+            
             if (data.length > 10 && index % 2 !== 0) return null
             return (
               <text
@@ -97,7 +92,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             )
           })}
 
-          {/* Đường lý thuyết (đứt nét) */}
+          {}
           <path
             d={idealPath}
             fill="none"
@@ -106,7 +101,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             strokeDasharray="4 4"
           />
 
-          {/* Đường thực tế (màu chủ đạo primary) */}
+          {}
           {actualPoints.length > 0 && (
             <path
               d={actualPath}
@@ -118,7 +113,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
             />
           )}
 
-          {/* Các điểm nút trên đường thực tế */}
+          {}
           {actualPoints.map((p, index) => (
             <circle
               key={index}
@@ -132,7 +127,7 @@ export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
         </svg>
       </div>
 
-      {/* Chú thích biểu đồ */}
+      {}
       <div className="flex items-center justify-center gap-5 text-[11px] font-semibold text-neutral-500 border-t border-neutral-100 pt-3">
         <div className="flex items-center gap-1.5">
           <div className="h-0.5 w-6 border-t-2 border-dashed border-neutral-300" />

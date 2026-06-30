@@ -64,7 +64,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
         </div>
       </div>
 
-      {/* Các tùy chọn quản lý vai trò (Chỉ PO được phép, không được tự sửa thẻ của chính mình) */}
+      {}
       {isPO && !isOwnCard && (
         <div className="relative">
           <button

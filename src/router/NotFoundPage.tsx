@@ -1,7 +1,6 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 
-// Trang lỗi 404 - Không tìm thấy trang
 export const NotFoundPage: React.FC = () => (
   <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
     <h1 className="text-4xl font-extrabold text-neutral-900 mb-2">404</h1>

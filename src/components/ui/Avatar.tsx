@@ -43,7 +43,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           alt={alt}
           className="h-full w-full object-cover"
           onError={(e) => {
-            // Ẩn ảnh nếu load thất bại để kích hoạt ký tự viết tắt thay thế
+            
             ;(e.target as HTMLImageElement).style.display = 'none'
           }}
         />

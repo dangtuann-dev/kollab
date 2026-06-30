@@ -8,7 +8,7 @@ export function useAuth() {
   const queryClient = useQueryClient()
 
   useEffect(() => {
-    // 1. Lấy session ban đầu
+    
     const getInitialSession = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
@@ -24,7 +24,6 @@ export function useAuth() {
 
     getInitialSession()
 
-    // 2. Thiết lập trình lắng nghe sự kiện thay đổi trạng thái xác thực
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session)
@@ -36,7 +35,6 @@ export function useAuth() {
       }
     )
 
-    // Dọn dẹp listener khi unmount component
     return () => {
       subscription.unsubscribe()
     }

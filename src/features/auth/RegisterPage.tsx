@@ -61,10 +61,10 @@ export const RegisterPage: React.FC = () => {
       }
 
       if (resData?.session) {
-        // Nếu Confirm email tắt, Supabase trả về session ngay lập tức, chuyển hướng vào trang chủ
+        
         navigate('/projects', { replace: true })
       } else {
-        // Nếu vẫn yêu cầu Confirm email, hiện màn hình thông báo kiểm tra hòm thư
+        
         setIsSuccess(true)
       }
     } catch (err: any) {
@@ -99,7 +99,7 @@ export const RegisterPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-primary-50/20 to-neutral-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-white border border-neutral-100 shadow-glass rounded-2xl p-8 flex flex-col gap-6">
         
-        {/* Tiêu đề thương hiệu */}
+        {}
         <div className="flex flex-col items-center text-center gap-2">
           <div className="h-14 w-14 shrink-0">
             <svg viewBox="0 0 100 100" className="h-full w-full">
@@ -113,7 +113,7 @@ export const RegisterPage: React.FC = () => {
           <p className="text-sm text-neutral-500">Bắt đầu với không gian làm việc của nhóm Kollab</p>
         </div>
 
-        {/* Thông báo lỗi chung */}
+        {}
         {errorMessage && (
           <div className="flex items-center gap-2.5 p-3.5 bg-danger-50 border border-danger-200 rounded-lg text-xs text-danger-700 font-medium">
             <AlertCircle className="h-4.5 w-4.5 text-danger-500 shrink-0" />
@@ -121,7 +121,7 @@ export const RegisterPage: React.FC = () => {
           </div>
         )}
 
-        {/* Biểu mẫu đăng ký */}
+        {}
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Input
             label="Họ và Tên"

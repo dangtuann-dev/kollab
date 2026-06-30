@@ -26,7 +26,7 @@ export function useMembers(projectId: string) {
 
   const inviteMemberMutation = useMutation<any, Error, { email: string; role: UserRole }>({
     mutationFn: async (vars) => {
-      // 1. Tìm kiếm profile có email trùng khớp
+      
       const { data: profile, error: profileError } = await (supabase
         .from('profiles')
         .select('id, full_name')
@@ -38,7 +38,6 @@ export function useMembers(projectId: string) {
         throw new Error('Người dùng không tồn tại trong hệ thống')
       }
 
-      // 2. Thêm vào bảng project_members
       const { data, error } = await ((supabase
         .from('project_members') as any)
         .insert({

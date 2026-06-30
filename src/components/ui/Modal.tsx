@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({
           sizes[size]
         )}
       >
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
           <h3 className="text-lg font-semibold text-neutral-900 truncate">{title}</h3>
           <button
@@ -75,12 +75,12 @@ export const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="px-6 py-5 overflow-y-auto max-h-[75vh]">
           {children}
         </div>
 
-        {/* Footer */}
+        {}
         {footer && (
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-neutral-100 bg-neutral-50/50">
             {footer}

@@ -2,12 +2,12 @@ import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { PrivateRoute } from './PrivateRoute'
 import { AppLayout } from '../components/layout/AppLayout'
 
-// Các trang component được import trực tiếp hoặc lazy load
 import LoginPage from '../features/auth/LoginPage'
 import RegisterPage from '../features/auth/RegisterPage'
 import ForgotPasswordPage from '../features/auth/ForgotPasswordPage'
 
 import ProjectsPage from '../features/projects/ProjectsPage'
+import DashboardPage from '../features/dashboard/DashboardPage'
 import SprintBoardPage from '../features/sprint/SprintBoardPage'
 import BacklogPage from '../features/backlog/BacklogPage'
 import MembersPage from '../features/members/MembersPage'
@@ -21,7 +21,6 @@ export const router = createBrowserRouter([
   {
     element: <AuthInitializer />,
     children: [
-      // Các route xác thực (Auth Routes)
       {
         path: '/login',
         element: <LoginPage />,
@@ -35,19 +34,22 @@ export const router = createBrowserRouter([
         element: <ForgotPasswordPage />,
       },
 
-      // Các route bảo mật (Private Routes)
       {
         element: <PrivateRoute />,
         children: [
           {
             path: '/',
-            element: <Navigate to="/projects" replace />,
+            element: <Navigate to="/dashboard" replace />,
+          },
+          {
+            path: '/dashboard',
+            element: <DashboardPage />,
           },
           {
             path: '/projects',
             element: <ProjectsPage />,
           },
-          // Các route dự án lồng nhau bên trong layout chung
+          
           {
             path: '/projects/:projectId',
             element: <AppLayout />,
@@ -80,8 +82,7 @@ export const router = createBrowserRouter([
           },
         ],
       },
-      
-      // Route dự phòng khi không tìm thấy trang (Fallback Route)
+
       {
         path: '*',
         element: <NotFoundPage />,
