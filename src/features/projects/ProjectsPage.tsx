@@ -40,8 +40,7 @@ export const ProjectsPage: React.FC = () => {
   )
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="max-w-6xl mx-auto flex flex-col gap-8 font-sans">
         
         <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
           <div className="flex items-center gap-3">
@@ -115,7 +114,6 @@ export const ProjectsPage: React.FC = () => {
             ))}
           </div>
         )}
-      </div>
 
       <ProjectFormModal isOpen={isModalOpen} onClose={handleCloseModal} project={editingProject} />
     </div>

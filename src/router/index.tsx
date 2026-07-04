@@ -38,45 +38,48 @@ export const router = createBrowserRouter([
         element: <PrivateRoute />,
         children: [
           {
-            path: '/',
-            element: <Navigate to="/dashboard" replace />,
-          },
-          {
-            path: '/dashboard',
-            element: <DashboardPage />,
-          },
-          {
-            path: '/projects',
-            element: <ProjectsPage />,
-          },
-          
-          {
-            path: '/projects/:projectId',
             element: <AppLayout />,
             children: [
               {
-                path: '',
-                element: <Navigate to="board" replace />,
+                path: '/',
+                element: <Navigate to="/dashboard" replace />,
               },
               {
-                path: 'board',
-                element: <SprintBoardPage />,
+                path: '/dashboard',
+                element: <DashboardPage />,
               },
               {
-                path: 'backlog',
-                element: <BacklogPage />,
+                path: '/projects',
+                element: <ProjectsPage />,
               },
               {
-                path: 'members',
-                element: <MembersPage />,
-              },
-              {
-                path: 'reports',
-                element: <ReportsPage />,
-              },
-              {
-                path: 'settings',
-                element: <ProjectSettingsPage />,
+                path: '/projects/:projectId',
+                children: [
+                  {
+                    path: '',
+                    element: <Navigate to="board" replace />,
+                  },
+                  {
+                    path: 'board',
+                    element: <SprintBoardPage />,
+                  },
+                  {
+                    path: 'backlog',
+                    element: <BacklogPage />,
+                  },
+                  {
+                    path: 'members',
+                    element: <MembersPage />,
+                  },
+                  {
+                    path: 'reports',
+                    element: <ReportsPage />,
+                  },
+                  {
+                    path: 'settings',
+                    element: <ProjectSettingsPage />,
+                  },
+                ],
               },
             ],
           },

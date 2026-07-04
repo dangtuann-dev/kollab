@@ -140,8 +140,7 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-4 md:p-8 font-sans">
-      <div className="max-w-6xl mx-auto flex flex-col gap-8">
+    <div className="max-w-6xl mx-auto flex flex-col gap-8 font-sans">
         
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 pb-6">
           <div className="flex items-center gap-4">
@@ -302,7 +301,6 @@ export const DashboardPage: React.FC = () => {
         </div>
 
       </div>
-    </div>
   )
 }
 
