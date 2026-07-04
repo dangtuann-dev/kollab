@@ -22,8 +22,8 @@ export function useBacklog(
         .from('user_stories')
         .select(`
           *,
-          assignee:profiles!user_stories_assignee_id_fkey(*),
-          reporter:profiles!user_stories_reporter_id_fkey(*)
+          assignee:profiles!assignee_id(*),
+          reporter:profiles!reporter_id(*)
         `)
         .eq('project_id', projectId)
 
