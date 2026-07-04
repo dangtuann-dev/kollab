@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../../lib/supabase'
 import { useBacklog } from '../../hooks/useBacklog'
 import { useSprint } from '../../hooks/useSprint'
+import { useCompleteSprint } from '../../hooks/useCompleteSprint'
 import { useProject } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
 import { SprintHeader } from './SprintHeader'
@@ -25,7 +26,8 @@ export const SprintBoardPage: React.FC = () => {
   useProject(projectIdStr)
   
   const { stories, isLoading: loadingStories, updateStory } = useBacklog(projectIdStr)
-  const { activeSprint, completeSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
+  const { activeSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
+  const { mutateAsync: completeSprint } = useCompleteSprint(projectIdStr)
 
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
@@ -57,7 +59,6 @@ export const SprintBoardPage: React.FC = () => {
   }, [activeSprint?.id, projectIdStr, queryClient])
 
   const handleUpdateStatus = async (storyId: string, status: StoryStatus) => {
-    
     queryClient.setQueryData(['stories', projectIdStr], (oldStories: Story[] | undefined) => {
       if (!oldStories) return oldStories
       return oldStories.map((story) => (story.id === storyId ? { ...story, status } : story))
@@ -66,27 +67,25 @@ export const SprintBoardPage: React.FC = () => {
     try {
       await updateStory({ id: storyId, status })
     } catch (err) {
-      
       queryClient.invalidateQueries({ queryKey: ['stories', projectIdStr] })
     }
   }
 
   const handleCompleteSprint = async () => {
     if (!activeSprint) return
-    if (confirm('Bạn có chắc chắn muốn hoàn thành sprint này không? Những story chưa hoàn thành còn lại sẽ được chuyển về backlog.')) {
+    if (
+      confirm(
+        'Bạn có chắc chắn muốn hoàn thành sprint này không? Những story chưa hoàn thành còn lại sẽ được chuyển về backlog.'
+      )
+    ) {
       try {
-        
-        const incompleteStories = activeStories.filter((s) => s.status !== 'done')
-        for (const story of incompleteStories) {
-          await updateStory({ id: story.id, sprint_id: null, status: 'backlog' })
-        }
-
         await completeSprint(activeSprint.id)
       } catch (err) {
         console.error(err)
       }
     }
   }
+
 
   if (loadingStories || loadingSprints) {
     return (

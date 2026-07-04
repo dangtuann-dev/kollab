@@ -93,9 +93,31 @@ export function useSprint(projectId: string) {
     },
   })
 
+  const updateSprintMutation = useMutation<any, Error, { sprintId: string; name: string; goal?: string; start_date?: string | null; end_date?: string | null; status?: Sprint['status'] }>({
+    mutationFn: async (vars) => {
+      const { sprintId, ...updates } = vars
+      const { data, error } = await ((supabase
+        .from('sprints') as any)
+        .update(updates)
+        .eq('id', sprintId)
+        .select()
+        .single() as any)
+
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      toast.success('Cập nhật Sprint thành công!')
+      queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
+      queryClient.invalidateQueries({ queryKey: ['activeSprint', projectId] })
+    },
+    onError: (err: any) => {
+      toast.error(err.message || 'Cập nhật Sprint thất bại')
+    },
+  })
+
   const completeSprintMutation = useMutation<any, Error, string>({
     mutationFn: async (sprintId) => {
-      
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({ status: 'completed' })
@@ -123,6 +145,9 @@ export function useSprint(projectId: string) {
     isLoading: sprintsQuery.isLoading || activeSprintQuery.isLoading,
     createSprint: createSprintMutation.mutateAsync,
     startSprint: startSprintMutation.mutateAsync,
+    updateSprint: updateSprintMutation.mutateAsync,
     completeSprint: completeSprintMutation.mutateAsync,
   }
 }
+
+

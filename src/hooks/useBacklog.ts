@@ -161,6 +161,47 @@ export function useBacklog(
     },
   })
 
+  const reorderStoriesMutation = useMutation<any, Error, Story[], { previousStories: Story[] | undefined }>({
+    mutationFn: async (updatedStories) => {
+      const updates = updatedStories.map((story) => {
+        const { assignee, reporter, ...dbStory } = story
+        return dbStory
+      })
+
+      const { error } = await (supabase
+        .from('user_stories') as any)
+        .upsert(updates)
+
+      if (error) throw error
+    },
+    onMutate: async (newStories) => {
+      await queryClient.cancelQueries({ queryKey: ['stories', projectId, filters] })
+      const previousStories = queryClient.getQueryData<Story[]>(['stories', projectId, filters])
+
+      queryClient.setQueryData<Story[]>(['stories', projectId, filters], () => {
+        if (!previousStories) return newStories
+        const newStoriesMap = new Map(newStories.map((s) => [s.id, s]))
+        return previousStories
+          .map((s) => newStoriesMap.get(s.id) || s)
+          .sort((a, b) => a.order_index - b.order_index)
+      })
+
+      return { previousStories }
+    },
+    onError: (_err, _newStories, context) => {
+      if (context?.previousStories) {
+        queryClient.setQueryData(['stories', projectId, filters], context.previousStories)
+      }
+      toast.error('Không thể sắp xếp lại story. Đã khôi phục thứ tự cũ.')
+    },
+    onSuccess: () => {
+      toast.success('Đã cập nhật thứ tự story!')
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['stories', projectId] })
+    },
+  })
+
   return {
     stories: storiesQuery.data || [],
     isLoading: storiesQuery.isLoading,
@@ -168,5 +209,7 @@ export function useBacklog(
     updateStory: updateStoryMutation.mutateAsync,
     deleteStory: deleteStoryMutation.mutateAsync,
     moveStory: moveStoryMutation.mutateAsync,
+    reorderStories: reorderStoriesMutation.mutateAsync,
   }
 }
+

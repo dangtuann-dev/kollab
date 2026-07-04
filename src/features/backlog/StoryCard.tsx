@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { MoreVertical, Edit2, Trash2, ArrowUpRight, ArrowDownRight, GripVertical } from 'lucide-react'
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import type { Story, Sprint } from '../../types'
 import { PriorityBadge } from '../../components/shared/PriorityBadge'
 import { StatusBadge } from '../../components/shared/StatusBadge'
@@ -13,6 +15,7 @@ interface StoryCardProps {
   onEdit?: (story: Story) => void
   onMoveToSprint: (storyId: string, sprintId: string | null) => void
   onDelete: (storyId: string) => void
+  dragDisabled?: boolean
 }
 
 export const StoryCard: React.FC<StoryCardProps> = ({
@@ -22,12 +25,30 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   onEdit,
   onMoveToSprint,
   onDelete,
+  dragDisabled = false,
 }) => {
   const { role } = useAuthStore()
   const [menuOpen, setMenuOpen] = useState(false)
   const isPO = role === 'product_owner'
 
   const activeSprints = sprints.filter((s) => s.status !== 'completed')
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: story.id, disabled: dragDisabled })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    position: 'relative' as const,
+    zIndex: isDragging ? 10 : undefined,
+  }
 
   let parsedLabels: Array<{ name: string; color: string; hex: string }> = []
   if (story.labels) {
@@ -42,11 +63,24 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   }
 
   return (
-    <div className="bg-white border border-neutral-200/80 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-205 flex items-center justify-between gap-3 group">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="bg-white border border-neutral-200/80 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-205 flex items-center justify-between gap-3 group"
+    >
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        <div className="text-neutral-350 cursor-grab active:cursor-grabbing hover:text-neutral-500">
-          <GripVertical className="h-4.5 w-4.5" />
-        </div>
+        {!dragDisabled ? (
+          <div
+            className="text-neutral-350 cursor-grab active:cursor-grabbing hover:text-neutral-500 p-1 rounded hover:bg-neutral-50"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="h-4.5 w-4.5" />
+          </div>
+        ) : (
+          <div className="w-2" />
+        )}
+
 
         <div className="flex-1 min-w-0 flex flex-col gap-1.5" onClick={() => onOpenDetails(story)}>
           <div className="flex flex-wrap items-center gap-1.5">

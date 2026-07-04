@@ -1,18 +1,34 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { Plus, ListFilter, ArrowUpDown, Calendar, Play, ChevronDown, ChevronRight, Award, Search } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  TouchSensor,
+} from '@dnd-kit/core'
+import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  arrayMove,
+} from '@dnd-kit/sortable'
 import { useBacklog } from '../../hooks/useBacklog'
 import { useSprint } from '../../hooks/useSprint'
+import { useStartSprint } from '../../hooks/useStartSprint'
 import { useProject } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
 import { StoryCard } from './StoryCard'
 import { UserStoryFormModal } from './UserStoryFormModal'
 import { StoryDetailPanel } from './StoryDetailPanel'
+import { SprintFormModal } from '../sprint/SprintFormModal'
 import { Button } from '../../components/ui/Button'
-import { Badge } from '../../components/ui/Badge'
+import { SprintStatusBadge } from '../../components/shared/SprintStatusBadge'
 import { Spinner } from '../../components/ui/Spinner'
 import { EmptyState } from '../../components/shared/EmptyState'
-import type { Story, ProjectMember } from '../../types'
+import type { Story, ProjectMember, Sprint } from '../../types'
 
 export const BacklogPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
@@ -23,10 +39,13 @@ export const BacklogPage: React.FC = () => {
   const isSM = role === 'scrum_master'
 
   const { data: project, isLoading: loadingProject } = useProject(projectIdStr)
-  const { sprints, createSprint, startSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
+  const { sprints, isLoading: loadingSprints } = useSprint(projectIdStr)
+  const { mutateAsync: runStartSprint } = useStartSprint(projectIdStr)
 
   const [isFormModalOpen, setIsFormModalOpen] = useState(false)
+  const [isSprintModalOpen, setIsSprintModalOpen] = useState(false)
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
+  const [selectedSprint, setSelectedSprint] = useState<Sprint | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
@@ -50,6 +69,7 @@ export const BacklogPage: React.FC = () => {
     isLoading: loadingStories,
     moveStory,
     deleteStory,
+    reorderStories,
   } = useBacklog(projectIdStr, {
     priority: priorityFilter,
     label: labelFilter,
@@ -57,21 +77,39 @@ export const BacklogPage: React.FC = () => {
     search: debouncedSearchQuery,
   })
 
-  const handleCreateSprint = async () => {
-    const name = `Sprint ${sprints.length + 1}`
-    const goal = 'Sprint Goal definition'
-    try {
-      await createSprint({ name, goal })
-    } catch (e) {
-      console.error(e)
-    }
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    })
+  )
+
+  const handleOpenCreateSprint = () => {
+    setSelectedSprint(null)
+    setIsSprintModalOpen(true)
   }
 
-  const handleStartSprint = async (sprintId: string) => {
+  const handleOpenEditSprint = (sprint: Sprint) => {
+    setSelectedSprint(sprint)
+    setIsSprintModalOpen(true)
+  }
+
+  const handleStartSprint = async (sprint: Sprint) => {
     const today = new Date().toISOString().split('T')[0]
     const twoWeeksLater = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
     try {
-      await startSprint({ sprintId, start_date: today, end_date: twoWeeksLater })
+      await runStartSprint({
+        sprintId: sprint.id,
+        startDate: sprint.start_date || today,
+        endDate: sprint.end_date || twoWeeksLater,
+      })
     } catch (e) {
       console.error(e)
     }
@@ -95,6 +133,36 @@ export const BacklogPage: React.FC = () => {
   const backlogStories = getSortedStories(stories.filter((s) => s.sprint_id === null))
   const activeSprints = sprints.filter((s) => s.status !== 'completed')
 
+  const isDragDisabled =
+    sortBy !== 'order' ||
+    priorityFilter !== 'all' ||
+    labelFilter !== 'all' ||
+    assigneeFilter !== 'all' ||
+    debouncedSearchQuery.trim() !== ''
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event
+    if (!over || active.id === over.id) return
+
+    const oldIndex = backlogStories.findIndex((s) => s.id === active.id)
+    const newIndex = backlogStories.findIndex((s) => s.id === over.id)
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const reorderedList = arrayMove(backlogStories, oldIndex, newIndex)
+      
+      const updatedStories = reorderedList.map((story, index) => ({
+        ...story,
+        order_index: index,
+      }))
+
+      try {
+        await reorderStories(updatedStories)
+      } catch (err) {
+        console.error('Lỗi khi sắp xếp lại backlog:', err)
+      }
+    }
+  }
+
   if (loadingProject || loadingStories || loadingSprints) {
     return (
       <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-2">
@@ -117,7 +185,7 @@ export const BacklogPage: React.FC = () => {
 
         <div className="flex items-center gap-2.5">
           {isSM && (
-            <Button variant="secondary" size="sm" onClick={handleCreateSprint} leftIcon={<Calendar className="h-4 w-4" />}>
+            <Button variant="secondary" size="sm" onClick={handleOpenCreateSprint} leftIcon={<Calendar className="h-4 w-4" />}>
               Tạo Sprint
             </Button>
           )}
@@ -144,7 +212,7 @@ export const BacklogPage: React.FC = () => {
             placeholder="Tìm kiếm tiêu đề User Story..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent border-none text-sm outline-none placeholder-neutral-400 text-neutral-800"
+            className="w-full bg-transparent border-none text-sm outline-none placeholder-neutral-450 text-neutral-800"
           />
         </div>
 
@@ -232,9 +300,7 @@ export const BacklogPage: React.FC = () => {
                     {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                   </button>
                   <h3 className="text-sm font-bold text-neutral-800">{sprint.name}</h3>
-                  <Badge variant={sprint.status === 'active' ? 'info' : 'neutral'} size="sm">
-                    {sprint.status === 'active' ? 'Đang hoạt động' : 'Đang lập kế hoạch'}
-                  </Badge>
+                  <SprintStatusBadge status={sprint.status} />
                   {sprintPoints > 0 && (
                     <span className="text-[10px] font-bold text-neutral-500 bg-neutral-200/80 px-2 py-0.5 rounded-full flex items-center">
                       <Award className="h-3 w-3 mr-0.5" />
@@ -244,11 +310,21 @@ export const BacklogPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-2.5">
+                  {isSM && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleOpenEditSprint(sprint)}
+                      className="py-1 px-2 text-xs text-neutral-500 hover:text-neutral-700"
+                    >
+                      Sửa
+                    </Button>
+                  )}
                   {sprint.status === 'planning' && isSM && sprintStories.length > 0 && (
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={() => handleStartSprint(sprint.id)}
+                      onClick={() => handleStartSprint(sprint)}
                       leftIcon={<Play className="h-3 w-3 text-success-600" />}
                       className="py-1 px-2.5 text-xs"
                     >
@@ -270,6 +346,7 @@ export const BacklogPage: React.FC = () => {
                         key={story.id}
                         story={story}
                         sprints={sprints}
+                        dragDisabled={true}
                         onOpenDetails={(s) => {
                           setSelectedStory(s)
                           setIsDetailOpen(true)
@@ -317,25 +394,30 @@ export const BacklogPage: React.FC = () => {
             }
           />
         ) : (
-          <div className="flex flex-col gap-2.5">
-            {backlogStories.map((story) => (
-              <StoryCard
-                key={story.id}
-                story={story}
-                sprints={sprints}
-                onOpenDetails={(s) => {
-                  setSelectedStory(s)
-                  setIsDetailOpen(true)
-                }}
-                onEdit={(s) => {
-                  setSelectedStory(s)
-                  setIsFormModalOpen(true)
-                }}
-                onMoveToSprint={(id, sprintId) => moveStory({ storyId: id, sprintId })}
-                onDelete={(id) => deleteStory(id)}
-              />
-            ))}
-          </div>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={backlogStories.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+              <div className="flex flex-col gap-2.5">
+                {backlogStories.map((story) => (
+                  <StoryCard
+                    key={story.id}
+                    story={story}
+                    sprints={sprints}
+                    dragDisabled={isDragDisabled}
+                    onOpenDetails={(s) => {
+                      setSelectedStory(s)
+                      setIsDetailOpen(true)
+                    }}
+                    onEdit={(s) => {
+                      setSelectedStory(s)
+                      setIsFormModalOpen(true)
+                    }}
+                    onMoveToSprint={(id, sprintId) => moveStory({ storyId: id, sprintId })}
+                    onDelete={(id) => deleteStory(id)}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
@@ -346,6 +428,16 @@ export const BacklogPage: React.FC = () => {
         onClose={() => {
           setIsFormModalOpen(false)
           setSelectedStory(null)
+        }}
+      />
+
+      <SprintFormModal
+        projectId={projectIdStr}
+        sprint={selectedSprint}
+        isOpen={isSprintModalOpen}
+        onClose={() => {
+          setIsSprintModalOpen(false)
+          setSelectedSprint(null)
         }}
       />
 
@@ -361,4 +453,5 @@ export const BacklogPage: React.FC = () => {
     </div>
   )
 }
+
 export default BacklogPage

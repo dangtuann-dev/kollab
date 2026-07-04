@@ -1,7 +1,7 @@
 import React from 'react'
 import { Calendar, Goal, CheckCircle2 } from 'lucide-react'
 import type { Sprint, Story } from '../../types'
-import { Badge } from '../../components/ui/Badge'
+import { SprintStatusBadge } from '../../components/shared/SprintStatusBadge'
 import { Button } from '../../components/ui/Button'
 import { useAuthStore } from '../../stores'
 
@@ -40,9 +40,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
         {}
         <div className="flex items-center gap-3">
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">{sprint.name}</h2>
-          <Badge variant="success" size="sm">
-            Sprint đang hoạt động
-          </Badge>
+          <SprintStatusBadge status={sprint.status} />
           
           {daysRemaining !== null && (
             <span className="text-xs text-neutral-500 font-semibold flex items-center gap-1 bg-neutral-100 px-2 py-0.5 rounded-full">
