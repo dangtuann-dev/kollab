@@ -17,6 +17,13 @@ import AuthInitializer from './AuthInitializer'
 import ProjectSettingsPage from './ProjectSettingsPage'
 import NotFoundPage from './NotFoundPage'
 
+// Ceremonies imports
+import CeremoniesDashboard from '../features/ceremonies/CeremoniesDashboard'
+import SprintPlanning from '../features/ceremonies/SprintPlanning'
+import DailyStandup from '../features/ceremonies/DailyStandup'
+import SprintReview from '../features/ceremonies/SprintReview'
+import Retrospective from '../features/ceremonies/Retrospective'
+
 export const router = createBrowserRouter([
   {
     element: <AuthInitializer />,
@@ -78,6 +85,31 @@ export const router = createBrowserRouter([
                   {
                     path: 'settings',
                     element: <ProjectSettingsPage />,
+                  },
+                  {
+                    path: 'ceremonies',
+                    children: [
+                      {
+                        path: '',
+                        element: <CeremoniesDashboard />,
+                      },
+                      {
+                        path: 'sprint-planning',
+                        element: <SprintPlanning />,
+                      },
+                      {
+                        path: 'daily-standup',
+                        element: <DailyStandup />,
+                      },
+                      {
+                        path: 'sprint-review',
+                        element: <SprintReview />,
+                      },
+                      {
+                        path: 'retrospective',
+                        element: <Retrospective />,
+                      },
+                    ],
                   },
                 ],
               },

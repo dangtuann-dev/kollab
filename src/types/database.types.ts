@@ -275,6 +275,10 @@ export interface Database {
           actual_hours: number
           created_at: string
           updated_at: string
+          story_points: number | null
+          priority: 'critical' | 'high' | 'medium' | 'low'
+          labels: string | null
+          deadline: string | null
         }
         Insert: {
           id?: string
@@ -287,6 +291,10 @@ export interface Database {
           actual_hours?: number
           created_at?: string
           updated_at?: string
+          story_points?: number | null
+          priority?: 'critical' | 'high' | 'medium' | 'low'
+          labels?: string | null
+          deadline?: string | null
         }
         Update: {
           id?: string
@@ -299,6 +307,10 @@ export interface Database {
           actual_hours?: number
           created_at?: string
           updated_at?: string
+          story_points?: number | null
+          priority?: 'critical' | 'high' | 'medium' | 'low'
+          labels?: string | null
+          deadline?: string | null
         }
         Relationships: [
           {
@@ -320,7 +332,8 @@ export interface Database {
       comments: {
         Row: {
           id: string
-          user_story_id: string
+          user_story_id: string | null
+          task_id: string | null
           user_id: string
           content: string
           created_at: string
@@ -328,7 +341,8 @@ export interface Database {
         }
         Insert: {
           id?: string
-          user_story_id: string
+          user_story_id?: string | null
+          task_id?: string | null
           user_id: string
           content: string
           created_at?: string
@@ -336,7 +350,8 @@ export interface Database {
         }
         Update: {
           id?: string
-          user_story_id?: string
+          user_story_id?: string | null
+          task_id?: string | null
           user_id?: string
           content?: string
           created_at?: string
@@ -351,7 +366,148 @@ export interface Database {
             referencedSchema: "public"
           },
           {
+            foreignKeyName: "comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedSchema: "public"
+          },
+          {
             foreignKeyName: "comments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedSchema: "public"
+          }
+        ]
+      }
+      standup_logs: {
+        Row: {
+          id: string
+          project_id: string
+          user_id: string
+          yesterday: string
+          today: string
+          blockers: string | null
+          log_date: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          project_id: string
+          user_id: string
+          yesterday: string
+          today: string
+          blockers?: string | null
+          log_date?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          project_id?: string
+          user_id?: string
+          yesterday?: string
+          today?: string
+          blockers?: string | null
+          log_date?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standup_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedSchema: "public"
+          },
+          {
+            foreignKeyName: "standup_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedSchema: "public"
+          }
+        ]
+      }
+      notifications: {
+        Row: {
+          id: string
+          user_id: string
+          type: 'assignment' | 'comment' | 'sprint_warning' | 'other'
+          title: string
+          body: string | null
+          link: string | null
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          type?: 'assignment' | 'comment' | 'sprint_warning' | 'other'
+          title: string
+          body?: string | null
+          link?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          type?: 'assignment' | 'comment' | 'sprint_warning' | 'other'
+          title?: string
+          body?: string | null
+          link?: string | null
+          read_at?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedSchema: "public"
+          }
+        ]
+      }
+      activity_logs: {
+        Row: {
+          id: string
+          task_id: string
+          user_id: string | null
+          action: 'created' | 'status_changed' | 'assigned' | 'commented' | 'field_updated'
+          old_value: Json | null
+          new_value: Json | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          task_id: string
+          user_id?: string | null
+          action: 'created' | 'status_changed' | 'assigned' | 'commented' | 'field_updated'
+          old_value?: Json | null
+          new_value?: Json | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          task_id?: string
+          user_id?: string | null
+          action?: 'created' | 'status_changed' | 'assigned' | 'commented' | 'field_updated'
+          old_value?: Json | null
+          new_value?: Json | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_logs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedSchema: "public"
+          },
+          {
+            foreignKeyName: "activity_logs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"

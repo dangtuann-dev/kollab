@@ -20,8 +20,16 @@ export type Story = Database['public']['Tables']['user_stories']['Row'] & {
 }
 export type Task = Database['public']['Tables']['tasks']['Row'] & {
   assignee?: Profile | null
+  user_story?: Story | null
 }
 export type Comment = Database['public']['Tables']['comments']['Row'] & {
   author?: Profile
+}
+export type Notification = Database['public']['Tables']['notifications']['Row']
+export type ActivityLog = Database['public']['Tables']['activity_logs']['Row'] & {
+  profile?: Profile | null
+}
+export type StandupLog = Database['public']['Tables']['standup_logs']['Row'] & {
+  profile?: Profile
 }
 

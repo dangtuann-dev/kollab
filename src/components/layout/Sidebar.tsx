@@ -11,6 +11,7 @@ import {
   LogOut,
   FolderKanban,
   LayoutDashboard,
+  Compass,
 } from 'lucide-react'
 import { useUiStore, useAuthStore, useProjectStore } from '../../stores'
 import { Avatar } from '../ui/Avatar'
@@ -71,6 +72,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
       name: 'Backlog',
       to: projectId ? `/projects/${projectId}/backlog` : '/projects',
       icon: <ListTodo className="h-5 w-5 shrink-0" />,
+      requireProject: true,
+    },
+    {
+      name: 'Nghi thức Scrum',
+      to: projectId ? `/projects/${projectId}/ceremonies` : '/projects',
+      icon: <Compass className="h-5 w-5 shrink-0" />,
       requireProject: true,
     },
     {

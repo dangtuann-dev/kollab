@@ -93,7 +93,7 @@ export function useSprint(projectId: string) {
     },
   })
 
-  const updateSprintMutation = useMutation<any, Error, { sprintId: string; name: string; goal?: string; start_date?: string | null; end_date?: string | null; status?: Sprint['status'] }>({
+  const updateSprintMutation = useMutation<any, Error, { sprintId: string; name: string; goal?: string; start_date?: string | null; end_date?: string | null; status?: Sprint['status']; velocity?: number | null }>({
     mutationFn: async (vars) => {
       const { sprintId, ...updates } = vars
       const { data, error } = await ((supabase

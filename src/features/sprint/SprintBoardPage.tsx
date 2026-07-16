@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { ListTodo } from 'lucide-react'
-import { useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../../lib/supabase'
+import { ListTodo, Radio } from 'lucide-react'
 import { useBacklog } from '../../hooks/useBacklog'
 import { useSprint } from '../../hooks/useSprint'
 import { useCompleteSprint } from '../../hooks/useCompleteSprint'
@@ -10,64 +8,67 @@ import { useProject } from '../../hooks/useProjects'
 import { useAuthStore } from '../../stores'
 import { SprintHeader } from './SprintHeader'
 import { KanbanBoard } from './KanbanBoard'
-import { StoryDetailPanel } from '../backlog/StoryDetailPanel'
+import { TaskDetailModal } from './TaskDetailModal'
 import { Button } from '../../components/ui/Button'
 import { Spinner } from '../../components/ui/Spinner'
 import { EmptyState } from '../../components/shared/EmptyState'
-import type { Story, StoryStatus } from '../../types'
+import { useRealtimeBoard } from '../../hooks/useRealtimeBoard'
+import { usePresence } from '../../hooks/usePresence'
+import type { Task, TaskStatus } from '../../types'
 
 export const SprintBoardPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const projectIdStr = projectId || ''
-  const queryClient = useQueryClient()
 
-  const { role } = useAuthStore()
+  const { role, user } = useAuthStore()
 
   useProject(projectIdStr)
   
-  const { stories, isLoading: loadingStories, updateStory } = useBacklog(projectIdStr)
+  const { stories, isLoading: loadingStories } = useBacklog(projectIdStr)
   const { activeSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
   const { mutateAsync: completeSprint } = useCompleteSprint(projectIdStr)
 
-  const [selectedStory, setSelectedStory] = useState<Story | null>(null)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
 
   const activeStories = stories.filter((s) => s.sprint_id === activeSprint?.id)
+  const activeStoryIds = activeStories.map((s) => s.id)
 
-  useEffect(() => {
-    if (!activeSprint?.id) return
+  // 1. Load tasks via realtime board hook
+  const { tasks, isLoading: loadingTasks, updateTask, createTask } = useRealtimeBoard(
+    activeSprint?.id || '',
+    activeStoryIds
+  )
 
-    const channel = supabase
-      .channel(`sprint-board-channel-${activeSprint.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'stories',
-          filter: `sprint_id=eq.${activeSprint.id}`,
-        },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['stories', projectIdStr] })
-        }
-      )
-      .subscribe()
+  // 2. Load presence info
+  const currentUserProfile = user ? {
+    id: user.id,
+    full_name: user.user_metadata?.full_name || user.email || 'Thành viên',
+    avatar_url: user.user_metadata?.avatar_url || null
+  } as any : null
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [activeSprint?.id, projectIdStr, queryClient])
+  const onlineUsers = usePresence(
+    activeSprint ? `presence-sprint-${activeSprint.id}` : '',
+    currentUserProfile
+  )
 
-  const handleUpdateStatus = async (storyId: string, status: StoryStatus) => {
-    queryClient.setQueryData(['stories', projectIdStr], (oldStories: Story[] | undefined) => {
-      if (!oldStories) return oldStories
-      return oldStories.map((story) => (story.id === storyId ? { ...story, status } : story))
-    })
-
+  const handleUpdateStatus = async (taskId: string, status: TaskStatus) => {
     try {
-      await updateStory({ id: storyId, status })
+      await updateTask({ id: taskId, status })
     } catch (err) {
-      queryClient.invalidateQueries({ queryKey: ['stories', projectIdStr] })
+      console.error(err)
+    }
+  }
+
+  const handleCreateTask = async (vars: { title: string; user_story_id: string; status: TaskStatus }) => {
+    try {
+      await createTask({
+        title: vars.title,
+        user_story_id: vars.user_story_id,
+        status: vars.status,
+      })
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -86,8 +87,7 @@ export const SprintBoardPage: React.FC = () => {
     }
   }
 
-
-  if (loadingStories || loadingSprints) {
+  if (loadingStories || loadingSprints || loadingTasks) {
     return (
       <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-2">
         <Spinner size="lg" />
@@ -100,17 +100,53 @@ export const SprintBoardPage: React.FC = () => {
     <div className="flex flex-col gap-6 font-sans">
       {activeSprint ? (
         <>
-          <SprintHeader
-            sprint={activeSprint}
-            stories={activeStories}
-            onCompleteSprint={handleCompleteSprint}
-          />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-neutral-200 pb-4">
+            <SprintHeader
+              sprint={activeSprint}
+              stories={activeStories}
+              onCompleteSprint={handleCompleteSprint}
+            />
+
+            {/* Presence UI */}
+            <div className="flex items-center gap-3 bg-neutral-50 border border-neutral-200 rounded-full py-1.5 px-3 shadow-xs shrink-0 self-stretch sm:self-auto justify-between sm:justify-start">
+              <div className="flex items-center gap-1.5 text-xs text-neutral-600 font-semibold">
+                <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
+                <span>Đang xem ({onlineUsers.length}):</span>
+              </div>
+              <div className="flex -space-x-1.5 overflow-hidden">
+                {onlineUsers.map((u) => (
+                  <div key={u.id} className="relative group">
+                    {u.avatar_url ? (
+                      <img
+                        src={u.avatar_url}
+                        alt={u.full_name || 'User'}
+                        className="inline-block h-6 w-6 rounded-full ring-2 ring-white object-cover"
+                      />
+                    ) : (
+                      <div className="inline-block h-6 w-6 rounded-full bg-indigo-50 ring-2 ring-white text-indigo-600 flex items-center justify-center text-[9px] font-bold">
+                        {u.full_name?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="absolute bottom-0 right-0 block h-1.5 w-1.5 rounded-full bg-emerald-400 ring-1 ring-white animate-ping" />
+                    <span className="absolute bottom-0 right-0 block h-1.5 w-1.5 rounded-full bg-emerald-500 ring-1 ring-white" />
+                    
+                    {/* Tooltip */}
+                    <span className="absolute bottom-full right-1/2 translate-x-1/2 mb-1 px-1.5 py-0.5 bg-neutral-800 text-[8px] font-bold text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                      {u.full_name}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
           
           <KanbanBoard
+            tasks={tasks}
             stories={activeStories}
             onUpdateStatus={handleUpdateStatus}
-            onOpenDetails={(story) => {
-              setSelectedStory(story)
+            onCreateTask={handleQuickCreate => handleCreateTask(handleQuickCreate)}
+            onOpenDetails={(task) => {
+              setSelectedTask(task)
               setIsDetailOpen(true)
             }}
           />
@@ -131,17 +167,20 @@ export const SprintBoardPage: React.FC = () => {
         />
       )}
 
-      {}
-      <StoryDetailPanel
-        story={selectedStory}
-        projectId={projectIdStr}
-        isOpen={isDetailOpen}
-        onClose={() => {
-          setIsDetailOpen(false)
-          setSelectedStory(null)
-        }}
-      />
+      {/* Task Detail Modal */}
+      {selectedTask && (
+        <TaskDetailModal
+          task={selectedTask}
+          projectId={projectIdStr}
+          isOpen={isDetailOpen}
+          onClose={() => {
+            setIsDetailOpen(false)
+            setSelectedTask(null)
+          }}
+        />
+      )}
     </div>
   )
 }
+
 export default SprintBoardPage

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { Bell, Menu, LogOut, Settings, FolderKanban, ChevronRight } from 'lucide-react'
+import { Menu, LogOut, Settings, FolderKanban, ChevronRight } from 'lucide-react'
 import { useAuthStore, useProjectStore } from '../../stores'
 import { Avatar } from '../ui/Avatar'
 import { supabase } from '../../lib/supabase'
+import { NotificationBell } from './NotificationBell'
 
 interface HeaderProps {
   onOpenMobileMenu: () => void
@@ -23,7 +24,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
 
   return (
     <header className="sticky top-0 z-30 h-16 w-full bg-white/80 backdrop-blur-md border-b border-neutral-200/60 px-4 md:px-6 flex items-center justify-between">
-      {}
+      {/* Left side */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenMobileMenu}
@@ -32,7 +33,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
           <Menu className="h-6 w-6" />
         </button>
 
-        {}
+        {/* Breadcrumb */}
         <div className="flex items-center gap-1.5 text-sm font-medium text-neutral-500 select-none">
           <Link
             to="/projects"
@@ -53,13 +54,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
         </div>
       </div>
 
-      {}
+      {/* Right side */}
       <div className="flex items-center gap-4">
-        {}
-        <button className="relative text-neutral-500 hover:text-neutral-700 p-1.5 rounded-lg hover:bg-neutral-100 transition-colors focus:outline-none">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-danger-500" />
-        </button>
+        {/* Notification Bell */}
+        <NotificationBell />
 
         {}
         <div className="relative">
