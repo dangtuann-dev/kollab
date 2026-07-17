@@ -286,3 +286,132 @@ DROP TRIGGER IF EXISTS on_comment_logged ON public.comments;
 CREATE TRIGGER on_comment_logged
     AFTER INSERT ON public.comments
     FOR EACH ROW EXECUTE FUNCTION public.log_comment_creation();
+
+--------------------------------------------------------------------------------
+-- 6. Full-text search and Global Search
+--------------------------------------------------------------------------------
+ALTER TABLE public.user_stories ADD COLUMN IF NOT EXISTS fts tsvector GENERATED ALWAYS AS (to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, ''))) STORED;
+CREATE INDEX IF NOT EXISTS idx_user_stories_fts ON public.user_stories USING gin(fts);
+
+ALTER TABLE public.tasks ADD COLUMN IF NOT EXISTS fts tsvector GENERATED ALWAYS AS (to_tsvector('simple', coalesce(title, '') || ' ' || coalesce(description, ''))) STORED;
+CREATE INDEX IF NOT EXISTS idx_tasks_fts ON public.tasks USING gin(fts);
+
+CREATE OR REPLACE FUNCTION public.search_all(search_query text, p_project_id uuid)
+RETURNS TABLE (
+    id uuid,
+    type text,
+    title text,
+    description text,
+    project_id uuid,
+    extra_info jsonb
+) AS $$
+BEGIN
+    RETURN QUERY
+    -- Search Projects
+    SELECT 
+        p.id,
+        'project'::text as type,
+        p.name as title,
+        p.description,
+        p.id as project_id,
+        jsonb_build_object('color', p.color) as extra_info
+    FROM public.projects p
+    WHERE p.id = p_project_id AND (p.name ILIKE '%' || search_query || '%')
+    
+    UNION ALL
+    
+    -- Search User Stories
+    SELECT 
+        us.id,
+        'user_story'::text as type,
+        us.title,
+        us.description,
+        us.project_id,
+        jsonb_build_object('priority', us.priority, 'status', us.status, 'story_points', us.story_points) as extra_info
+    FROM public.user_stories us
+    WHERE us.project_id = p_project_id AND (us.fts @@ to_tsquery('simple', search_query) OR us.title ILIKE '%' || search_query || '%')
+    
+    UNION ALL
+    
+    -- Search Tasks
+    SELECT 
+        t.id,
+        'task'::text as type,
+        t.title,
+        t.description,
+        us.project_id,
+        jsonb_build_object('status', t.status, 'story_title', us.title) as extra_info
+    FROM public.tasks t
+    JOIN public.user_stories us ON t.user_story_id = us.id
+    WHERE us.project_id = p_project_id AND (t.fts @@ to_tsquery('simple', search_query) OR t.title ILIKE '%' || search_query || '%');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+
+--------------------------------------------------------------------------------
+-- 7. Sprint Burndown Chart Data Generator
+--------------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.get_sprint_burndown(p_sprint_id uuid)
+RETURNS TABLE (
+    day text,
+    ideal numeric,
+    actual numeric
+) AS $$
+DECLARE
+    v_start_date date;
+    v_end_date date;
+    v_total_points numeric;
+    v_days_count integer;
+    v_decrement numeric;
+BEGIN
+    -- Get sprint dates
+    SELECT start_date, end_date INTO v_start_date, v_end_date
+    FROM public.sprints
+    WHERE id = p_sprint_id;
+    
+    IF v_start_date IS NULL OR v_end_date IS NULL THEN
+        RETURN;
+    END IF;
+    
+    -- Get total story points
+    SELECT coalesce(sum(story_points), 0) INTO v_total_points
+    FROM public.user_stories
+    WHERE sprint_id = p_sprint_id;
+    
+    v_days_count := (v_end_date - v_start_date) + 1;
+    IF v_days_count <= 1 THEN
+        v_days_count := 2;
+    END IF;
+    
+    v_decrement := v_total_points::numeric / (v_days_count - 1);
+    
+    RETURN QUERY
+    WITH RECURSIVE calendar AS (
+        SELECT v_start_date AS date_val, 0 AS idx
+        UNION ALL
+        SELECT (date_val + 1)::date, idx + 1
+        FROM calendar
+        WHERE date_val < v_end_date
+    ),
+    completed_points AS (
+        SELECT 
+            c.date_val,
+            coalesce(sum(us.story_points), 0) as done_points
+        FROM calendar c
+        LEFT JOIN public.user_stories us ON us.sprint_id = p_sprint_id 
+            AND us.status = 'done' 
+            AND us.updated_at::date <= c.date_val
+        GROUP BY c.date_val
+    )
+    SELECT 
+        to_char(calendar.date_val, 'Mon DD') AS day,
+        round(greatest(0, v_total_points - (calendar.idx * v_decrement)), 1) AS ideal,
+        CASE 
+            WHEN cp.date_val > current_date THEN NULL
+            ELSE greatest(0, v_total_points - cp.done_points)::numeric
+        END AS actual
+    FROM calendar
+    JOIN completed_points cp ON calendar.date_val = cp.date_val
+    ORDER BY calendar.date_val;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

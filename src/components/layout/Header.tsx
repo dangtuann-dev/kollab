@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { Menu, LogOut, Settings, FolderKanban, ChevronRight } from 'lucide-react'
+import { Menu, LogOut, Settings, FolderKanban, ChevronRight, Search } from 'lucide-react'
 import { useAuthStore, useProjectStore } from '../../stores'
 import { Avatar } from '../ui/Avatar'
 import { supabase } from '../../lib/supabase'
@@ -8,9 +8,10 @@ import { NotificationBell } from './NotificationBell'
 
 interface HeaderProps {
   onOpenMobileMenu: () => void
+  onOpenSearch: () => void
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
+export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }) => {
   const { user } = useAuthStore()
   const { currentProject } = useProjectStore()
   const { projectId } = useParams<{ projectId: string }>()
@@ -56,6 +57,18 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu }) => {
 
       {/* Right side */}
       <div className="flex items-center gap-4">
+        {/* Search trigger button */}
+        <button
+          onClick={onOpenSearch}
+          className="flex items-center gap-2 border border-neutral-200/60 bg-neutral-50 hover:bg-neutral-100/80 transition-all rounded-lg px-2.5 py-1.5 text-xs text-neutral-450 font-medium focus:outline-none select-none hover:shadow-xs group no-print"
+        >
+          <Search className="h-4 w-4 text-neutral-450 group-hover:text-neutral-600 transition-colors" />
+          <span className="hidden sm:inline text-neutral-400 group-hover:text-neutral-500 transition-colors">Tìm kiếm...</span>
+          <kbd className="hidden sm:inline-block px-1.5 py-0.2 text-[9px] font-bold text-neutral-400 bg-white border border-neutral-200 rounded">
+            Ctrl K
+          </kbd>
+        </button>
+
         {/* Notification Bell */}
         <NotificationBell />
 

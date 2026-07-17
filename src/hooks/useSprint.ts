@@ -118,6 +118,16 @@ export function useSprint(projectId: string) {
 
   const completeSprintMutation = useMutation<any, Error, string>({
     mutationFn: async (sprintId) => {
+      // 1. Move unfinished stories in this sprint back to the backlog
+      const { error: storiesError } = await (supabase
+        .from('user_stories') as any)
+        .update({ sprint_id: null, status: 'backlog' })
+        .eq('sprint_id', sprintId)
+        .neq('status', 'done')
+
+      if (storiesError) throw storiesError
+
+      // 2. Complete the sprint
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({ status: 'completed' })
@@ -129,7 +139,7 @@ export function useSprint(projectId: string) {
       return data
     },
     onSuccess: () => {
-      toast.success('Đã hoàn thành Sprint!')
+      toast.success('Đã hoàn thành Sprint và chuyển các Story chưa xong về Backlog!')
       queryClient.invalidateQueries({ queryKey: ['sprints', projectId] })
       queryClient.invalidateQueries({ queryKey: ['activeSprint', projectId] })
       queryClient.invalidateQueries({ queryKey: ['stories', projectId] })

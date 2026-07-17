@@ -1,4 +1,14 @@
 import React from 'react'
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from 'recharts'
 
 interface BurndownDataPoint {
   day: string
@@ -10,135 +20,113 @@ interface BurndownChartProps {
   data: BurndownDataPoint[]
 }
 
-export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
-  if (data.length === 0) {
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
     return (
-      <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-455 text-neutral-400">
-        Không có dữ liệu sprint đang hoạt động cho biểu đồ burndown.
+      <div className="bg-white/95 backdrop-blur-md border border-neutral-200 p-3 rounded-xl shadow-xl font-sans text-xs">
+        <p className="font-bold text-neutral-800 mb-1.5">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2 my-1">
+            <span
+              className="h-2 w-2 rounded-full inline-block"
+              style={{ backgroundColor: entry.stroke }}
+            />
+            <span className="text-neutral-500 font-medium">{entry.name}:</span>
+            <span className="font-bold text-neutral-800">
+              {entry.value !== null ? `${entry.value} SP` : '--'}
+            </span>
+          </div>
+        ))}
       </div>
     )
   }
 
-  const maxVal = Math.max(...data.map((d) => Math.max(d.ideal, d.actual || 0)), 10)
+  return null
+}
 
-  const width = 500
-  const height = 260
-  const padding = 40
-
-  const chartWidth = width - padding * 2
-  const chartHeight = height - padding * 2
-
-  const points = data.map((d, index) => {
-    const x = padding + (index / (data.length - 1 || 1)) * chartWidth
-    const idealY = padding + chartHeight - (d.ideal / maxVal) * chartHeight
-    const actualY = d.actual !== null ? padding + chartHeight - (d.actual / maxVal) * chartHeight : null
-    return { x, idealY, actualY, label: d.day }
-  })
-
-  const idealPath = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.idealY}`).join(' ')
-
-  const actualPoints = points.filter((p) => p.actualY !== null)
-  const actualPath = actualPoints.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.actualY}`).join(' ')
+export const BurndownChart: React.FC<BurndownChartProps> = ({ data }) => {
+  if (!data || data.length === 0) {
+    return (
+      <div className="flex h-72 items-center justify-center border border-dashed border-neutral-350 rounded-2xl text-xs text-neutral-450 bg-neutral-50/50 font-sans">
+        Không có dữ liệu Sprint cho biểu đồ Burndown.
+      </div>
+    )
+  }
 
   return (
-    <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 font-sans">
+    <div className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm flex flex-col gap-4 font-sans h-full">
       <div>
-        <h3 className="text-sm font-bold text-neutral-800">Biểu đồ Sprint Burndown</h3>
-        <p className="text-[11px] text-neutral-450 mt-0.5">Theo dõi nỗ lực còn lại so với tỷ lệ hoàn thành lý tưởng.</p>
+        <h3 className="text-sm font-bold text-neutral-850 tracking-tight">Biểu đồ Sprint Burndown</h3>
+        <p className="text-[11px] text-neutral-450 mt-0.5">
+          Theo dõi tiến độ hoàn thành công việc so với kế hoạch lý tưởng.
+        </p>
       </div>
 
-      <div className="relative w-full overflow-x-auto">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto min-w-[400px]">
-          {}
-          {[0, 0.25, 0.5, 0.75, 1].map((ratio, index) => {
-            const y = padding + ratio * chartHeight
-            const val = Math.round(maxVal * (1 - ratio))
-            return (
-              <g key={index}>
-                <line
-                  x1={padding}
-                  y1={y}
-                  x2={width - padding}
-                  y2={y}
-                  className="stroke-neutral-100"
-                  strokeWidth="1"
-                />
-                <text
-                  x={padding - 8}
-                  y={y + 4}
-                  className="text-[9px] fill-neutral-400 font-bold text-right"
-                  textAnchor="end"
-                >
-                  {val}
-                </text>
-              </g>
-            )
-          })}
-
-          {}
-          {points.map((p, index) => {
-            
-            if (data.length > 10 && index % 2 !== 0) return null
-            return (
-              <text
-                key={index}
-                x={p.x}
-                y={height - padding + 16}
-                className="text-[8px] fill-neutral-400 font-bold"
-                textAnchor="middle"
-              >
-                {p.label}
-              </text>
-            )
-          })}
-
-          {}
-          <path
-            d={idealPath}
-            fill="none"
-            className="stroke-neutral-300"
-            strokeWidth="2"
-            strokeDasharray="4 4"
-          />
-
-          {}
-          {actualPoints.length > 0 && (
-            <path
-              d={actualPath}
-              fill="none"
-              className="stroke-primary-500"
-              strokeWidth="3.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+      <div className="w-full h-64 mt-2">
+        <ResponsiveContainer width="105%" height="100%">
+          <LineChart
+            data={data}
+            margin={{ top: 10, right: 30, left: -20, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f3f5" vertical={false} />
+            <XAxis
+              dataKey="day"
+              stroke="#9ca3af"
+              fontSize={10}
+              tickLine={false}
+              axisLine={false}
+              dy={8}
+              className="font-semibold"
             />
-          )}
-
-          {}
-          {actualPoints.map((p, index) => (
-            <circle
-              key={index}
-              cx={p.x}
-              cy={p.actualY!}
-              r="4.5"
-              className="fill-white stroke-primary-600"
-              strokeWidth="2.5"
+            <YAxis
+              stroke="#9ca3af"
+              fontSize={10}
+              tickLine={false}
+              axisLine={false}
+              dx={-8}
+              className="font-semibold"
+              label={{
+                value: 'Story Points',
+                angle: -90,
+                position: 'insideLeft',
+                offset: 10,
+                style: { fontSize: '10px', fill: '#9ca3af', fontWeight: 'bold' }
+              }}
             />
-          ))}
-        </svg>
-      </div>
-
-      {}
-      <div className="flex items-center justify-center gap-5 text-[11px] font-semibold text-neutral-500 border-t border-neutral-100 pt-3">
-        <div className="flex items-center gap-1.5">
-          <div className="h-0.5 w-6 border-t-2 border-dashed border-neutral-300" />
-          <span>Đường lý thuyết</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <div className="h-0.5 w-6 border-t-[3.5px] border-primary-500 rounded-full" />
-          <span>Thực tế còn lại</span>
-        </div>
+            <Tooltip content={<CustomTooltip />} />
+            <Legend
+              verticalAlign="bottom"
+              height={36}
+              iconType="circle"
+              iconSize={8}
+              className="text-[11px] font-semibold"
+              wrapperStyle={{ fontSize: '11px', paddingTop: '10px', fontWeight: 600 }}
+            />
+            <Line
+              name="Lý tưởng"
+              type="monotone"
+              dataKey="ideal"
+              stroke="#9ca3af"
+              strokeDasharray="4 4"
+              strokeWidth={2}
+              dot={false}
+              activeDot={false}
+            />
+            <Line
+              name="Thực tế"
+              type="monotone"
+              dataKey="actual"
+              stroke="#3b82f6"
+              strokeWidth={3}
+              connectNulls={false}
+              dot={{ r: 4, strokeWidth: 1 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   )
 }
+
 export default BurndownChart

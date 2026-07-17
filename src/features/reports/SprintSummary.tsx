@@ -8,6 +8,8 @@ interface Contributor {
   points: number
 }
 
+import { Button } from '../../components/ui/Button'
+
 interface SprintSummaryProps {
   summary: {
     totalStories: number
@@ -17,9 +19,19 @@ interface SprintSummaryProps {
     averageCycleTime: number
     topContributors: Contributor[]
   } | null
+  isActiveSprint: boolean
+  onCompleteSprint?: () => void
+  canComplete: boolean
+  isCompleting?: boolean
 }
 
-export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
+export const SprintSummary: React.FC<SprintSummaryProps> = ({
+  summary,
+  isActiveSprint,
+  onCompleteSprint,
+  canComplete,
+  isCompleting = false,
+}) => {
   if (!summary) {
     return (
       <div className="flex h-64 items-center justify-center border border-dashed border-neutral-300 rounded-xl text-xs text-neutral-450">
@@ -29,7 +41,21 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans">
+    <div className="flex flex-col gap-4 w-full">
+      {isActiveSprint && canComplete && (
+        <div className="flex justify-end no-print">
+          <Button
+            variant="danger"
+            onClick={onCompleteSprint}
+            isLoading={isCompleting}
+            size="sm"
+            className="text-xs font-bold shrink-0"
+          >
+            Hoàn thành Sprint
+          </Button>
+        </div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 font-sans">
       
       {}
       <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4">
@@ -107,6 +133,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({ summary }) => {
         )}
       </div>
 
+    </div>
     </div>
   )
 }
