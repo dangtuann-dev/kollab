@@ -40,11 +40,11 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
   return (
     <div
       onClick={handleCardClick}
-      className="bg-white rounded-xl border border-neutral-200/80 p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[220px] group border-l-4 border-l-primary-500 hover:border-l-primary-600"
+      className="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200/80 dark:border-neutral-800 p-5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between min-h-[220px] group border-l-4 border-l-primary-500 hover:border-l-primary-600 font-sans"
     >
       <div className="flex flex-col gap-2">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="text-base font-bold text-neutral-900 truncate group-hover:text-primary-600 transition-colors">
+          <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-100 truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
             {project.name}
           </h3>
           <div className="flex items-center gap-1.5 shrink-0">
@@ -60,7 +60,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
                     e.stopPropagation()
                     onEdit?.(project)
                   }}
-                  className="p-1 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-md transition-colors"
+                  className="p-1 text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-md transition-colors"
                   title="Chỉnh sửa dự án"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
@@ -70,7 +70,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
                     e.stopPropagation()
                     onDelete?.(project.id, project.name)
                   }}
-                  className="p-1 text-neutral-400 hover:text-danger-600 hover:bg-danger-50 rounded-md transition-colors"
+                  className="p-1 text-neutral-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-950/40 rounded-md transition-colors"
                   title="Xóa dự án"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -80,20 +80,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
           </div>
         </div>
 
-        <p className="text-xs text-neutral-500 line-clamp-3 leading-relaxed">
+        <p className="text-xs text-neutral-500 dark:text-neutral-400 line-clamp-3 leading-relaxed">
           {project.description || 'Chưa có mô tả.'}
         </p>
       </div>
-      <div className="flex flex-col gap-3.5 border-t border-neutral-100/80 pt-3.5 mt-auto">
+
+      <div className="flex flex-col gap-3.5 border-t border-neutral-100/80 dark:border-neutral-800 pt-3.5 mt-auto">
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-1 text-[11px] font-semibold text-neutral-400">
+            <div className="flex items-center gap-1 text-[11px] font-semibold text-neutral-400 dark:text-neutral-500">
               <Calendar className="h-3.5 w-3.5" />
               <span>
                 Tạo ngày: {project.created_at ? new Date(project.created_at).toLocaleDateString('vi-VN') : 'Chưa xác định'}
               </span>
             </div>
-            <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-md w-fit">
+            <span className="text-[10px] font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/60 px-2 py-0.5 rounded-md w-fit">
               {project.activeSprintsCount || 0} sprint active
             </span>
           </div>
@@ -113,4 +114,5 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
     </div>
   )
 }
+
 export default ProjectCard

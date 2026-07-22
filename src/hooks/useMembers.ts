@@ -22,6 +22,8 @@ export function useMembers(projectId: string) {
       return data as ProjectMember[]
     },
     enabled: !!projectId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 
   const inviteMemberMutation = useMutation<any, Error, { email: string; role: UserRole }>({

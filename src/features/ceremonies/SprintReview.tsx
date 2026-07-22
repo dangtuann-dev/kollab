@@ -58,7 +58,7 @@ export const SprintReview: React.FC = () => {
     if (!criteriaText) return []
     return criteriaText
       .split('\n')
-      .map(line => line.replace(/^[-\*\s\d\.\)]+/, '').trim())
+      .map(line => line.replace(/^[-*\s\d.)]+/, '').trim())
       .filter(Boolean)
   }
 

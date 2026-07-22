@@ -1,28 +1,35 @@
+import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { PrivateRoute } from './PrivateRoute'
 import { AppLayout } from '../components/layout/AppLayout'
-
-import LoginPage from '../features/auth/LoginPage'
-import RegisterPage from '../features/auth/RegisterPage'
-import ForgotPasswordPage from '../features/auth/ForgotPasswordPage'
-
-import ProjectsPage from '../features/projects/ProjectsPage'
-import DashboardPage from '../features/dashboard/DashboardPage'
-import SprintBoardPage from '../features/sprint/SprintBoardPage'
-import BacklogPage from '../features/backlog/BacklogPage'
-import MembersPage from '../features/members/MembersPage'
-import ReportsPage from '../features/reports/ReportsPage'
-
+import { PageSkeleton } from '../components/shared/LoadingSkeleton'
 import AuthInitializer from './AuthInitializer'
-import ProjectSettingsPage from './ProjectSettingsPage'
-import NotFoundPage from './NotFoundPage'
+
+// Lazy-loaded feature pages
+const LoginPage = lazy(() => import('../features/auth/LoginPage'))
+const RegisterPage = lazy(() => import('../features/auth/RegisterPage'))
+const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPasswordPage'))
+
+const ProjectsPage = lazy(() => import('../features/projects/ProjectsPage'))
+const DashboardPage = lazy(() => import('../features/dashboard/DashboardPage'))
+const SprintBoardPage = lazy(() => import('../features/sprint/SprintBoardPage'))
+const BacklogPage = lazy(() => import('../features/backlog/BacklogPage'))
+const MembersPage = lazy(() => import('../features/members/MembersPage'))
+const ReportsPage = lazy(() => import('../features/reports/ReportsPage'))
+
+const ProjectSettingsPage = lazy(() => import('./ProjectSettingsPage'))
+const NotFoundPage = lazy(() => import('./NotFoundPage'))
 
 // Ceremonies imports
-import CeremoniesDashboard from '../features/ceremonies/CeremoniesDashboard'
-import SprintPlanning from '../features/ceremonies/SprintPlanning'
-import DailyStandup from '../features/ceremonies/DailyStandup'
-import SprintReview from '../features/ceremonies/SprintReview'
-import Retrospective from '../features/ceremonies/Retrospective'
+const CeremoniesDashboard = lazy(() => import('../features/ceremonies/CeremoniesDashboard'))
+const SprintPlanning = lazy(() => import('../features/ceremonies/SprintPlanning'))
+const DailyStandup = lazy(() => import('../features/ceremonies/DailyStandup'))
+const SprintReview = lazy(() => import('../features/ceremonies/SprintReview'))
+const Retrospective = lazy(() => import('../features/ceremonies/Retrospective'))
+
+const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
+)
 
 export const router = createBrowserRouter([
   {
@@ -30,15 +37,27 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/login',
-        element: <LoginPage />,
+        element: (
+          <SuspenseWrapper>
+            <LoginPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: '/register',
-        element: <RegisterPage />,
+        element: (
+          <SuspenseWrapper>
+            <RegisterPage />
+          </SuspenseWrapper>
+        ),
       },
       {
         path: '/forgot-password',
-        element: <ForgotPasswordPage />,
+        element: (
+          <SuspenseWrapper>
+            <ForgotPasswordPage />
+          </SuspenseWrapper>
+        ),
       },
 
       {
@@ -53,11 +72,19 @@ export const router = createBrowserRouter([
               },
               {
                 path: '/dashboard',
-                element: <DashboardPage />,
+                element: (
+                  <SuspenseWrapper>
+                    <DashboardPage />
+                  </SuspenseWrapper>
+                ),
               },
               {
                 path: '/projects',
-                element: <ProjectsPage />,
+                element: (
+                  <SuspenseWrapper>
+                    <ProjectsPage />
+                  </SuspenseWrapper>
+                ),
               },
               {
                 path: '/projects/:projectId',
@@ -68,46 +95,86 @@ export const router = createBrowserRouter([
                   },
                   {
                     path: 'board',
-                    element: <SprintBoardPage />,
+                    element: (
+                      <SuspenseWrapper>
+                        <SprintBoardPage />
+                      </SuspenseWrapper>
+                    ),
                   },
                   {
                     path: 'backlog',
-                    element: <BacklogPage />,
+                    element: (
+                      <SuspenseWrapper>
+                        <BacklogPage />
+                      </SuspenseWrapper>
+                    ),
                   },
                   {
                     path: 'members',
-                    element: <MembersPage />,
+                    element: (
+                      <SuspenseWrapper>
+                        <MembersPage />
+                      </SuspenseWrapper>
+                    ),
                   },
                   {
                     path: 'reports',
-                    element: <ReportsPage />,
+                    element: (
+                      <SuspenseWrapper>
+                        <ReportsPage />
+                      </SuspenseWrapper>
+                    ),
                   },
                   {
                     path: 'settings',
-                    element: <ProjectSettingsPage />,
+                    element: (
+                      <SuspenseWrapper>
+                        <ProjectSettingsPage />
+                      </SuspenseWrapper>
+                    ),
                   },
                   {
                     path: 'ceremonies',
                     children: [
                       {
                         path: '',
-                        element: <CeremoniesDashboard />,
+                        element: (
+                          <SuspenseWrapper>
+                            <CeremoniesDashboard />
+                          </SuspenseWrapper>
+                        ),
                       },
                       {
                         path: 'sprint-planning',
-                        element: <SprintPlanning />,
+                        element: (
+                          <SuspenseWrapper>
+                            <SprintPlanning />
+                          </SuspenseWrapper>
+                        ),
                       },
                       {
                         path: 'daily-standup',
-                        element: <DailyStandup />,
+                        element: (
+                          <SuspenseWrapper>
+                            <DailyStandup />
+                          </SuspenseWrapper>
+                        ),
                       },
                       {
                         path: 'sprint-review',
-                        element: <SprintReview />,
+                        element: (
+                          <SuspenseWrapper>
+                            <SprintReview />
+                          </SuspenseWrapper>
+                        ),
                       },
                       {
                         path: 'retrospective',
-                        element: <Retrospective />,
+                        element: (
+                          <SuspenseWrapper>
+                            <Retrospective />
+                          </SuspenseWrapper>
+                        ),
                       },
                     ],
                   },
@@ -120,7 +187,11 @@ export const router = createBrowserRouter([
 
       {
         path: '*',
-        element: <NotFoundPage />,
+        element: (
+          <SuspenseWrapper>
+            <NotFoundPage />
+          </SuspenseWrapper>
+        ),
       },
     ],
   },

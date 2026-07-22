@@ -1,19 +1,29 @@
 import React from 'react'
 import { ChevronUp, ChevronRight, ChevronDown, AlertOctagon } from 'lucide-react'
-import type { Story } from '../../types'
+import type { Story, Task } from '../../types'
 import { Avatar } from '../../components/ui/Avatar'
 
 interface TaskCardProps {
-  story: Story
+  story?: Story
+  task?: Task
   onClick: () => void
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ story, onClick }) => {
+export const TaskCard: React.FC<TaskCardProps> = React.memo(({ story, task, onClick }) => {
+  const item = story || task
+  if (!item) return null
+
+  const priority = (item as any).priority || 'medium'
+  const title = item.title
+  const id = item.id
+  const storyPoints = (item as any).story_points
+  const assignee = (item as any).assignee
+
   const priorityColors = {
     critical: 'border-l-danger-500',
     high: 'border-l-warning-500',
     medium: 'border-l-primary-500',
-    low: 'border-l-neutral-300',
+    low: 'border-l-neutral-300 dark:border-l-neutral-700',
   }
 
   const priorityIcons = {
@@ -26,39 +36,42 @@ export const TaskCard: React.FC<TaskCardProps> = ({ story, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className={`bg-white border border-neutral-200 rounded-lg p-3.5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 ${
-        priorityColors[story.priority] || priorityColors.medium
-      } flex flex-col gap-3 group`}
+      className={`bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-xl p-3.5 shadow-xs hover:shadow-md transition-all duration-200 cursor-pointer border-l-4 ${
+        priorityColors[priority as keyof typeof priorityColors] || priorityColors.medium
+      } flex flex-col gap-2.5 group`}
     >
-      {}
-      <h4 className="text-xs font-bold text-neutral-800 line-clamp-2 leading-relaxed group-hover:text-primary-600 transition-colors">
-        {story.title}
+      {/* Title (compact on mobile) */}
+      <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2 leading-relaxed group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+        {title}
       </h4>
 
-      {}
-      <div className="flex items-center justify-between gap-2 border-t border-neutral-100 pt-2.5">
-        <div className="flex items-center gap-1.5">
-          {priorityIcons[story.priority]}
-          <span className="text-[9px] font-bold text-neutral-400">
-            ST-{story.id.substring(0, 4).toUpperCase()}
+      {/* Details footer */}
+      <div className="flex items-center justify-between gap-2 border-t border-neutral-100 dark:border-neutral-800/80 pt-2 font-sans">
+        <div className="flex items-center gap-1.5 min-w-0">
+          {priorityIcons[priority as keyof typeof priorityIcons]}
+          <span className="text-[9px] font-bold text-neutral-400 dark:text-neutral-500 shrink-0">
+            TS-{id.substring(0, 4).toUpperCase()}
           </span>
-          {story.story_points !== null && (
-            <span className="text-[9px] font-bold bg-neutral-100 text-neutral-600 px-1.5 py-0.5 rounded">
-              {story.story_points} SP
+          {storyPoints !== undefined && storyPoints !== null && (
+            <span className="hidden sm:inline-block text-[9px] font-bold bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 px-1.5 py-0.5 rounded">
+              {storyPoints} SP
             </span>
           )}
         </div>
 
-        {story.assignee && (
+        {assignee && (
           <Avatar
-            src={story.assignee.avatar_url}
-            alt={story.assignee.full_name}
-            fallback={story.assignee.full_name}
+            src={assignee.avatar_url}
+            alt={assignee.full_name || 'Assignee'}
+            fallback={assignee.full_name || 'A'}
             size="xs"
           />
         )}
       </div>
     </div>
   )
-}
+})
+
+TaskCard.displayName = 'TaskCard'
+
 export default TaskCard

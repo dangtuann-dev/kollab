@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -18,6 +19,7 @@ module.exports = {
           700: '#be123c',
           800: '#9f1239',
           900: '#881337',
+          950: '#4c0519',
           DEFAULT: '#e11d48',
         },
         success: {
@@ -31,6 +33,7 @@ module.exports = {
           700: '#047857',
           800: '#065f46',
           900: '#064e3b',
+          950: '#022c22',
           DEFAULT: '#10b981',
         },
         warning: {
@@ -70,6 +73,7 @@ module.exports = {
           700: '#3f3f46',
           800: '#27272a',
           900: '#09090b',
+          950: '#030304',
         }
       },
       fontFamily: {

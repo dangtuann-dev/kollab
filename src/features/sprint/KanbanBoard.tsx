@@ -39,7 +39,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     }
   }, [stories, selectedStoryId])
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = React.useCallback((event: DragEndEvent) => {
     const { active, over } = event
     if (!over) return
 
@@ -50,7 +50,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     if (task && task.status !== newStatus) {
       onUpdateStatus(taskId, newStatus)
     }
-  }
+  }, [tasks, onUpdateStatus])
 
   const handleQuickAdd = (e: React.FormEvent) => {
     e.preventDefault()

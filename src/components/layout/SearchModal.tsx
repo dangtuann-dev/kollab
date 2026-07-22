@@ -31,7 +31,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Debounce query
+  // Debounce query (300ms)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query)
@@ -39,7 +39,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     return () => clearTimeout(handler)
   }, [query])
 
-  // Reset search state on open/close
+  // Auto focus input on modal open
   useEffect(() => {
     if (isOpen) {
       setQuery('')
@@ -63,7 +63,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
       })
 
       if (error) {
-        console.error('Search error:', error)
+        console.error('Search RPC error:', error)
         return []
       }
 
@@ -72,7 +72,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     enabled: !!projectId && debouncedQuery.trim().length >= 2,
   })
 
-  // Local project search for projects listed in store (useful when not in project route)
+  // Local project search for projects listed in store
   const localProjectResults: SearchResult[] =
     debouncedQuery.trim().length >= 2
       ? projects
@@ -87,17 +87,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
           }))
       : []
 
-  // Combine results (filter duplicates)
+  // Combine results (deduplicate)
   const combinedResults: SearchResult[] = []
   const addedIds = new Set<string>()
 
-  // Add local projects search results first
   localProjectResults.forEach((r) => {
     combinedResults.push(r)
     addedIds.add(r.id)
   })
 
-  // Add server RPC results
   if (serverResults) {
     serverResults.forEach((r) => {
       if (!addedIds.has(r.id)) {
@@ -119,7 +117,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     }
   }
 
-  // Keyboard controls
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
@@ -152,16 +150,16 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     setSelectedIndex(0)
   }, [debouncedQuery])
 
-  // Helper to highlight match keyword
+  // Keyword highlighting
   const highlightText = (text: string, highlight: string) => {
     if (!highlight.trim()) return <span>{text}</span>
-    const regex = new RegExp(`(${highlight.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi')
+    const regex = new RegExp(`(${highlight.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi')
     const parts = text.split(regex)
     return (
       <span>
         {parts.map((part, i) =>
           regex.test(part) ? (
-            <mark key={i} className="bg-amber-100 text-amber-800 font-bold rounded-sm px-0.5">
+            <mark key={i} className="bg-amber-100 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200 font-bold rounded-xs px-0.5">
               {part}
             </mark>
           ) : (
@@ -180,14 +178,14 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 no-print">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 no-print">
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-neutral-900/40 backdrop-blur-xs" onClick={onClose} />
+      <div className="fixed inset-0 bg-neutral-900/50 backdrop-blur-xs" onClick={onClose} />
 
       {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-lg rounded-2xl border border-neutral-200 shadow-2xl overflow-hidden flex flex-col font-sans animate-fade-in max-h-[500px]">
+      <div className="relative bg-white dark:bg-neutral-900 w-full max-w-xl rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-2xl overflow-hidden flex flex-col font-sans animate-fade-in max-h-[520px]">
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 border-b border-neutral-100">
+        <div className="flex items-center gap-3 px-4 border-b border-neutral-150 dark:border-neutral-800">
           <Search className="h-5 w-5 text-neutral-400 shrink-0" />
           <input
             ref={inputRef}
@@ -195,9 +193,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
             placeholder="Tìm kiếm dự án, user story, task... (Nhập ít nhất 2 ký tự)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full border-none focus:ring-0 focus:outline-none py-4 text-sm text-neutral-800 placeholder-neutral-400"
+            className="w-full border-none bg-transparent focus:ring-0 focus:outline-none py-4 text-sm text-neutral-800 dark:text-neutral-100 placeholder-neutral-400"
           />
-          <kbd className="hidden sm:inline-block shrink-0 px-2 py-0.5 text-[10px] font-bold text-neutral-400 bg-neutral-100 border border-neutral-200 rounded">
+          <kbd className="hidden sm:inline-block shrink-0 px-2 py-0.5 text-[10px] font-bold text-neutral-400 bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded">
             ESC
           </kbd>
         </div>
@@ -228,7 +226,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               {/* Projects Group */}
               {projectsGroup.length > 0 && (
                 <div>
-                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-450 uppercase tracking-wider">
+                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
                     Dự án
                   </div>
                   {projectsGroup.map((item) => {
@@ -240,13 +238,15 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                         onClick={() => handleItemClick(item)}
                         className={cn(
                           'flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors',
-                          isSelected ? 'bg-primary-50/70 text-primary-950 font-semibold' : 'hover:bg-neutral-50'
+                          isSelected
+                            ? 'bg-primary-50/80 dark:bg-primary-950/40 text-primary-950 dark:text-primary-200 font-semibold'
+                            : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/60'
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <FolderKanban className={cn('h-4 w-4 shrink-0', isSelected ? 'text-primary-600' : 'text-neutral-400')} />
                           <div className="min-w-0">
-                            <p className="text-xs font-bold truncate">
+                            <p className="text-xs font-bold truncate text-neutral-800 dark:text-neutral-100">
                               {highlightText(item.title, debouncedQuery)}
                             </p>
                           </div>
@@ -261,7 +261,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               {/* Stories Group */}
               {storiesGroup.length > 0 && (
                 <div>
-                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-450 uppercase tracking-wider">
+                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
                     User Stories
                   </div>
                   {storiesGroup.map((item) => {
@@ -273,16 +273,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                         onClick={() => handleItemClick(item)}
                         className={cn(
                           'flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors',
-                          isSelected ? 'bg-primary-50/70 text-primary-950 font-semibold' : 'hover:bg-neutral-50'
+                          isSelected
+                            ? 'bg-primary-50/80 dark:bg-primary-950/40 text-primary-950 dark:text-primary-200 font-semibold'
+                            : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/60'
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <ListTodo className={cn('h-4 w-4 shrink-0', isSelected ? 'text-primary-600' : 'text-neutral-400')} />
                           <div className="min-w-0">
-                            <p className="text-xs font-bold truncate">
+                            <p className="text-xs font-bold truncate text-neutral-800 dark:text-neutral-100">
                               {highlightText(item.title, debouncedQuery)}
                             </p>
-                            <p className="text-[10px] text-neutral-400 truncate mt-0.5">
+                            <p className="text-[10px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
                               Backlog / Story Points: {item.extra_info?.story_points || 'Chưa định lượng'}
                             </p>
                           </div>
@@ -297,7 +299,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
               {/* Tasks Group */}
               {tasksGroup.length > 0 && (
                 <div>
-                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-450 uppercase tracking-wider">
+                  <div className="px-3 py-1.5 text-[10px] font-extrabold text-neutral-400 dark:text-neutral-500 uppercase tracking-wider">
                     Công việc (Tasks)
                   </div>
                   {tasksGroup.map((item) => {
@@ -309,16 +311,18 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
                         onClick={() => handleItemClick(item)}
                         className={cn(
                           'flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl cursor-pointer transition-colors',
-                          isSelected ? 'bg-primary-50/70 text-primary-950 font-semibold' : 'hover:bg-neutral-50'
+                          isSelected
+                            ? 'bg-primary-50/80 dark:bg-primary-950/40 text-primary-950 dark:text-primary-200 font-semibold'
+                            : 'hover:bg-neutral-50 dark:hover:bg-neutral-800/60'
                         )}
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <Target className={cn('h-4 w-4 shrink-0', isSelected ? 'text-primary-600' : 'text-neutral-400')} />
                           <div className="min-w-0">
-                            <p className="text-xs font-bold truncate">
+                            <p className="text-xs font-bold truncate text-neutral-800 dark:text-neutral-100">
                               {highlightText(item.title, debouncedQuery)}
                             </p>
-                            <p className="text-[10px] text-neutral-400 truncate mt-0.5">
+                            <p className="text-[10px] text-neutral-400 dark:text-neutral-500 truncate mt-0.5">
                               {item.extra_info?.story_title ? `Story: ${item.extra_info.story_title}` : 'Subtask'}
                             </p>
                           </div>

@@ -48,6 +48,8 @@ export function useProjects() {
       return formatted as any[]
     },
     enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
   })
 
   const createProjectMutation = useMutation<any, Error, { name: string; description: string; start_date?: string; end_date?: string }>({

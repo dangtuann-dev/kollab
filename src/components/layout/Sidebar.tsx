@@ -111,50 +111,49 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
   return (
     <aside
       className={cn(
-        'h-full flex flex-col bg-white border-r border-neutral-200 transition-all duration-300 z-20',
+        'h-full flex flex-col bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-800 transition-all duration-300 z-20 font-sans',
         isCollapsed ? 'w-20' : 'w-72',
         isMobile && 'w-full h-full'
       )}
     >
-      {}
-      <div className="flex items-center justify-between h-16 px-5 border-b border-neutral-200">
+      {/* Brand logo */}
+      <div className="flex items-center justify-between h-16 px-5 border-b border-neutral-200 dark:border-neutral-800">
         <Link
           to="/projects"
-          className="flex items-center gap-2.5 font-bold text-neutral-900 focus:outline-none"
+          className="flex items-center gap-2.5 font-bold text-neutral-900 dark:text-white focus:outline-none"
           onClick={onClose}
         >
           <div className="h-9 w-9 shrink-0">
             <svg viewBox="0 0 100 100" className="h-full w-full">
               <rect width="100" height="100" rx="22" fill="#09090b"/>
-              <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
-              <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
-              <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
+              <path d="M32 25V75" stroke="#ffffff" strokeWidth="12" strokeLinecap="round"/>
+              <path d="M38 50L64 26" stroke="#ffffff" strokeWidth="11" strokeLinecap="round"/>
+              <path d="M48 41L68 74" stroke="#e11d48" strokeWidth="12" strokeLinecap="round"/>
             </svg>
           </div>
           {!isCollapsed && <span className="text-lg tracking-tight font-bold font-sans">Kollab</span>}
         </Link>
         
-        {}
         {!isMobile && (
           <button
             onClick={toggleSidebar}
-            className="text-neutral-400 hover:text-neutral-600 rounded-lg p-1 hover:bg-neutral-50 transition-colors focus:outline-none focus:ring-1 focus:ring-neutral-300"
+            className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 rounded-lg p-1 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors focus:outline-none"
           >
             {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
         )}
       </div>
 
-      {}
+      {/* Project selector */}
       {projectId && !isCollapsed && projects.length > 0 && (
-        <div className="px-4 py-3 border-b border-neutral-100">
+        <div className="px-4 py-3 border-b border-neutral-100 dark:border-neutral-800">
           <label className="block text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1.5 px-1">
             Dự án hiện tại
           </label>
           <select
             value={projectId}
             onChange={handleProjectChange}
-            className="w-full text-xs font-semibold bg-neutral-50 border border-neutral-200 rounded-lg py-2 px-2.5 text-neutral-800 focus:outline-none focus:ring-1 focus:ring-primary-500"
+            className="w-full text-xs font-semibold bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-2 px-2.5 text-neutral-800 dark:text-neutral-100 focus:outline-none focus:ring-1 focus:ring-primary-500"
           >
             {projects.map((proj) => (
               <option key={proj.id} value={proj.id}>
@@ -166,10 +165,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         </div>
       )}
 
-      {}
+      {/* Navigation menu */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {mainNavItems.map((item) => {
-          
           if (item.requireProject && !projectId) return null
 
           return (
@@ -180,10 +178,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
               onClick={onClose}
               className={({ isActive }) =>
                 cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 group focus:outline-none',
+                  'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 group focus:outline-none',
                   isActive
-                    ? 'bg-primary-50 text-primary-700 font-bold'
-                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900',
+                    ? 'bg-primary-50 dark:bg-primary-950/60 text-primary-700 dark:text-primary-300 font-bold'
+                    : 'text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800/60 hover:text-neutral-900 dark:hover:text-neutral-100',
                   isCollapsed && 'justify-center px-2'
                 )
               }
@@ -191,7 +189,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
             >
               {({ isActive }) => (
                 <>
-                  <span className={cn(isActive ? 'text-primary-600' : 'text-neutral-400 group-hover:text-neutral-600')}>
+                  <span className={cn(isActive ? 'text-primary-600 dark:text-primary-400' : 'text-neutral-400 dark:text-neutral-500 group-hover:text-neutral-600 dark:group-hover:text-neutral-300')}>
                     {item.icon}
                   </span>
                   {!isCollapsed && <span>{item.name}</span>}
@@ -202,8 +200,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
         })}
       </nav>
 
-      {}
-      <div className="p-4 border-t border-neutral-200 bg-neutral-50/50">
+      {/* User profile footer */}
+      <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/40">
         <div className={cn('flex items-center gap-3', isCollapsed && 'justify-center')}>
           <Avatar
             src={user?.user_metadata?.avatar_url}
@@ -212,11 +210,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           />
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-neutral-800 truncate">
+              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 truncate">
                 {user?.user_metadata?.full_name || 'Khách'}
               </p>
               {projectId && role && (
-                <p className="text-xs text-primary-600 font-medium truncate mt-0.5">
+                <p className="text-xs text-primary-600 dark:text-primary-400 font-medium truncate mt-0.5">
                   {roleLabels[role] || 'Developer'}
                 </p>
               )}
@@ -228,7 +226,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           {!isCollapsed && (
             <button
               onClick={handleLogout}
-              className="text-neutral-400 hover:text-danger-600 rounded p-1 hover:bg-neutral-100 transition-colors focus:outline-none"
+              className="text-neutral-400 hover:text-danger-600 rounded p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors focus:outline-none"
               title="Đăng xuất"
             >
               <LogOut className="h-4.5 w-4.5" />
@@ -239,4 +237,5 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
     </aside>
   )
 }
+
 export default Sidebar

@@ -139,12 +139,14 @@ export function useReports(projectId: string, sprintId?: string) {
     const start = parseISO(activeSprint.start_date)
     const end = parseISO(activeSprint.end_date)
 
-    let days: Date[] = []
-    try {
-      days = eachDayOfInterval({ start, end })
-    } catch (e) {
-      return []
-    }
+    const days: Date[] = (() => {
+      try {
+        return eachDayOfInterval({ start, end })
+      } catch {
+        return []
+      }
+    })()
+    if (days.length === 0) return []
 
     const sprintStories = stories.filter((s) => s.sprint_id === activeSprint.id)
     const totalPoints = sprintStories.reduce((sum, s) => sum + (s.story_points || 0), 0)
@@ -180,29 +182,95 @@ export function useReports(projectId: string, sprintId?: string) {
 
     const sprintStories = stories.filter((s) => s.sprint_id === activeSprint.id)
     const totalStories = sprintStories.length
-    const completedStories = sprintStories.filter((s) => s.status === 'done').length
-    
-    const totalPoints = sprintStories.reduce((sum, s) => sum + (s.story_points || 0), 0)
-    const completedPoints = sprintStories
-      .filter((s) => s.status === 'done')
-      .reduce((sum, s) => sum + (s.story_points || 0), 0)
+    const completedStoriesList = sprintStories.filter((s) => s.status === 'done')
+    const incompletedStoriesList = sprintStories.filter((s) => s.status !== 'done')
+    const completedStories = completedStoriesList.length
+    const carryoverCount = incompletedStoriesList.length
 
-    let cycleTimes: number[] = []
-    sprintStories
-      .filter((s) => s.status === 'done')
-      .forEach((s) => {
-        const created = new Date(s.created_at).getTime()
-        const completed = new Date(s.updated_at).getTime()
-        const diffDays = Math.ceil((completed - created) / (1000 * 60 * 60 * 24))
-        cycleTimes.push(diffDays > 0 ? diffDays : 1)
-      })
-    const averageCycleTime = cycleTimes.length > 0
+    const completionRate = totalStories > 0 ? Math.round((completedStories / totalStories) * 100) : 0
+
+    const totalPoints = sprintStories.reduce((sum, s) => sum + (s.story_points || 0), 0)
+    const completedPoints = completedStoriesList.reduce((sum, s) => sum + (s.story_points || 0), 0)
+
+    // Calculate story lead times & sparkline data
+    const storyLeadTimes = sprintStories.map((s) => {
+      const created = new Date(s.created_at).getTime()
+      const updated = new Date(s.updated_at).getTime()
+      const diffDays = Math.max(1, Math.ceil((updated - created) / (1000 * 60 * 60 * 24)))
+      return {
+        id: s.id,
+        title: s.title,
+        status: s.status,
+        points: s.story_points || 0,
+        leadTime: diffDays,
+      }
+    })
+
+    const cycleTimes = completedStoriesList.map((s) => {
+      const created = new Date(s.created_at).getTime()
+      const completed = new Date(s.updated_at).getTime()
+      return Math.max(1, Math.ceil((completed - created) / (1000 * 60 * 60 * 24)))
+    })
+
+    const averageLeadTime = cycleTimes.length > 0
       ? Math.round((cycleTimes.reduce((sum, t) => sum + t, 0) / cycleTimes.length) * 10) / 10
       : 0
 
+    // Compare with previous completed sprint
+    const completedSprints = sprints
+      .filter((s) => s.status === 'completed' && s.id !== activeSprint.id)
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+    const prevSprint = completedSprints[0]
+    let prevSprintComparison = {
+      completionRateChange: 0,
+      velocityChange: 0,
+      leadTimeChange: 0,
+      hasPrevious: false,
+    }
+
+    if (prevSprint) {
+      const prevStories = stories.filter((s) => s.sprint_id === prevSprint.id)
+      const prevTotal = prevStories.length
+      const prevCompleted = prevStories.filter((s) => s.status === 'done').length
+      const prevCompletionRate = prevTotal > 0 ? (prevCompleted / prevTotal) * 100 : 0
+      const prevVelocity = prevStories
+        .filter((s) => s.status === 'done')
+        .reduce((sum, s) => sum + (s.story_points || 0), 0)
+
+      const prevCycleTimes = prevStories
+        .filter((s) => s.status === 'done')
+        .map((s) => {
+          const created = new Date(s.created_at).getTime()
+          const completed = new Date(s.updated_at).getTime()
+          return Math.max(1, Math.ceil((completed - created) / (1000 * 60 * 60 * 24)))
+        })
+      const prevLeadTime = prevCycleTimes.length > 0
+        ? prevCycleTimes.reduce((sum, t) => sum + t, 0) / prevCycleTimes.length
+        : 0
+
+      prevSprintComparison = {
+        completionRateChange: Math.round(completionRate - prevCompletionRate),
+        velocityChange: Math.round(completedPoints - prevVelocity),
+        leadTimeChange: averageLeadTime > 0 && prevLeadTime > 0 ? Math.round(((averageLeadTime - prevLeadTime) / prevLeadTime) * 100) : 0,
+        hasPrevious: true,
+      }
+    }
+
+    // Historical average velocity for capacity recommendation
+    const allCompletedSprints = sprints.filter((s) => s.status === 'completed')
+    let totalPastVelocity = 0
+    allCompletedSprints.forEach((s) => {
+      totalPastVelocity += stories
+        .filter((st) => st.sprint_id === s.id && st.status === 'done')
+        .reduce((sum, st) => sum + (st.story_points || 0), 0)
+    })
+    const avgPastVelocity = allCompletedSprints.length > 0 ? totalPastVelocity / allCompletedSprints.length : completedPoints || 10
+    const suggestedCapacity = Math.round(avgPastVelocity * 1.1)
+
     const contributorMap: Record<string, { name: string; avatar?: string | null; points: number }> = {}
-    sprintStories
-      .filter((s) => s.status === 'done' && s.assignee)
+    completedStoriesList
+      .filter((s) => s.assignee)
       .forEach((s) => {
         const assignee = s.assignee!
         if (!contributorMap[assignee.id]) {
@@ -218,9 +286,17 @@ export function useReports(projectId: string, sprintId?: string) {
     return {
       totalStories,
       completedStories,
+      incompletedStories: carryoverCount,
       totalPoints,
       completedPoints,
-      averageCycleTime,
+      completionRate,
+      averageLeadTime,
+      carryoverCount,
+      storyLeadTimes,
+      completedStoriesList,
+      incompletedStoriesList,
+      prevSprintComparison,
+      suggestedCapacity,
       topContributors,
     }
   }

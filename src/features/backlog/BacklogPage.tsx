@@ -29,6 +29,16 @@ import { Button } from '../../components/ui/Button'
 import { Spinner } from '../../components/ui/Spinner'
 import type { Story, ProjectMember, Sprint } from '../../types'
 
+// Droppable container wrapper
+const DroppableColumn: React.FC<{ id: string; children: React.ReactNode; className?: string }> = ({ id, children, className }) => {
+  const { setNodeRef } = useDroppable({ id })
+  return (
+    <div ref={setNodeRef} className={className}>
+      {children}
+    </div>
+  )
+}
+
 export const BacklogPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>()
   const projectIdStr = projectId || ''
@@ -238,16 +248,6 @@ export const BacklogPage: React.FC = () => {
 
   const projectMembers = project?.members || []
   const labelOptions = ['Feature', 'Bug', 'UI/UX', 'Refactor', 'Backend', 'Testing']
-
-  // Droppable container wrapper
-  const DroppableColumn: React.FC<{ id: string; children: React.ReactNode; className?: string }> = ({ id, children, className }) => {
-    const { setNodeRef } = useDroppable({ id })
-    return (
-      <div ref={setNodeRef} className={className}>
-        {children}
-      </div>
-    )
-  }
 
   const isStartSprintActive = selectedSprint && selectedSprint.status === 'planning' && sprintStories.length > 0
 

@@ -60,7 +60,7 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
   // 3. Mutation to update task details/status (Optimistic UI)
   const updateTaskMutation = useMutation<any, Error, Partial<Task> & { id: string }, { previousTasks: Task[] | undefined }>({
     mutationFn: async (vars) => {
-      const { id, assignee, user_story, ...updates } = vars
+      const { id, assignee: _assignee, user_story: _user_story, ...updates } = vars
       
       const { data, error } = await ((supabase
         .from('tasks') as any)

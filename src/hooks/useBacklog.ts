@@ -164,7 +164,7 @@ export function useBacklog(
   const reorderStoriesMutation = useMutation<any, Error, Story[], { previousStories: Story[] | undefined }>({
     mutationFn: async (updatedStories) => {
       const updates = updatedStories.map((story) => {
-        const { assignee, reporter, ...dbStory } = story
+        const { assignee: _assignee, reporter: _reporter, ...dbStory } = story
         return dbStory
       })
 

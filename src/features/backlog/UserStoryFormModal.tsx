@@ -115,8 +115,19 @@ export const UserStoryFormModal: React.FC<UserStoryFormModalProps> = ({
         })
         setSelectedLabels([])
       }
+    } else {
+      reset({
+        title: '',
+        description: '',
+        acceptance_criteria: '',
+        story_points: '',
+        priority: 'medium',
+        assignee_id: '',
+        sprint_id: '',
+      })
+      setSelectedLabels([])
     }
-  }, [isOpen, story, setValue, reset])
+  }, [isOpen, story, reset, setValue])
 
   const saveMutation = useMutation({
     mutationFn: async (data: StoryFormInputs) => {
