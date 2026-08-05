@@ -201,28 +201,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
       </nav>
 
       {/* User profile footer */}
-      <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/40">
+      <div className="p-3 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/40">
         <div className={cn('flex items-center gap-3', isCollapsed && 'justify-center')}>
-          <Avatar
-            src={user?.user_metadata?.avatar_url}
-            alt={user?.user_metadata?.full_name || user?.email || 'User'}
-            size="sm"
-          />
-          {!isCollapsed && (
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 truncate">
-                {user?.user_metadata?.full_name || 'Khách'}
-              </p>
-              {projectId && role && (
-                <p className="text-xs text-primary-600 dark:text-primary-400 font-medium truncate mt-0.5">
-                  {roleLabels[role] || 'Developer'}
+          <Link to="/profile" onClick={onClose} className="flex items-center gap-3 flex-1 min-w-0 group">
+            <Avatar
+              src={user?.user_metadata?.avatar_url}
+              alt={user?.user_metadata?.full_name || user?.email || 'User'}
+              size="sm"
+            />
+            {!isCollapsed && (
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-neutral-800 dark:text-neutral-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                  {user?.user_metadata?.full_name || 'Khách'}
                 </p>
-              )}
-              {!projectId && (
-                <p className="text-[10px] text-neutral-400 truncate mt-0.5">Chưa vào dự án</p>
-              )}
-            </div>
-          )}
+                {projectId && role ? (
+                  <p className="text-xs text-primary-600 dark:text-primary-400 font-medium truncate mt-0.5">
+                    {roleLabels[role] || 'Developer'}
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-neutral-400 truncate mt-0.5">Hồ sơ cá nhân</p>
+                )}
+              </div>
+            )}
+          </Link>
           {!isCollapsed && (
             <button
               onClick={handleLogout}

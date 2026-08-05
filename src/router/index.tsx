@@ -41,6 +41,7 @@ const MembersPage = lazyWithRetry(() => import('../features/members/MembersPage'
 const ReportsPage = lazyWithRetry(() => import('../features/reports/ReportsPage'))
 
 const ProjectSettingsPage = lazyWithRetry(() => import('./ProjectSettingsPage'))
+const ProfilePage = lazyWithRetry(() => import('../features/profile/ProfilePage'))
 const NotFoundPage = lazyWithRetry(() => import('./NotFoundPage'))
 
 const CeremoniesDashboard = lazyWithRetry(() => import('../features/ceremonies/CeremoniesDashboard'))
@@ -106,6 +107,14 @@ export const router = createBrowserRouter([
                 element: (
                   <SuspenseWrapper>
                     <ProjectsPage />
+                  </SuspenseWrapper>
+                ),
+              },
+              {
+                path: '/profile',
+                element: (
+                  <SuspenseWrapper>
+                    <ProfilePage />
                   </SuspenseWrapper>
                 ),
               },

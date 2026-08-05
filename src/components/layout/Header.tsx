@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
-import { Menu, LogOut, Settings, FolderKanban, ChevronRight, Search } from 'lucide-react'
+import { Menu, LogOut, Settings, FolderKanban, ChevronRight, Search, User } from 'lucide-react'
 import { useAuthStore, useProjectStore } from '../../stores'
 import { Avatar } from '../ui/Avatar'
 import { ThemeToggle } from '../ui/ThemeToggle'
@@ -111,6 +111,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
                 </div>
 
                 <div className="py-1">
+                  <Link
+                    to="/profile"
+                    onClick={() => setProfileDropdownOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+                  >
+                    <User className="h-4 w-4 text-neutral-400" />
+                    <span>Hồ sơ & Cài đặt</span>
+                  </Link>
+
                   <Link
                     to={projectId ? `/projects/${projectId}/settings` : '/projects'}
                     onClick={() => setProfileDropdownOpen(false)}
