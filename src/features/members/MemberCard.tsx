@@ -22,13 +22,20 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   const isPO = currentUserRole === 'product_owner'
   const isOwnCard = member.user_id === user?.id
 
-  const roleConfigs = {
-    product_owner: { label: 'Product Owner', variant: 'danger' as const },
-    scrum_master: { label: 'Scrum Master', variant: 'purple' as const },
-    developer: { label: 'Developer', variant: 'success' as const },
+  const getRoleInfo = (r: string) => {
+    switch (r) {
+      case 'product_owner':
+        return { label: 'Product Owner', variant: 'danger' as const }
+      case 'scrum_master':
+        return { label: 'Scrum Master', variant: 'purple' as const }
+      case 'developer':
+        return { label: 'Developer', variant: 'success' as const }
+      default:
+        return { label: r, variant: 'info' as const }
+    }
   }
 
-  const currentRoleInfo = roleConfigs[member.role] || roleConfigs.developer
+  const currentRoleInfo = getRoleInfo(member.role)
 
   const handleRoleChange = (nextRole: UserRole) => {
     setMenuOpen(false)

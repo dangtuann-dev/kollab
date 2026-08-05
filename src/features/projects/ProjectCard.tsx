@@ -20,13 +20,21 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onEdit, onDel
   const navigate = useNavigate()
   const { user } = useAuthStore()
 
-  const roleConfigs = {
-    product_owner: { label: 'PO', variant: 'danger' as const },
-    scrum_master: { label: 'SM', variant: 'purple' as const },
-    developer: { label: 'Dev', variant: 'success' as const },
+  const getRoleInfo = (r?: UserRole | null) => {
+    if (!r) return null
+    switch (r) {
+      case 'product_owner':
+        return { label: 'PO', variant: 'danger' as const }
+      case 'scrum_master':
+        return { label: 'SM', variant: 'purple' as const }
+      case 'developer':
+        return { label: 'Dev', variant: 'success' as const }
+      default:
+        return { label: r, variant: 'info' as const }
+    }
   }
 
-  const roleInfo = project.userRole ? roleConfigs[project.userRole] : null
+  const roleInfo = getRoleInfo(project.userRole)
   const isOwner = project.owner_id === user?.id || project.userRole === 'product_owner'
 
   const handleCardClick = () => {

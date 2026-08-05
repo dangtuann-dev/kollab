@@ -2,7 +2,7 @@ import type { Database } from './database.types'
 
 export type * from './database.types'
 
-export type UserRole = 'product_owner' | 'scrum_master' | 'developer'
+export type UserRole = 'product_owner' | 'scrum_master' | 'developer' | (string & {})
 export type StoryStatus = 'backlog' | 'sprint' | 'done'
 export type StoryPriority = 'critical' | 'high' | 'medium' | 'low'
 export type SprintStatus = 'planning' | 'active' | 'completed'

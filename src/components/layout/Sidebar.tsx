@@ -216,7 +216,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
                 </p>
                 {projectId && role ? (
                   <p className="text-xs text-primary-600 dark:text-primary-400 font-medium truncate mt-0.5">
-                    {roleLabels[role] || 'Developer'}
+                    {roleLabels[role as keyof typeof roleLabels] || role}
                   </p>
                 ) : (
                   <p className="text-[10px] text-neutral-400 truncate mt-0.5">Hồ sơ cá nhân</p>
