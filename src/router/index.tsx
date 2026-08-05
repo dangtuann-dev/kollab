@@ -4,26 +4,50 @@ import { PrivateRoute } from './PrivateRoute'
 import { AppLayout } from '../components/layout/AppLayout'
 import { PageSkeleton } from '../components/shared/LoadingSkeleton'
 import AuthInitializer from './AuthInitializer'
+import { RouteErrorElement } from './RouteErrorElement'
 
-const LoginPage = lazy(() => import('../features/auth/LoginPage'))
-const RegisterPage = lazy(() => import('../features/auth/RegisterPage'))
-const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPasswordPage'))
+function lazyWithRetry<T extends React.ComponentType<any>>(
+  componentImport: () => Promise<{ default: T }>
+) {
+  return lazy(async () => {
+    const pageHasAlreadyBeenReloaded = JSON.parse(
+      sessionStorage.getItem('page_reloaded_for_chunk_error') || 'false'
+    )
 
-const ProjectsPage = lazy(() => import('../features/projects/ProjectsPage'))
-const DashboardPage = lazy(() => import('../features/dashboard/DashboardPage'))
-const SprintBoardPage = lazy(() => import('../features/sprint/SprintBoardPage'))
-const BacklogPage = lazy(() => import('../features/backlog/BacklogPage'))
-const MembersPage = lazy(() => import('../features/members/MembersPage'))
-const ReportsPage = lazy(() => import('../features/reports/ReportsPage'))
+    try {
+      const component = await componentImport()
+      sessionStorage.setItem('page_reloaded_for_chunk_error', 'false')
+      return component
+    } catch (error) {
+      if (!pageHasAlreadyBeenReloaded) {
+        sessionStorage.setItem('page_reloaded_for_chunk_error', 'true')
+        window.location.reload()
+        return new Promise<{ default: T }>(() => {})
+      }
+      throw error
+    }
+  })
+}
 
-const ProjectSettingsPage = lazy(() => import('./ProjectSettingsPage'))
-const NotFoundPage = lazy(() => import('./NotFoundPage'))
+const LoginPage = lazyWithRetry(() => import('../features/auth/LoginPage'))
+const RegisterPage = lazyWithRetry(() => import('../features/auth/RegisterPage'))
+const ForgotPasswordPage = lazyWithRetry(() => import('../features/auth/ForgotPasswordPage'))
 
-const CeremoniesDashboard = lazy(() => import('../features/ceremonies/CeremoniesDashboard'))
-const SprintPlanning = lazy(() => import('../features/ceremonies/SprintPlanning'))
-const DailyStandup = lazy(() => import('../features/ceremonies/DailyStandup'))
-const SprintReview = lazy(() => import('../features/ceremonies/SprintReview'))
-const Retrospective = lazy(() => import('../features/ceremonies/Retrospective'))
+const ProjectsPage = lazyWithRetry(() => import('../features/projects/ProjectsPage'))
+const DashboardPage = lazyWithRetry(() => import('../features/dashboard/DashboardPage'))
+const SprintBoardPage = lazyWithRetry(() => import('../features/sprint/SprintBoardPage'))
+const BacklogPage = lazyWithRetry(() => import('../features/backlog/BacklogPage'))
+const MembersPage = lazyWithRetry(() => import('../features/members/MembersPage'))
+const ReportsPage = lazyWithRetry(() => import('../features/reports/ReportsPage'))
+
+const ProjectSettingsPage = lazyWithRetry(() => import('./ProjectSettingsPage'))
+const NotFoundPage = lazyWithRetry(() => import('./NotFoundPage'))
+
+const CeremoniesDashboard = lazyWithRetry(() => import('../features/ceremonies/CeremoniesDashboard'))
+const SprintPlanning = lazyWithRetry(() => import('../features/ceremonies/SprintPlanning'))
+const DailyStandup = lazyWithRetry(() => import('../features/ceremonies/DailyStandup'))
+const SprintReview = lazyWithRetry(() => import('../features/ceremonies/SprintReview'))
+const Retrospective = lazyWithRetry(() => import('../features/ceremonies/Retrospective'))
 
 const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
   <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
@@ -32,6 +56,7 @@ const SuspenseWrapper = ({ children }: { children: React.ReactNode }) => (
 export const router = createBrowserRouter([
   {
     element: <AuthInitializer />,
+    errorElement: <RouteErrorElement />,
     children: [
       {
         path: '/login',
