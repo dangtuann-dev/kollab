@@ -9,6 +9,7 @@ interface ProjectOnboardingChecklistProps {
   hasActiveSprint?: boolean
   memberCount?: number
   onOpenCreateStory?: () => void
+  onOpenCreateSprint?: () => void
   onOpenInviteMember?: () => void
 }
 
@@ -18,6 +19,7 @@ export const ProjectOnboardingChecklist: React.FC<ProjectOnboardingChecklistProp
   hasActiveSprint = false,
   memberCount = 1,
   onOpenCreateStory,
+  onOpenCreateSprint,
   onOpenInviteMember,
 }) => {
   const navigate = useNavigate()
@@ -52,7 +54,11 @@ export const ProjectOnboardingChecklist: React.FC<ProjectOnboardingChecklistProp
       actionText: 'Tạo Sprint',
       icon: <Play className="h-3.5 w-3.5" />,
       onClick: () => {
-        navigate(`/projects/${projectId}/planning`)
+        if (onOpenCreateSprint) {
+          onOpenCreateSprint()
+        } else {
+          navigate(`/projects/${projectId}/backlog`)
+        }
       },
     },
     {

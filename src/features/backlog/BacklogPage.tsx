@@ -265,6 +265,7 @@ export const BacklogPage: React.FC = () => {
         hasActiveSprint={sprints.some((s) => s.status === 'active' || s.status === 'completed')}
         memberCount={projectMembers.length}
         onOpenCreateStory={handleOpenCreateStory}
+        onOpenCreateSprint={handleOpenCreateSprint}
       />
 
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
