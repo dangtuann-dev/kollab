@@ -67,7 +67,6 @@ export function useSprint(projectId: string) {
 
   const startSprintMutation = useMutation<any, Error, { sprintId: string; start_date: string; end_date: string }>({
     mutationFn: async (vars) => {
-      
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({
@@ -118,7 +117,6 @@ export function useSprint(projectId: string) {
 
   const completeSprintMutation = useMutation<any, Error, string>({
     mutationFn: async (sprintId) => {
-      // 1. Move unfinished stories in this sprint back to the backlog
       const { error: storiesError } = await (supabase
         .from('user_stories') as any)
         .update({ sprint_id: null, status: 'backlog' })
@@ -127,7 +125,6 @@ export function useSprint(projectId: string) {
 
       if (storiesError) throw storiesError
 
-      // 2. Complete the sprint
       const { data, error } = await ((supabase
         .from('sprints') as any)
         .update({ status: 'completed' })
@@ -159,5 +156,3 @@ export function useSprint(projectId: string) {
     completeSprint: completeSprintMutation.mutateAsync,
   }
 }
-
-

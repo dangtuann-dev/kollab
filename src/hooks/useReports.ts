@@ -4,7 +4,6 @@ import type { Sprint, Story, Task } from '../types'
 import { eachDayOfInterval, format, parseISO, isBefore, isAfter, isSameDay } from 'date-fns'
 
 export function useReports(projectId: string, sprintId?: string) {
-  // 1. Fetch project info
   const projectQuery = useQuery({
     queryKey: ['project', projectId],
     queryFn: async () => {
@@ -19,7 +18,6 @@ export function useReports(projectId: string, sprintId?: string) {
     enabled: !!projectId,
   })
 
-  // 2. Fetch project members
   const membersQuery = useQuery({
     queryKey: ['members', projectId],
     queryFn: async () => {
@@ -33,7 +31,6 @@ export function useReports(projectId: string, sprintId?: string) {
     enabled: !!projectId,
   })
 
-  // 3. Fetch sprints
   const sprintsQuery = useQuery<Sprint[]>({
     queryKey: ['sprints', projectId],
     queryFn: async () => {
@@ -48,7 +45,6 @@ export function useReports(projectId: string, sprintId?: string) {
     enabled: !!projectId,
   })
 
-  // 4. Fetch stories
   const storiesQuery = useQuery<Story[]>({
     queryKey: ['stories', projectId],
     queryFn: async () => {
@@ -66,11 +62,9 @@ export function useReports(projectId: string, sprintId?: string) {
   const stories = storiesQuery.data || []
   const members = membersQuery.data || []
 
-  // Resolve target sprint
   const activeSprint = sprints.find((s) => s.id === (sprintId || s.status === 'active'))
   const targetSprintId = activeSprint?.id
 
-  // 5. Fetch sprint tasks
   const tasksQuery = useQuery<Task[]>({
     queryKey: ['tasks-sprint', projectId, targetSprintId],
     queryFn: async () => {
@@ -96,7 +90,6 @@ export function useReports(projectId: string, sprintId?: string) {
     enabled: !!projectId && !!targetSprintId,
   })
 
-  // 6. Fetch RPC Burndown Data
   const burndownRPCQuery = useQuery({
     queryKey: ['burndown-rpc', targetSprintId],
     queryFn: async () => {
@@ -132,7 +125,6 @@ export function useReports(projectId: string, sprintId?: string) {
     })
   }
 
-  // Backup Client Burndown Generator if RPC fails/empty
   const getBurndownDataBackup = () => {
     if (!activeSprint || !activeSprint.start_date || !activeSprint.end_date) return []
 
@@ -192,7 +184,6 @@ export function useReports(projectId: string, sprintId?: string) {
     const totalPoints = sprintStories.reduce((sum, s) => sum + (s.story_points || 0), 0)
     const completedPoints = completedStoriesList.reduce((sum, s) => sum + (s.story_points || 0), 0)
 
-    // Calculate story lead times & sparkline data
     const storyLeadTimes = sprintStories.map((s) => {
       const created = new Date(s.created_at).getTime()
       const updated = new Date(s.updated_at).getTime()
@@ -216,7 +207,6 @@ export function useReports(projectId: string, sprintId?: string) {
       ? Math.round((cycleTimes.reduce((sum, t) => sum + t, 0) / cycleTimes.length) * 10) / 10
       : 0
 
-    // Compare with previous completed sprint
     const completedSprints = sprints
       .filter((s) => s.status === 'completed' && s.id !== activeSprint.id)
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -257,7 +247,6 @@ export function useReports(projectId: string, sprintId?: string) {
       }
     }
 
-    // Historical average velocity for capacity recommendation
     const allCompletedSprints = sprints.filter((s) => s.status === 'completed')
     let totalPastVelocity = 0
     allCompletedSprints.forEach((s) => {
@@ -301,7 +290,6 @@ export function useReports(projectId: string, sprintId?: string) {
     }
   }
 
-  // Calculate task status distribution
   const tasks = tasksQuery.data || []
   const todoCount = tasks.filter((t) => t.status === 'todo').length
   const inProgressCount = tasks.filter((t) => t.status === 'in_progress').length
@@ -313,7 +301,6 @@ export function useReports(projectId: string, sprintId?: string) {
     { name: 'Done', value: doneCount, color: '#10b981' },
   ]
 
-  // Calculate workload distribution
   const workloadData = members.map((m: any) => {
     const memberName = m.profile?.full_name || 'Thành viên'
     const memberTasksCount = tasks.filter((t) => t.assignee_id === m.user_id).length
@@ -324,7 +311,6 @@ export function useReports(projectId: string, sprintId?: string) {
     }
   })
 
-  // Calculate threshold = total tasks / member count * 1.5
   const totalTasks = tasks.length
   const memberCount = members.length || 1
   const workloadThreshold = Math.max(3, (totalTasks / memberCount) * 1.5)

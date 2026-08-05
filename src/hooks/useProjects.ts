@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase, ensureUserProfile } from '../lib/supabase'
+import { supabase, damBaoHoSoNguoiDung } from '../lib/supabase'
 import type { ProjectMember, UserRole } from '../types'
 import { useAuthStore, useProjectStore } from '../stores'
 import { useToast } from '../stores/toastStore'
@@ -24,7 +24,7 @@ export function useProjects() {
         .eq('user_id', user.id) as any)
 
       if (error) {
-        console.error('Error fetching projects:', error.message)
+        console.error('Lỗi khi tải danh sách dự án:', error.message)
         throw error
       }
 
@@ -54,10 +54,9 @@ export function useProjects() {
 
   const createProjectMutation = useMutation<any, Error, { name: string; description: string; start_date?: string; end_date?: string }>({
     mutationFn: async (vars) => {
-      if (!user) throw new Error('You must be signed in to create projects')
+      if (!user) throw new Error('Bạn cần đăng nhập để tạo dự án mới')
 
-      // Ensure user profile exists in public.profiles table to satisfy foreign key constraint
-      await ensureUserProfile(user)
+      await damBaoHoSoNguoiDung(user)
 
       const { data: project, error: projectError } = await ((supabase
         .from('projects') as any)
@@ -87,11 +86,11 @@ export function useProjects() {
       return project
     },
     onSuccess: (project) => {
-      toast.success(`Project "${project.name}" created successfully!`)
+      toast.success(`Tạo dự án "${project.name}" thành công!`)
       queryClient.invalidateQueries({ queryKey: ['projects', user?.id] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to create project')
+      toast.error(err.message || 'Tạo dự án thất bại')
     },
   })
 
@@ -108,11 +107,11 @@ export function useProjects() {
       return data
     },
     onSuccess: (project) => {
-      toast.success(`Project "${project.name}" archived successfully!`)
+      toast.success(`Đã lưu trữ dự án "${project.name}" thành công!`)
       queryClient.invalidateQueries({ queryKey: ['projects', user?.id] })
     },
     onError: (err: any) => {
-      toast.error(err.message || 'Failed to archive project')
+      toast.error(err.message || 'Lưu trữ dự án thất bại')
     },
   })
 

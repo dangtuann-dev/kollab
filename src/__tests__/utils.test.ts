@@ -1,13 +1,11 @@
 import { describe, it, expect } from 'vitest'
 
-// Velocity calculation utility
 export function calculateVelocity(sprintsData: Array<{ committed: number; completed: number }>) {
   if (!sprintsData.length) return 0
   const totalCompleted = sprintsData.reduce((sum, s) => sum + s.completed, 0)
   return Math.round((totalCompleted / sprintsData.length) * 10) / 10
 }
 
-// Burndown ideal decrement utility
 export function calculateIdealBurndown(totalPoints: number, totalDays: number) {
   if (totalDays <= 1) return [totalPoints, 0]
   const step = totalPoints / (totalDays - 1)

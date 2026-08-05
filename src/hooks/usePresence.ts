@@ -23,7 +23,6 @@ export function usePresence(channelName: string, currentUserProfile: Profile | n
           })
         })
 
-        // Deduplicate profiles
         const uniqueUsers = users.filter(
           (u, index, self) => self.findIndex((t) => t.id === u.id) === index
         )

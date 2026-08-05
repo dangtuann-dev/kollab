@@ -40,12 +40,10 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ story, task, onCl
         priorityColors[priority as keyof typeof priorityColors] || priorityColors.medium
       } flex flex-col gap-2.5 group`}
     >
-      {/* Title (compact on mobile) */}
       <h4 className="text-xs font-bold text-neutral-800 dark:text-neutral-100 line-clamp-2 leading-relaxed group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
         {title}
       </h4>
 
-      {/* Details footer */}
       <div className="flex items-center justify-between gap-2 border-t border-neutral-100 dark:border-neutral-800/80 pt-2 font-sans">
         <div className="flex items-center gap-1.5 min-w-0">
           {priorityIcons[priority as keyof typeof priorityIcons]}
@@ -62,8 +60,8 @@ export const TaskCard: React.FC<TaskCardProps> = React.memo(({ story, task, onCl
         {assignee && (
           <Avatar
             src={assignee.avatar_url}
-            alt={assignee.full_name || 'Assignee'}
-            fallback={assignee.full_name || 'A'}
+            alt={assignee.full_name || 'Thành viên'}
+            fallback={assignee.full_name || 'T'}
             size="xs"
           />
         )}

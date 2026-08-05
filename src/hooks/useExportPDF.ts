@@ -9,7 +9,7 @@ export function useExportPDF() {
 
   const exportPDF = async (
     target: string | React.RefObject<HTMLElement | null>,
-    filename: string = 'report'
+    filename: string = 'bao-cao-kollab'
   ) => {
     let element: HTMLElement | null = null
 
@@ -49,11 +49,9 @@ export function useExportPDF() {
       let heightLeft = imgHeight
       let position = 0
 
-      // First page
       pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight)
       heightLeft -= pageHeight
 
-      // Additional pages
       while (heightLeft >= 0) {
         position = heightLeft - imgHeight
         pdf.addPage()
@@ -64,7 +62,7 @@ export function useExportPDF() {
       pdf.save(`${filename}.pdf`)
       toast.success('Xuất báo cáo PDF thành công!')
     } catch (error: any) {
-      console.error('Error generating PDF:', error)
+      console.error('Lỗi khi xuất file PDF:', error)
       toast.error(error.message || 'Lỗi khi tạo file PDF báo cáo')
     } finally {
       setIsExporting(false)

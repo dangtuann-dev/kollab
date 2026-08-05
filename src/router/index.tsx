@@ -5,7 +5,6 @@ import { AppLayout } from '../components/layout/AppLayout'
 import { PageSkeleton } from '../components/shared/LoadingSkeleton'
 import AuthInitializer from './AuthInitializer'
 
-// Lazy-loaded feature pages
 const LoginPage = lazy(() => import('../features/auth/LoginPage'))
 const RegisterPage = lazy(() => import('../features/auth/RegisterPage'))
 const ForgotPasswordPage = lazy(() => import('../features/auth/ForgotPasswordPage'))
@@ -20,7 +19,6 @@ const ReportsPage = lazy(() => import('../features/reports/ReportsPage'))
 const ProjectSettingsPage = lazy(() => import('./ProjectSettingsPage'))
 const NotFoundPage = lazy(() => import('./NotFoundPage'))
 
-// Ceremonies imports
 const CeremoniesDashboard = lazy(() => import('../features/ceremonies/CeremoniesDashboard'))
 const SprintPlanning = lazy(() => import('../features/ceremonies/SprintPlanning'))
 const DailyStandup = lazy(() => import('../features/ceremonies/DailyStandup'))

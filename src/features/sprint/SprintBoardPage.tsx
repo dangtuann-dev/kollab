@@ -35,13 +35,11 @@ export const SprintBoardPage: React.FC = () => {
   const activeStories = stories.filter((s) => s.sprint_id === activeSprint?.id)
   const activeStoryIds = activeStories.map((s) => s.id)
 
-  // 1. Load tasks via realtime board hook
   const { tasks, isLoading: loadingTasks, updateTask, createTask } = useRealtimeBoard(
     activeSprint?.id || '',
     activeStoryIds
   )
 
-  // 2. Load presence info
   const currentUserProfile = user ? {
     id: user.id,
     full_name: user.user_metadata?.full_name || user.email || 'Thành viên',
@@ -113,7 +111,6 @@ export const SprintBoardPage: React.FC = () => {
               onCompleteSprint={handleCompleteSprint}
             />
 
-            {/* Presence UI */}
             <div className="flex items-center gap-3 bg-neutral-50 border border-neutral-200 rounded-full py-1.5 px-3 shadow-xs shrink-0 self-stretch sm:self-auto justify-between sm:justify-start">
               <div className="flex items-center gap-1.5 text-xs text-neutral-600 font-semibold">
                 <Radio className="h-3.5 w-3.5 text-emerald-500 animate-pulse" />
@@ -136,7 +133,6 @@ export const SprintBoardPage: React.FC = () => {
                     <span className="absolute bottom-0 right-0 block h-1.5 w-1.5 rounded-full bg-emerald-400 ring-1 ring-white animate-ping" />
                     <span className="absolute bottom-0 right-0 block h-1.5 w-1.5 rounded-full bg-emerald-500 ring-1 ring-white" />
                     
-                    {/* Tooltip */}
                     <span className="absolute bottom-full right-1/2 translate-x-1/2 mb-1 px-1.5 py-0.5 bg-neutral-800 text-[8px] font-bold text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
                       {u.full_name}
                     </span>
@@ -173,7 +169,6 @@ export const SprintBoardPage: React.FC = () => {
         />
       )}
 
-      {/* Task Detail Modal */}
       {selectedTask && (
         <TaskDetailModal
           task={selectedTask}

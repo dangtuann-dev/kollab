@@ -6,11 +6,11 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 if (!supabaseUrl) {
-  throw new Error('Missing VITE_SUPABASE_URL environment variable')
+  throw new Error('Thiếu biến môi trường VITE_SUPABASE_URL')
 }
 
 if (!supabaseAnonKey) {
-  throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable')
+  throw new Error('Thiếu biến môi trường VITE_SUPABASE_ANON_KEY')
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
@@ -18,7 +18,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey)
 export async function getSession(): Promise<Session | null> {
   const { data: { session }, error } = await supabase.auth.getSession()
   if (error) {
-    console.error('Error fetching Supabase session:', error.message)
+    console.error('Lỗi khi lấy phiên làm việc Supabase:', error.message)
     return null
   }
   return session
@@ -27,7 +27,7 @@ export async function getSession(): Promise<Session | null> {
 export async function getCurrentUser(): Promise<User | null> {
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error) {
-    console.error('Error fetching current user:', error.message)
+    console.error('Lỗi khi lấy thông tin người dùng hiện tại:', error.message)
     return null
   }
   return user
@@ -40,7 +40,7 @@ export async function signOut(): Promise<void> {
   }
 }
 
-export async function ensureUserProfile(user: User): Promise<void> {
+export async function damBaoHoSoNguoiDung(user: User): Promise<void> {
   if (!user) return
   try {
     const { data: profile } = await supabase
@@ -54,16 +54,17 @@ export async function ensureUserProfile(user: User): Promise<void> {
         .from('profiles') as any)
         .upsert({
           id: user.id,
-          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'Thành viên',
           email: user.email,
           avatar_url: user.user_metadata?.avatar_url || null,
         })
       if (error) {
-        console.error('Failed to auto-create user profile:', error.message)
+        console.error('Không thể tự động tạo hồ sơ người dùng:', error.message)
       }
     }
   } catch (err) {
-    console.error('Error in ensureUserProfile:', err)
+    console.error('Lỗi trong hàm damBaoHoSoNguoiDung:', err)
   }
 }
 
+export const ensureUserProfile = damBaoHoSoNguoiDung

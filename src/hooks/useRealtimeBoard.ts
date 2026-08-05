@@ -8,7 +8,6 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
   const queryClient = useQueryClient()
   const toast = useToast()
 
-  // 1. Fetch all tasks for stories in the active sprint
   const { data: tasks = [], isLoading } = useQuery({
     queryKey: ['tasks-board', sprintId],
     queryFn: async () => {
@@ -25,7 +24,7 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
         .order('created_at', { ascending: true }) as any)
 
       if (error) {
-        console.error('Error fetching board tasks:', error.message)
+        console.error('Lỗi khi tải công việc trên bảng:', error.message)
         throw error
       }
       return data as Task[]
@@ -33,7 +32,6 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
     enabled: !!sprintId && storyIds.length > 0,
   })
 
-  // 2. Realtime sync subscription
   useEffect(() => {
     if (!sprintId) return
 
@@ -57,7 +55,6 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
     }
   }, [sprintId, queryClient])
 
-  // 3. Mutation to update task details/status (Optimistic UI)
   const updateTaskMutation = useMutation<any, Error, Partial<Task> & { id: string }, { previousTasks: Task[] | undefined }>({
     mutationFn: async (vars) => {
       const { id, assignee: _assignee, user_story: _user_story, ...updates } = vars
@@ -73,13 +70,9 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
       return data
     },
     onMutate: async (updatedTask) => {
-      // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['tasks-board', sprintId] })
-
-      // Snapshot current value
       const previousTasks = queryClient.getQueryData<Task[]>(['tasks-board', sprintId])
 
-      // Optimistically update
       queryClient.setQueryData<Task[]>(['tasks-board', sprintId], (oldTasks) => {
         if (!oldTasks) return []
         return oldTasks.map((t) => (t.id === updatedTask.id ? { ...t, ...updatedTask } : t))
@@ -88,7 +81,6 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
       return { previousTasks }
     },
     onError: (err, _vars, context) => {
-      // Rollback
       if (context?.previousTasks) {
         queryClient.setQueryData(['tasks-board', sprintId], context.previousTasks)
       }
@@ -99,7 +91,6 @@ export function useRealtimeBoard(sprintId: string, storyIds: string[]) {
     },
   })
 
-  // 4. Mutation to create task
   const createTaskMutation = useMutation<any, Error, {
     user_story_id: string
     title: string

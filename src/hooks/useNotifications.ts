@@ -12,7 +12,6 @@ export function useNotifications() {
 
   const userId = user?.id || ''
 
-  // 1. Fetch notifications
   const { data: notifications = [], isLoading } = useQuery({
     queryKey: ['notifications', userId],
     queryFn: async () => {
@@ -29,7 +28,6 @@ export function useNotifications() {
     enabled: !!userId,
   })
 
-  // 2. Realtime listener
   useEffect(() => {
     if (!userId) return
 
@@ -46,7 +44,6 @@ export function useNotifications() {
         (payload) => {
           queryClient.invalidateQueries({ queryKey: ['notifications', userId] })
           
-          // Trigger toast notification
           const newNotif = payload.new as Notification
           toast.info(newNotif.title || 'Thông báo mới')
         }
@@ -58,7 +55,6 @@ export function useNotifications() {
     }
   }, [userId, queryClient, toast])
 
-  // 3. Mark as read
   const markAsReadMutation = useMutation<any, Error, string>({
     mutationFn: async (notificationId) => {
       const { data, error } = await ((supabase
@@ -73,7 +69,6 @@ export function useNotifications() {
     },
   })
 
-  // 4. Mark all as read
   const markAllAsReadMutation = useMutation<any, Error, void>({
     mutationFn: async () => {
       if (!userId) return

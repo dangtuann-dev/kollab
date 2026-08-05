@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
 
-// Mock Supabase Client
 vi.mock('../lib/supabase', () => ({
   supabase: {
     from: vi.fn(() => ({
