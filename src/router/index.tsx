@@ -29,6 +29,7 @@ function lazyWithRetry<T extends React.ComponentType<any>>(
   })
 }
 
+const LandingPage = lazyWithRetry(() => import('../features/landing/LandingPage'))
 const LoginPage = lazyWithRetry(() => import('../features/auth/LoginPage'))
 const RegisterPage = lazyWithRetry(() => import('../features/auth/RegisterPage'))
 const ForgotPasswordPage = lazyWithRetry(() => import('../features/auth/ForgotPasswordPage'))
@@ -60,6 +61,14 @@ export const router = createBrowserRouter([
     errorElement: <RouteErrorElement />,
     children: [
       {
+        path: '/',
+        element: (
+          <SuspenseWrapper>
+            <LandingPage />
+          </SuspenseWrapper>
+        ),
+      },
+      {
         path: '/login',
         element: (
           <SuspenseWrapper>
@@ -90,10 +99,7 @@ export const router = createBrowserRouter([
           {
             element: <AppLayout />,
             children: [
-              {
-                path: '/',
-                element: <Navigate to="/dashboard" replace />,
-              },
+
               {
                 path: '/dashboard',
                 element: (
