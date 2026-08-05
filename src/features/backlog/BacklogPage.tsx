@@ -27,6 +27,7 @@ import { StoryDetailPanel } from './StoryDetailPanel'
 import { SprintFormModal } from '../sprint/SprintFormModal'
 import { Button } from '../../components/ui/Button'
 import { Spinner } from '../../components/ui/Spinner'
+import { ProjectOnboardingChecklist } from '../../components/onboarding/ProjectOnboardingChecklist'
 import type { Story, ProjectMember, Sprint } from '../../types'
 
 // Droppable container wrapper
@@ -56,6 +57,11 @@ export const BacklogPage: React.FC = () => {
   const [selectedStory, setSelectedStory] = useState<Story | null>(null)
   const [sprintToEdit, setSprintToEdit] = useState<Sprint | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
+
+  const handleOpenCreateStory = () => {
+    setSelectedStory(null)
+    setIsFormModalOpen(true)
+  }
 
   const [priorityFilter, setPriorityFilter] = useState<string>('all')
   const [labelFilter, setLabelFilter] = useState<string>('all')
@@ -253,6 +259,14 @@ export const BacklogPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
+      <ProjectOnboardingChecklist
+        projectId={projectIdStr}
+        hasStories={stories.length > 0}
+        hasActiveSprint={sprints.some((s) => s.status === 'active' || s.status === 'completed')}
+        memberCount={projectMembers.length}
+        onOpenCreateStory={handleOpenCreateStory}
+      />
+
       <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div>
           <h2 className="text-lg font-bold text-neutral-900 tracking-tight">Kế hoạch Sprint & Backlog</h2>

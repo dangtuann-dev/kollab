@@ -6,6 +6,7 @@ import { Avatar } from '../ui/Avatar'
 import { ThemeToggle } from '../ui/ThemeToggle'
 import { supabase } from '../../lib/supabase'
 import { NotificationBell } from './NotificationBell'
+import { HelpGuideButton } from '../onboarding/HelpGuideButton'
 
 interface HeaderProps {
   onOpenMobileMenu: () => void
@@ -71,6 +72,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
             Ctrl K
           </kbd>
         </button>
+
+        {/* Help Guide Button */}
+        <HelpGuideButton />
 
         {/* Dark Mode Theme Toggle */}
         <ThemeToggle />

@@ -14,6 +14,7 @@ import { Spinner } from '../../components/ui/Spinner'
 import { EmptyState } from '../../components/shared/EmptyState'
 import { useRealtimeBoard } from '../../hooks/useRealtimeBoard'
 import { usePresence } from '../../hooks/usePresence'
+import { ProjectOnboardingChecklist } from '../../components/onboarding/ProjectOnboardingChecklist'
 import type { Task, TaskStatus } from '../../types'
 
 export const SprintBoardPage: React.FC = () => {
@@ -98,6 +99,11 @@ export const SprintBoardPage: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
+      <ProjectOnboardingChecklist
+        projectId={projectIdStr}
+        hasStories={stories.length > 0}
+        hasActiveSprint={!!activeSprint}
+      />
       {activeSprint ? (
         <>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-neutral-200 pb-4">

@@ -6,6 +6,7 @@ interface OnboardingTooltipProps {
   title: string
   content: string
   children: React.ReactNode
+  position?: 'top' | 'bottom' | 'left' | 'right'
 }
 
 export const OnboardingTooltip: React.FC<OnboardingTooltipProps> = ({
@@ -13,6 +14,7 @@ export const OnboardingTooltip: React.FC<OnboardingTooltipProps> = ({
   title,
   content,
   children,
+  position = 'bottom',
 }) => {
   const [dismissed, setDismissed] = useState(true)
 
@@ -26,11 +28,33 @@ export const OnboardingTooltip: React.FC<OnboardingTooltipProps> = ({
     setDismissed(true)
   }
 
+  const getPositionClasses = () => {
+    switch (position) {
+      case 'top':
+        return 'bottom-full left-0 mb-2'
+      case 'left':
+        return 'right-full top-0 mr-2'
+      case 'right':
+        return 'left-full top-0 ml-2'
+      case 'bottom':
+      default:
+        return 'top-full left-0 mt-2'
+    }
+  }
+
   return (
     <div className="relative inline-block w-full">
+      {!dismissed && (
+        <span className="absolute -top-1 -right-1 flex h-3 w-3 z-50">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+        </span>
+      )}
       {children}
       {!dismissed && (
-        <div className="absolute top-full left-0 mt-2 z-40 w-72 bg-neutral-900 text-white p-3.5 rounded-2xl shadow-2xl border border-neutral-700 animate-slide-up text-xs font-sans">
+        <div
+          className={`absolute z-40 w-72 bg-neutral-900/95 backdrop-blur-md text-white p-3.5 rounded-2xl shadow-2xl border border-neutral-700/80 animate-slide-up text-xs font-sans ${getPositionClasses()}`}
+        >
           <div className="flex items-start justify-between gap-2 mb-1">
             <div className="flex items-center gap-1.5 font-bold text-amber-400">
               <Sparkles className="h-4 w-4 shrink-0" />
@@ -46,7 +70,7 @@ export const OnboardingTooltip: React.FC<OnboardingTooltipProps> = ({
           <p className="text-[11px] text-neutral-300 leading-relaxed mb-3">{content}</p>
           <button
             onClick={handleDismiss}
-            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-1 px-3 rounded-lg text-[10px] transition-colors text-center"
+            className="w-full bg-primary-600 hover:bg-primary-500 text-white font-bold py-1 px-3 rounded-lg text-[10px] transition-colors text-center shadow-xs"
           >
             Đã hiểu
           </button>

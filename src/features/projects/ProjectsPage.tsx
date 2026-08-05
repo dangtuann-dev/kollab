@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Plus, Search, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProjects, useDeleteProject } from '../../hooks/useProjects'
-import { useAuthStore } from '../../stores'
+import { useAuthStore, useOnboardingStore } from '../../stores'
 import { ProjectCard } from './ProjectCard'
 import { ProjectFormModal } from './ProjectFormModal'
 import { Button } from '../../components/ui/Button'
@@ -10,15 +10,24 @@ import { Input } from '../../components/ui/Input'
 import { EmptyState } from '../../components/shared/EmptyState'
 import { SkeletonGrid } from '../../components/shared/LoadingSkeleton'
 import { supabase } from '../../lib/supabase'
+import { WelcomeOnboardingModal } from '../../components/onboarding/WelcomeOnboardingModal'
+import { OnboardingTooltip } from '../../components/shared/OnboardingTooltip'
 
 export const ProjectsPage: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const { projects, isLoading } = useProjects()
   const { deleteProject } = useDeleteProject()
+  const { hasSeenWelcomeModal, openWelcomeModal } = useOnboardingStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingProject, setEditingProject] = useState<any>(undefined)
+
+  useEffect(() => {
+    if (!hasSeenWelcomeModal && !isLoading) {
+      openWelcomeModal()
+    }
+  }, [hasSeenWelcomeModal, isLoading, openWelcomeModal])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -75,13 +84,20 @@ export const ProjectsPage: React.FC = () => {
             />
           </div>
 
-          <Button
-            onClick={() => setIsModalOpen(true)}
-            leftIcon={<Plus className="h-4.5 w-4.5" />}
-            className="shadow-sm"
+          <OnboardingTooltip
+            storageKey="create_project_btn"
+            title="Tạo dự án mới"
+            content="Nhấn vào đây để khởi tạo dự án Agile mới và bắt đầu quản lý nhóm làm việc."
+            position="bottom"
           >
-            Dự án mới
-          </Button>
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              leftIcon={<Plus className="h-4.5 w-4.5" />}
+              className="shadow-sm w-full"
+            >
+              Dự án mới
+            </Button>
+          </OnboardingTooltip>
         </div>
 
         {isLoading ? (
@@ -116,7 +132,9 @@ export const ProjectsPage: React.FC = () => {
         )}
 
       <ProjectFormModal isOpen={isModalOpen} onClose={handleCloseModal} project={editingProject} />
+      <WelcomeOnboardingModal />
     </div>
   )
 }
 export default ProjectsPage
+
