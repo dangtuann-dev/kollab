@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   User,
   Lock,
@@ -10,7 +10,8 @@ import {
   Key,
   Mail,
   Sparkles,
-  UserCheck,
+  Upload,
+  Image as ImageIcon,
 } from 'lucide-react'
 import { useAuthStore } from '../../stores/authStore'
 import { useToast } from '../../stores/toastStore'
@@ -20,19 +21,20 @@ import { Avatar } from '../../components/ui/Avatar'
 import { capNhatHoSoCaNhan, doiMatKhauTaikhoan } from '../auth/useAuth'
 
 const PRESET_AVATARS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka&backgroundColor=c0aede',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=KollabBot1&backgroundColor=ffdfbf',
+  'https://api.dicebear.com/7.x/micah/svg?seed=Lucky&backgroundColor=d1d4f9',
+  'https://api.dicebear.com/7.x/lorelei/svg?seed=Pepper&backgroundColor=ffd5dc',
+  'https://api.dicebear.com/7.x/fun-emoji/svg?seed=CoolEmoji&backgroundColor=b6e3f4',
+  'https://api.dicebear.com/7.x/bottts/svg?seed=KollabBot2&backgroundColor=d1d4f9',
+  'https://api.dicebear.com/7.x/open-peeps/svg?seed=PeepArt&backgroundColor=ffdfbf',
 ]
 
 export const ProfilePage: React.FC = () => {
   const { user } = useAuthStore()
   const toast = useToast()
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences'>('profile')
 
@@ -54,6 +56,33 @@ export const ProfilePage: React.FC = () => {
       setAvatarUrl(user.user_metadata?.avatar_url || '')
     }
   }, [user])
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn tệp hình ảnh hợp lệ (PNG, JPG, WEBP, SVG)')
+      return
+    }
+
+    if (file.size > 3 * 1024 * 1024) {
+      toast.error('Kích thước ảnh không vượt quá 3MB')
+      return
+    }
+
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setAvatarUrl(reader.result)
+        toast.success('Đã tải ảnh lên thành công! Hãy nhấn "Lưu thay đổi hồ sơ" để hoàn tất.')
+      }
+    }
+    reader.onerror = () => {
+      toast.error('Có lỗi xảy ra khi đọc tệp ảnh')
+    }
+  }
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -116,11 +145,15 @@ export const ProfilePage: React.FC = () => {
               alt={fullName || user?.email || 'Avatar'}
               fallback={fullName || user?.email || 'U'}
               size="lg"
-              className="h-24 w-24 ring-4 ring-white/20 shadow-2xl"
+              className="h-24 w-24 ring-4 ring-white/20 shadow-2xl bg-neutral-800 object-cover"
             />
-            <div className="absolute bottom-0 right-0 p-1.5 bg-indigo-600 rounded-full text-white shadow-md border border-white/30">
-              <UserCheck className="h-3.5 w-3.5" />
-            </div>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="absolute bottom-0 right-0 p-2 bg-indigo-600 hover:bg-indigo-500 rounded-full text-white shadow-md border border-white/30 transition-transform active:scale-95"
+              title="Tải ảnh đại diện mới"
+            >
+              <Camera className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1 min-w-0">
@@ -188,7 +221,7 @@ export const ProfilePage: React.FC = () => {
             <p className="text-xs text-neutral-500 mt-0.5">Cập nhật thông tin hiển thị trên các dự án và bảng công việc.</p>
           </div>
 
-          <div className="flex flex-col gap-4 max-w-xl">
+          <div className="flex flex-col gap-5 max-w-xl">
             <Input
               label="Họ và tên"
               value={fullName}
@@ -210,23 +243,36 @@ export const ProfilePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex flex-col gap-2 pt-2">
+            <div className="flex flex-col gap-3 pt-2">
               <label className="block text-xs font-semibold text-neutral-700 dark:text-neutral-300">
-                URL Ảnh đại diện (Avatar)
+                Ảnh đại diện (Avatar)
               </label>
-              <div className="flex gap-2">
-                <Input
-                  value={avatarUrl}
-                  onChange={(e) => setAvatarUrl(e.target.value)}
-                  placeholder="https://example.com/avatar.jpg"
-                  className="flex-1"
-                />
+
+              <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileUpload}
+              />
+
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => fileInputRef.current?.click()}
+                  leftIcon={<Upload className="h-4 w-4 text-indigo-600" />}
+                  className="py-2.5"
+                >
+                  Tải ảnh từ máy tính
+                </Button>
+                <span className="text-xs text-neutral-400 self-center">Hỗ trợ PNG, JPG, WEBP (&lt;3MB)</span>
               </div>
 
-              <div className="mt-3">
+              <div className="mt-2">
                 <p className="text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-2.5 flex items-center gap-1.5">
-                  <Camera className="h-3.5 w-3.5 text-indigo-500" />
-                  <span>Hoặc chọn nhanh Avatar mẫu:</span>
+                  <ImageIcon className="h-3.5 w-3.5 text-indigo-500" />
+                  <span>Hoặc chọn nhanh Avatar hoạt hình mẫu:</span>
                 </p>
                 <div className="flex flex-wrap gap-2.5">
                   {PRESET_AVATARS.map((url, idx) => (
@@ -234,13 +280,13 @@ export const ProfilePage: React.FC = () => {
                       key={idx}
                       type="button"
                       onClick={() => setAvatarUrl(url)}
-                      className={`relative rounded-full p-0.5 transition-all duration-200 ${
+                      className={`relative rounded-full p-0.5 transition-all duration-200 bg-neutral-100 dark:bg-neutral-800 ${
                         avatarUrl === url
                           ? 'ring-2 ring-indigo-600 scale-110 shadow-md'
-                          : 'opacity-70 hover:opacity-100 hover:scale-105'
+                          : 'opacity-80 hover:opacity-100 hover:scale-105'
                       }`}
                     >
-                      <img src={url} alt={`Preset ${idx + 1}`} className="h-10 w-10 rounded-full object-cover" />
+                      <img src={url} alt={`Cartoon ${idx + 1}`} className="h-11 w-11 rounded-full object-cover" />
                       {avatarUrl === url && (
                         <span className="absolute -top-1 -right-1 bg-indigo-600 text-white rounded-full p-0.5 shadow-sm">
                           <CheckCircle2 className="h-3 w-3" />
@@ -249,6 +295,15 @@ export const ProfilePage: React.FC = () => {
                     </button>
                   ))}
                 </div>
+              </div>
+
+              <div className="mt-2">
+                <Input
+                  label="Hoặc dán liên kết URL ảnh:"
+                  value={avatarUrl}
+                  onChange={(e) => setAvatarUrl(e.target.value)}
+                  placeholder="https://example.com/avatar.png"
+                />
               </div>
             </div>
           </div>
