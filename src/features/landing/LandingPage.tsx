@@ -4,14 +4,13 @@ import { useAuthStore } from '../../stores/authStore'
 import {
   Layers, Kanban, ListChecks, Users, BarChart3, Zap,
   ChevronRight, Check, Star, ArrowRight, Menu, X,
-  Calendar, Target, TrendingUp, Shield, Clock, Globe,
-  Sparkles, Play, ChevronDown
+  Calendar, Target, TrendingUp, Clock,
+  Play, ChevronDown
 } from 'lucide-react'
 
-const useInView = (threshold = 0.15) => {
+const useInView = (threshold = 0.1) => {
   const ref = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setInView(true) },
@@ -20,7 +19,6 @@ const useInView = (threshold = 0.15) => {
     if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
   }, [threshold])
-
   return { ref, inView }
 }
 
@@ -43,51 +41,33 @@ const useCountUp = (target: number, duration = 2000, started = false) => {
 const features = [
   {
     icon: Kanban,
-    title: 'Sprint Board Trực quan',
-    desc: 'Kanban board kéo-thả mượt mà. Theo dõi tiến độ từng task theo thời gian thực trong mỗi Sprint.',
-    color: 'from-rose-500 to-pink-600',
-    bg: 'bg-rose-50 dark:bg-rose-950/30',
-    border: 'border-rose-100 dark:border-rose-900/40',
+    title: 'Sprint Board',
+    desc: 'Kanban board kéo-thả trực quan. Theo dõi tiến độ từng task trong Sprint theo thời gian thực.',
   },
   {
     icon: ListChecks,
     title: 'Product Backlog',
-    desc: 'Quản lý User Stories, phân loại độ ưu tiên MoSCoW và kéo thả vào Sprint Planning cực dễ dàng.',
-    color: 'from-violet-500 to-purple-600',
-    bg: 'bg-violet-50 dark:bg-violet-950/30',
-    border: 'border-violet-100 dark:border-violet-900/40',
+    desc: 'Quản lý User Stories, phân loại độ ưu tiên MoSCoW và kéo vào Sprint Planning cực dễ dàng.',
   },
   {
     icon: Calendar,
     title: 'Scrum Ceremonies',
-    desc: 'Phòng họp số cho Sprint Planning, Daily Standup, Sprint Review và Retrospective tích hợp sẵn.',
-    color: 'from-blue-500 to-cyan-600',
-    bg: 'bg-blue-50 dark:bg-blue-950/30',
-    border: 'border-blue-100 dark:border-blue-900/40',
+    desc: 'Sprint Planning, Daily Standup, Sprint Review và Retrospective — tất cả tích hợp sẵn trong một nơi.',
   },
   {
     icon: BarChart3,
     title: 'Báo cáo & Biểu đồ',
-    desc: 'Burndown chart, velocity chart và báo cáo Sprint tự động giúp team nhìn rõ hiệu suất.',
-    color: 'from-emerald-500 to-teal-600',
-    bg: 'bg-emerald-50 dark:bg-emerald-950/30',
-    border: 'border-emerald-100 dark:border-emerald-900/40',
+    desc: 'Burndown chart, velocity chart và báo cáo Sprint tự động — không cần nhập liệu thủ công.',
   },
   {
     icon: Users,
-    title: 'Quản lý Nhóm',
-    desc: 'Phân quyền linh hoạt theo vai trò: Product Owner, Scrum Master, Developer và vai trò tùy chỉnh.',
-    color: 'from-amber-500 to-orange-600',
-    bg: 'bg-amber-50 dark:bg-amber-950/30',
-    border: 'border-amber-100 dark:border-amber-900/40',
+    title: 'Quản lý Thành viên',
+    desc: 'Phân quyền linh hoạt: Product Owner, Scrum Master, Developer và vai trò tùy chỉnh.',
   },
   {
     icon: Zap,
-    title: 'Real-time Updates',
-    desc: 'Mọi thay đổi được đồng bộ ngay lập tức cho toàn bộ thành viên — không cần F5, không bao giờ lỗi thời.',
-    color: 'from-fuchsia-500 to-rose-600',
-    bg: 'bg-fuchsia-50 dark:bg-fuchsia-950/30',
-    border: 'border-fuchsia-100 dark:border-fuchsia-900/40',
+    title: 'Đồng bộ Thời gian Thực',
+    desc: 'Mọi thay đổi đồng bộ ngay lập tức — không cần tải lại trang, không bao giờ lỗi thời.',
   },
 ]
 
@@ -95,52 +75,51 @@ const steps = [
   {
     num: '01',
     icon: Target,
-    title: 'Tạo Dự Án',
+    title: 'Tạo dự án',
     desc: 'Khởi tạo dự án trong vài giây. Thêm thành viên và phân quyền vai trò ngay lập tức.',
   },
   {
     num: '02',
     icon: Layers,
-    title: 'Lập Kế Hoạch Sprint',
+    title: 'Lập kế hoạch Sprint',
     desc: 'Kéo User Stories từ Backlog vào Sprint. Ước lượng story points và phân công thành viên.',
   },
   {
     num: '03',
     icon: TrendingUp,
-    title: 'Theo Dõi & Cải Thiện',
-    desc: 'Biểu đồ burndown tự động cập nhật. Retrospective cuối sprint giúp team ngày càng tốt hơn.',
+    title: 'Theo dõi & Cải thiện',
+    desc: 'Biểu đồ burndown cập nhật tự động. Retrospective giúp team liên tục cải thiện mỗi Sprint.',
   },
 ]
 
 const testimonials = [
   {
-    quote: 'Kollab giúp team của mình chuyển từ Excel loạn xạ sang Scrum thực sự chỉ trong một tuần. Burndown chart tự động là điểm tôi thích nhất!',
+    quote: 'Kollab giúp team chúng tôi chuyển từ Excel sang Scrum thực sự chỉ trong một tuần. Burndown chart tự động là điểm chúng tôi thích nhất.',
     name: 'Nguyễn Thành Long',
-    role: 'Scrum Master · FPT Software',
-    avatar: '🦊',
-    stars: 5,
+    role: 'Scrum Master',
+    company: 'FPT Software',
+    initial: 'N',
   },
   {
-    quote: 'Giao diện đẹp, dễ dùng và đầy đủ tính năng. Từ backlog đến ceremonies đều có sẵn — không cần ghép nhiều tool nữa.',
+    quote: 'Giao diện sạch, dễ dùng và đầy đủ tính năng. Từ backlog đến ceremonies đều có sẵn — không cần ghép nhiều tool nữa.',
     name: 'Trần Minh Châu',
-    role: 'Product Owner · Tiki',
-    avatar: '🐼',
-    stars: 5,
+    role: 'Product Owner',
+    company: 'Tiki',
+    initial: 'T',
   },
   {
-    quote: 'Team mình 12 người, remote 100%. Kollab giúp Daily Standup nhanh gọn và mọi người luôn nắm được tiến độ dù khác múi giờ.',
+    quote: 'Team chúng tôi làm việc remote 100%. Kollab giúp Daily Standup nhanh gọn và mọi người luôn nắm được tiến độ dù khác múi giờ.',
     name: 'Lê Phương Anh',
-    role: 'Tech Lead · VNG',
-    avatar: '🦁',
-    stars: 5,
+    role: 'Tech Lead',
+    company: 'VNG',
+    initial: 'L',
   },
 ]
 
 const pricing = [
   {
-    name: 'Miễn phí',
+    name: 'Free',
     price: '0',
-    period: 'mãi mãi',
     desc: 'Dành cho team nhỏ và dự án cá nhân',
     features: [
       'Tối đa 3 dự án',
@@ -150,12 +129,11 @@ const pricing = [
     ],
     cta: 'Bắt đầu miễn phí',
     highlight: false,
-    variant: 'outline',
   },
   {
     name: 'Pro',
     price: '199.000',
-    period: '/tháng/dự án',
+    priceUnit: '₫/tháng',
     desc: 'Cho team chuyên nghiệp cần đầy đủ tính năng',
     features: [
       'Dự án không giới hạn',
@@ -163,17 +141,15 @@ const pricing = [
       'Toàn bộ Scrum Ceremonies',
       'Báo cáo nâng cao & xuất PDF',
       'Vai trò tùy chỉnh',
-      'Ưu tiên hỗ trợ',
+      'Hỗ trợ ưu tiên',
     ],
     cta: 'Dùng thử 14 ngày',
     highlight: true,
-    variant: 'primary',
   },
   {
     name: 'Enterprise',
     price: 'Liên hệ',
-    period: '',
-    desc: 'Giải pháp toàn diện cho doanh nghiệp lớn',
+    desc: 'Giải pháp toàn diện cho doanh nghiệp',
     features: [
       'Tất cả tính năng Pro',
       'SSO / SAML',
@@ -184,7 +160,6 @@ const pricing = [
     ],
     cta: 'Liên hệ tư vấn',
     highlight: false,
-    variant: 'outline',
   },
 ]
 
@@ -195,50 +170,83 @@ const stats = [
   { value: 40, suffix: '%', label: 'Năng suất tăng' },
 ]
 
-const MockupBoard = () => (
-  <div className="relative w-full max-w-2xl mx-auto">
-    <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 via-purple-500/10 to-blue-500/20 rounded-3xl blur-3xl" />
-    <div className="relative bg-white/10 dark:bg-white/5 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl overflow-hidden">
-      <div className="bg-white/15 dark:bg-black/20 px-4 py-3 flex items-center gap-2 border-b border-white/10">
-        <div className="w-3 h-3 rounded-full bg-rose-400" />
-        <div className="w-3 h-3 rounded-full bg-amber-400" />
-        <div className="w-3 h-3 rounded-full bg-emerald-400" />
-        <span className="ml-3 text-xs text-white/60 font-mono">kollab.app/projects/my-product/board</span>
+const BoardMockup = () => (
+  <div className="w-full rounded-2xl border border-neutral-200 overflow-hidden shadow-2xl shadow-neutral-200/60 bg-white">
+    <div className="border-b border-neutral-100 px-5 py-3.5 flex items-center gap-3 bg-neutral-50">
+      <div className="flex gap-1.5">
+        <div className="w-3 h-3 rounded-full bg-neutral-300" />
+        <div className="w-3 h-3 rounded-full bg-neutral-300" />
+        <div className="w-3 h-3 rounded-full bg-neutral-300" />
       </div>
-      <div className="p-4 grid grid-cols-3 gap-3">
+      <div className="flex-1 flex justify-center">
+        <div className="flex items-center gap-2 bg-white border border-neutral-200 rounded-lg px-4 py-1">
+          <div className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
+          <span className="text-xs text-neutral-400 font-mono tracking-tight">kollab.app / my-project / board</span>
+        </div>
+      </div>
+    </div>
+
+    <div className="p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <div className="text-xs text-neutral-400 font-medium mb-1">Sprint 4 · 14 ngày còn lại</div>
+          <div className="text-sm font-semibold text-neutral-800">My Product · Q3 2026</div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-1.5 w-32 rounded-full bg-neutral-100 overflow-hidden">
+            <div className="h-full rounded-full bg-rose-500" style={{ width: '62%' }} />
+          </div>
+          <span className="text-xs text-neutral-500">62%</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
         {[
-          { title: 'Cần làm', color: 'bg-neutral-400/30', items: ['Thiết kế UI/UX', 'Viết API docs', 'Setup CI/CD'] },
-          { title: 'Đang làm', color: 'bg-blue-400/30', items: ['Sprint Board', 'Auth module'] },
-          { title: 'Hoàn thành', color: 'bg-emerald-400/30', items: ['Backlog setup', 'Team roles', 'Database schema'] },
+          {
+            title: 'To Do', count: 3, dot: 'bg-neutral-300',
+            cards: [
+              { label: 'Thiết kế UI onboarding', pts: 3, assignee: 'N' },
+              { label: 'Viết API documentation', pts: 2, assignee: 'T' },
+              { label: 'Setup CI/CD pipeline', pts: 5, assignee: 'L' },
+            ]
+          },
+          {
+            title: 'In Progress', count: 2, dot: 'bg-blue-400',
+            cards: [
+              { label: 'Sprint Board — kéo thả', pts: 8, assignee: 'N' },
+              { label: 'Auth module & JWT', pts: 5, assignee: 'T' },
+            ]
+          },
+          {
+            title: 'Done', count: 3, dot: 'bg-emerald-400',
+            cards: [
+              { label: 'Backlog setup', pts: 3, assignee: 'L' },
+              { label: 'Team roles & permissions', pts: 2, assignee: 'N' },
+              { label: 'Database schema', pts: 5, assignee: 'T' },
+            ]
+          },
         ].map((col) => (
-          <div key={col.title} className="flex flex-col gap-2">
-            <div className={`${col.color} rounded-lg px-2 py-1 text-center`}>
-              <span className="text-white text-[10px] font-bold">{col.title}</span>
+          <div key={col.title}>
+            <div className="flex items-center gap-2 mb-2.5">
+              <div className={`w-2 h-2 rounded-full ${col.dot}`} />
+              <span className="text-xs font-semibold text-neutral-600">{col.title}</span>
+              <span className="ml-auto text-xs text-neutral-400 bg-neutral-100 rounded-md px-1.5 py-0.5">{col.count}</span>
             </div>
-            {col.items.map((item) => (
-              <div key={item} className="bg-white/10 dark:bg-white/5 border border-white/10 rounded-lg px-2.5 py-2">
-                <div className="text-white/80 text-[9px] font-medium leading-tight">{item}</div>
-                <div className="mt-1.5 flex items-center gap-1">
-                  <div className="w-4 h-4 rounded-full bg-rose-400/60 flex items-center justify-center text-[6px]">🦊</div>
-                  <div className="h-1 flex-1 rounded bg-white/10">
-                    <div className="h-full rounded bg-rose-400/70" style={{ width: `${Math.random() * 60 + 30}%` }} />
+            <div className="space-y-2">
+              {col.cards.map((card) => (
+                <div key={card.label} className="bg-white border border-neutral-150 rounded-xl p-3 shadow-sm hover:shadow-md hover:-translate-y-px transition-all cursor-pointer group">
+                  <div className="text-[11px] font-medium text-neutral-700 leading-snug mb-2.5 group-hover:text-neutral-900 transition-colors">{card.label}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="w-5 h-5 rounded-full bg-rose-100 flex items-center justify-center">
+                      <span className="text-[9px] font-bold text-rose-600">{card.assignee}</span>
+                    </div>
+                    <span className="text-[9px] font-medium text-neutral-400 bg-neutral-50 border border-neutral-100 rounded px-1.5 py-0.5">{card.pts} pts</span>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ))}
-      </div>
-      <div className="px-4 pb-3 flex items-center gap-3">
-        <div className="flex -space-x-2">
-          {['🦊', '🐼', '🦁', '🐯'].map((a) => (
-            <div key={a} className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center text-xs">{a}</div>
-          ))}
-        </div>
-        <div className="flex-1 h-1.5 rounded bg-white/10">
-          <div className="h-full rounded bg-gradient-to-r from-rose-500 to-pink-400" style={{ width: '62%' }} />
-        </div>
-        <span className="text-white/60 text-[10px]">62% Sprint</span>
       </div>
     </div>
   </div>
@@ -255,17 +263,17 @@ export default function LandingPage() {
   }, [user, navigate])
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20)
+    const onScroll = () => setScrolled(window.scrollY > 40)
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const heroSection = useInView(0.1)
-  const featuresSection = useInView(0.1)
-  const stepsSection = useInView(0.1)
+  const heroSection = useInView(0.05)
+  const featuresSection = useInView(0.05)
+  const stepsSection = useInView(0.05)
   const statsSection = useInView(0.1)
-  const testimonialsSection = useInView(0.1)
-  const pricingSection = useInView(0.1)
+  const testimonialsSection = useInView(0.05)
+  const pricingSection = useInView(0.05)
 
   const c0 = useCountUp(stats[0].value, 2000, statsSection.inView)
   const c1 = useCountUp(stats[1].value, 1800, statsSection.inView)
@@ -274,27 +282,28 @@ export default function LandingPage() {
   const counters = [c0, c1, c2, c3]
 
   const navLinks = [
-    { label: 'Tính năng', href: '#features' },
-    { label: 'Cách hoạt động', href: '#how-it-works' },
-    { label: 'Bảng giá', href: '#pricing' },
+    { label: 'Tính năng', href: 'features' },
+    { label: 'Cách hoạt động', href: 'how-it-works' },
+    { label: 'Bảng giá', href: 'pricing' },
   ]
 
   const scrollTo = (id: string) => {
-    document.getElementById(id.replace('#', ''))?.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
     setMobileMenuOpen(false)
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-neutral-950 text-neutral-900 dark:text-white font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-white text-neutral-900 font-sans overflow-x-hidden antialiased">
 
-      {/* ─── NAVBAR ─────────────────────────────────────────── */}
-      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-neutral-950/80 backdrop-blur-lg border-b border-neutral-200/50 dark:border-neutral-800/50 shadow-sm' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/30 group-hover:scale-110 transition-transform">
-              <Layers className="h-4.5 w-4.5 text-white" size={18} />
+      {/* NAVBAR */}
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md border-b border-neutral-100 shadow-sm' : 'bg-transparent'}`}>
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
+
+          <Link to="/" className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center">
+              <Layers className="text-white" size={16} />
             </div>
-            <span className="text-xl font-extrabold bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Kollab</span>
+            <span className="text-base font-bold tracking-tight text-neutral-900 font-display">Kollab</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1">
@@ -302,165 +311,171 @@ export default function LandingPage() {
               <button
                 key={link.label}
                 onClick={() => scrollTo(link.href)}
-                className="px-4 py-2 text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm text-neutral-500 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors font-medium"
               >
                 {link.label}
               </button>
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
-            <Link to="/login" className="text-sm font-medium text-neutral-600 dark:text-neutral-300 hover:text-rose-600 dark:hover:text-rose-400 transition-colors px-4 py-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              to="/login"
+              className="px-4 py-2 text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors"
+            >
               Đăng nhập
             </Link>
-            <Link to="/register" className="inline-flex items-center gap-1.5 bg-gradient-to-r from-rose-600 to-pink-500 text-white text-sm font-semibold px-5 py-2 rounded-xl shadow-lg shadow-rose-500/25 hover:shadow-rose-500/40 hover:scale-105 transition-all">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-1.5 bg-neutral-900 hover:bg-neutral-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            >
               Bắt đầu miễn phí
               <ArrowRight size={14} />
             </Link>
           </div>
 
-          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg text-neutral-600 dark:text-neutral-300">
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-neutral-600 hover:bg-neutral-100 transition-colors"
+          >
             {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-4 py-4 flex flex-col gap-2 animate-slide-up">
+          <div className="md:hidden bg-white border-b border-neutral-100 px-6 py-4 flex flex-col gap-1">
             {navLinks.map((link) => (
-              <button key={link.label} onClick={() => scrollTo(link.href)} className="text-left px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">
+              <button
+                key={link.label}
+                onClick={() => scrollTo(link.href)}
+                className="text-left px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 rounded-lg"
+              >
                 {link.label}
               </button>
             ))}
-            <hr className="border-neutral-200 dark:border-neutral-700 my-1" />
-            <Link to="/login" className="px-4 py-2.5 text-sm font-medium text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg">Đăng nhập</Link>
-            <Link to="/register" className="px-4 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-rose-600 to-pink-500 rounded-xl text-center">Bắt đầu miễn phí</Link>
+            <div className="border-t border-neutral-100 my-2" />
+            <Link to="/login" className="px-4 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 rounded-lg">Đăng nhập</Link>
+            <Link to="/register" className="px-4 py-2.5 text-sm font-semibold text-white bg-neutral-900 rounded-lg text-center">Bắt đầu miễn phí</Link>
           </div>
         )}
       </header>
 
-      {/* ─── HERO ───────────────────────────────────────────── */}
-      <section className="relative pt-28 pb-20 lg:pt-36 lg:pb-32 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-50 via-white to-purple-50/50 dark:from-neutral-950 dark:via-neutral-950 dark:to-purple-950/20" />
-        <div className="absolute top-20 left-1/4 w-96 h-96 bg-rose-400/10 dark:bg-rose-600/10 rounded-full blur-3xl" />
-        <div className="absolute top-32 right-1/4 w-80 h-80 bg-purple-400/10 dark:bg-purple-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-rose-300/50 dark:via-rose-700/30 to-transparent" />
-
-        <div ref={heroSection.ref} className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${heroSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800/50 text-rose-700 dark:text-rose-300 text-xs font-bold px-4 py-1.5 rounded-full mb-6 shadow-sm">
-              <Sparkles size={12} className="animate-pulse" />
-              Nền tảng Scrum & Agile cho team Việt
+      {/* HERO */}
+      <section className="pt-32 pb-16 lg:pt-44 lg:pb-20">
+        <div
+          ref={heroSection.ref}
+          className={`max-w-6xl mx-auto px-6 lg:px-8 transition-all duration-700 ${heroSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+        >
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 border border-neutral-200 text-neutral-500 text-xs font-medium px-3 py-1.5 rounded-full mb-8">
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+              Nền tảng Scrum & Agile cho team Việt Nam
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-tight tracking-tight mb-6">
-              Quản lý dự án{' '}
-              <span className="relative inline-block">
-                <span className="bg-gradient-to-r from-rose-600 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                  Agile
-                </span>
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" fill="none">
-                  <path d="M0 6 Q50 0 100 6 Q150 12 200 6" stroke="url(#grad)" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-                  <defs>
-                    <linearGradient id="grad" x1="0" x2="1">
-                      <stop offset="0%" stopColor="#e11d48" />
-                      <stop offset="100%" stopColor="#9333ea" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </span>
-              {' '}đơn giản{' '}
-              <br className="hidden sm:block" />
-              <span className="text-neutral-800 dark:text-white">& hiệu quả hơn bao giờ hết</span>
+            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight text-neutral-900 mb-7">
+              Quản lý dự án Agile{' '}
+              <span className="text-rose-600">đơn giản</span>{' '}
+              hơn bao giờ hết
             </h1>
 
-            <p className="text-lg sm:text-xl text-neutral-500 dark:text-neutral-400 max-w-2xl mx-auto leading-relaxed mb-10">
-              Kollab tích hợp Sprint Board, Backlog, Ceremonies và báo cáo Scrum trong một nền tảng thống nhất — giúp team của bạn phát hành phần mềm nhanh hơn và phối hợp tốt hơn.
+            <p className="text-lg text-neutral-500 max-w-2xl leading-relaxed mb-10">
+              Kollab tích hợp Sprint Board, Backlog, Scrum Ceremonies và báo cáo trong một nền tảng thống nhất — giúp team ship phần mềm nhanh hơn và phối hợp hiệu quả hơn.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/register" className="group inline-flex items-center gap-2 bg-gradient-to-r from-rose-600 to-pink-500 text-white font-bold px-8 py-4 rounded-2xl shadow-xl shadow-rose-500/30 hover:shadow-rose-500/50 hover:scale-105 transition-all text-base">
+            <div className="flex flex-col sm:flex-row items-start gap-3">
+              <Link
+                to="/register"
+                className="inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold px-7 py-3.5 rounded-xl text-sm transition-colors"
+              >
                 Bắt đầu miễn phí
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight size={16} />
               </Link>
               <button
-                onClick={() => scrollTo('#how-it-works')}
-                className="inline-flex items-center gap-2 text-neutral-600 dark:text-neutral-300 hover:text-rose-600 dark:hover:text-rose-400 font-semibold px-6 py-4 rounded-2xl border border-neutral-200 dark:border-neutral-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all text-base bg-white/50 dark:bg-white/5 backdrop-blur-sm"
+                onClick={() => scrollTo('how-it-works')}
+                className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 font-medium px-4 py-3.5 rounded-xl text-sm border border-neutral-200 hover:border-neutral-300 transition-colors"
               >
-                <Play size={16} className="text-rose-500" />
+                <Play size={14} className="fill-current opacity-60" />
                 Xem cách hoạt động
               </button>
             </div>
 
-            <div className="mt-6 flex items-center justify-center gap-6 text-sm text-neutral-400 dark:text-neutral-500">
-              {['Không cần thẻ tín dụng', 'Miễn phí mãi mãi', 'Setup dưới 2 phút'].map((item) => (
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-neutral-400">
+              {['Không cần thẻ tín dụng', 'Miễn phí mãi mãi cho team nhỏ', 'Setup dưới 2 phút'].map((item) => (
                 <span key={item} className="flex items-center gap-1.5">
-                  <Check size={13} className="text-emerald-500" />
+                  <Check size={12} className="text-neutral-400" strokeWidth={2.5} />
                   {item}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="mt-12 px-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <MockupBoard />
+          <div className="mt-20 relative">
+            <div className="absolute inset-x-0 -bottom-12 h-32 bg-gradient-to-b from-transparent to-white z-10 pointer-events-none" />
+            <BoardMockup />
           </div>
 
-          <div className="mt-8 flex justify-center">
-            <button onClick={() => scrollTo('#features')} className="flex flex-col items-center gap-1 text-neutral-400 hover:text-rose-500 transition-colors animate-bounce">
-              <span className="text-xs">Khám phá</span>
-              <ChevronDown size={18} />
+          <div className="mt-24 flex justify-center">
+            <button
+              onClick={() => scrollTo('features')}
+              className="flex flex-col items-center gap-1.5 text-neutral-400 hover:text-neutral-600 transition-colors"
+            >
+              <span className="text-xs tracking-widest uppercase">Khám phá</span>
+              <ChevronDown size={16} className="animate-bounce" />
             </button>
           </div>
         </div>
       </section>
 
-      {/* ─── STATS ──────────────────────────────────────────── */}
-      <section className="py-16 bg-gradient-to-r from-rose-600 via-pink-600 to-purple-700">
-        <div ref={statsSection.ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* STATS */}
+      <section className="py-16 border-y border-neutral-100">
+        <div
+          ref={statsSection.ref}
+          className="max-w-6xl mx-auto px-6 lg:px-8"
+        >
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             {stats.map((stat, i) => (
-              <div key={stat.label} className={`text-center transition-all duration-700 ${statsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`} style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="text-4xl lg:text-5xl font-black text-white mb-1">
+              <div
+                key={stat.label}
+                className={`transition-all duration-700 ${statsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+                style={{ transitionDelay: `${i * 80}ms` }}
+              >
+                <div className="font-display text-4xl lg:text-5xl font-bold text-neutral-900 mb-1 tabular-nums">
                   {counters[i]}{stat.suffix}
                 </div>
-                <div className="text-rose-200 text-sm font-medium">{stat.label}</div>
+                <div className="text-sm text-neutral-500">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── FEATURES ───────────────────────────────────────── */}
-      <section id="features" className="py-24 bg-white dark:bg-neutral-950">
-        <div ref={featuresSection.ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${featuresSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="inline-flex items-center gap-2 bg-violet-50 dark:bg-violet-950/50 border border-violet-200 dark:border-violet-800/50 text-violet-700 dark:text-violet-300 text-xs font-bold px-4 py-1.5 rounded-full mb-4">
-              <Shield size={12} />
-              Tính năng toàn diện
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-neutral-900 dark:text-white mb-4 leading-tight">
-              Mọi thứ team Scrum cần,<br />
-              <span className="bg-gradient-to-r from-violet-600 to-rose-600 bg-clip-text text-transparent">tất cả trong một nơi</span>
+      {/* FEATURES */}
+      <section id="features" className="py-28">
+        <div
+          ref={featuresSection.ref}
+          className="max-w-6xl mx-auto px-6 lg:px-8"
+        >
+          <div className={`mb-16 transition-all duration-700 ${featuresSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="text-xs font-semibold text-rose-600 uppercase tracking-widest mb-4">Tính năng</div>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight max-w-xl">
+              Mọi thứ một team Scrum cần
             </h2>
-            <p className="text-neutral-500 dark:text-neutral-400 text-lg max-w-xl mx-auto">
-              Từ backlog đến retrospective, Kollab đi cùng team bạn qua toàn bộ vòng đời Scrum.
-            </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-neutral-100 border border-neutral-100 rounded-2xl overflow-hidden">
             {features.map((f, i) => {
               const Icon = f.icon
               return (
                 <div
                   key={f.title}
-                  className={`group ${f.bg} border ${f.border} rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default ${featuresSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-                  style={{ transitionDelay: `${i * 80}ms` }}
+                  className={`bg-white p-8 hover:bg-neutral-50 transition-all duration-300 group ${featuresSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
+                  style={{ transitionDelay: `${i * 60}ms` }}
                 >
-                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${f.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}>
-                    <Icon className="text-white" size={22} />
+                  <div className="w-10 h-10 rounded-lg bg-neutral-100 group-hover:bg-rose-50 flex items-center justify-center mb-5 transition-colors">
+                    <Icon className="text-neutral-700 group-hover:text-rose-600 transition-colors" size={18} />
                   </div>
-                  <h3 className="text-lg font-bold text-neutral-900 dark:text-white mb-2">{f.title}</h3>
-                  <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="text-base font-semibold text-neutral-900 mb-2">{f.title}</h3>
+                  <p className="text-sm text-neutral-500 leading-relaxed">{f.desc}</p>
                 </div>
               )
             })}
@@ -468,61 +483,72 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── HOW IT WORKS ───────────────────────────────────── */}
-      <section id="how-it-works" className="py-24 bg-neutral-50 dark:bg-neutral-900/50">
-        <div ref={stepsSection.ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${stepsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 text-xs font-bold px-4 py-1.5 rounded-full mb-4">
-              <Clock size={12} />
-              Bắt đầu trong 2 phút
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-neutral-900 dark:text-white mb-4">
-              3 bước đơn giản để{' '}
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">ship faster</span>
+      {/* HOW IT WORKS */}
+      <section id="how-it-works" className="py-28 bg-neutral-950 text-white">
+        <div
+          ref={stepsSection.ref}
+          className="max-w-6xl mx-auto px-6 lg:px-8"
+        >
+          <div className={`mb-20 transition-all duration-700 ${stepsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-4">Quy trình</div>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold text-white leading-tight max-w-xl">
+              3 bước để bắt đầu Sprint đầu tiên
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-rose-300 to-emerald-300 dark:from-rose-700 dark:to-emerald-700" />
+          <div className="grid md:grid-cols-3 gap-12 lg:gap-16">
             {steps.map((step, i) => {
               const Icon = step.icon
               return (
                 <div
                   key={step.title}
-                  className={`relative text-center transition-all duration-700 ${stepsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                  style={{ transitionDelay: `${i * 150}ms` }}
+                  className={`transition-all duration-700 ${stepsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                  style={{ transitionDelay: `${i * 120}ms` }}
                 >
-                  <div className="flex flex-col items-center">
-                    <div className="relative mb-6">
-                      <div className="absolute inset-0 bg-gradient-to-br from-rose-500 to-pink-600 rounded-full blur-lg opacity-30" />
-                      <div className="relative w-16 h-16 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-xl shadow-rose-500/30">
-                        <Icon className="text-white" size={28} />
-                      </div>
-                      <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 text-xs font-black flex items-center justify-center border-2 border-white dark:border-neutral-900">
-                        {step.num.slice(-1)}
-                      </div>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 rounded-xl border border-neutral-800 flex items-center justify-center">
+                      <Icon className="text-neutral-400" size={20} />
                     </div>
-                    <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">{step.title}</h3>
-                    <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed max-w-xs">{step.desc}</p>
+                    <span className="text-5xl font-bold text-neutral-800 font-display tabular-nums">{step.num}</span>
                   </div>
+                  <h3 className="text-lg font-semibold text-white mb-3">{step.title}</h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed">{step.desc}</p>
                 </div>
               )
             })}
           </div>
+
+          <div className="mt-16 pt-16 border-t border-neutral-900 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-center gap-2 text-sm text-neutral-400">
+              <Clock size={14} />
+              <span>Setup hoàn chỉnh trong dưới 2 phút</span>
+            </div>
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 bg-white hover:bg-neutral-100 text-neutral-900 font-semibold px-6 py-3 rounded-lg text-sm transition-colors"
+            >
+              Bắt đầu ngay
+              <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ─── TESTIMONIALS ───────────────────────────────────── */}
-      <section className="py-24 bg-white dark:bg-neutral-950 overflow-hidden">
-        <div ref={testimonialsSection.ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${testimonialsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="inline-flex items-center gap-2 bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800/50 text-amber-700 dark:text-amber-300 text-xs font-bold px-4 py-1.5 rounded-full mb-4">
-              <Star size={12} />
-              5.0 ★ từ hàng nghìn team
+      {/* TESTIMONIALS */}
+      <section className="py-28">
+        <div
+          ref={testimonialsSection.ref}
+          className="max-w-6xl mx-auto px-6 lg:px-8"
+        >
+          <div className={`mb-16 transition-all duration-700 ${testimonialsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="flex items-center gap-1 mb-4">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={14} className="text-amber-400 fill-amber-400" />
+              ))}
+              <span className="ml-2 text-sm text-neutral-500">5.0 · Hàng nghìn team tin dùng</span>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-neutral-900 dark:text-white">
-              Đồng đội của bạn{' '}
-              <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">yêu thích</span>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight max-w-xl">
+              Team của bạn sẽ yêu thích Kollab
             </h2>
           </div>
 
@@ -530,24 +556,19 @@ export default function LandingPage() {
             {testimonials.map((t, i) => (
               <div
                 key={t.name}
-                className={`bg-neutral-50 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-6 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 ${testimonialsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+                className={`border border-neutral-100 rounded-2xl p-7 hover:border-neutral-200 hover:shadow-lg hover:shadow-neutral-100 transition-all duration-300 ${testimonialsSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
                 style={{ transitionDelay: `${i * 100}ms` }}
               >
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: t.stars }).map((_, j) => (
-                    <Star key={j} size={14} className="text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed mb-6 italic">
+                <p className="text-sm text-neutral-600 leading-relaxed mb-6">
                   "{t.quote}"
                 </p>
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-100 to-pink-100 dark:from-rose-900/40 dark:to-pink-900/40 flex items-center justify-center text-lg">
-                    {t.avatar}
+                  <div className="w-9 h-9 rounded-full bg-neutral-900 flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">{t.initial}</span>
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-neutral-900 dark:text-white">{t.name}</div>
-                    <div className="text-xs text-neutral-500 dark:text-neutral-400">{t.role}</div>
+                    <div className="text-sm font-semibold text-neutral-900">{t.name}</div>
+                    <div className="text-xs text-neutral-400">{t.role} · {t.company}</div>
                   </div>
                 </div>
               </div>
@@ -556,102 +577,127 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ─── PRICING ────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 bg-neutral-50 dark:bg-neutral-900/50">
-        <div ref={pricingSection.ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={`text-center mb-16 transition-all duration-700 ${pricingSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950/50 border border-blue-200 dark:border-blue-800/50 text-blue-700 dark:text-blue-300 text-xs font-bold px-4 py-1.5 rounded-full mb-4">
-              <Globe size={12} />
-              Bảng giá minh bạch
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black text-neutral-900 dark:text-white mb-4">
-              Chọn gói phù hợp với{' '}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">team của bạn</span>
+      {/* PRICING */}
+      <section id="pricing" className="py-28 bg-neutral-50">
+        <div
+          ref={pricingSection.ref}
+          className="max-w-6xl mx-auto px-6 lg:px-8"
+        >
+          <div className={`mb-16 transition-all duration-700 ${pricingSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="text-xs font-semibold text-rose-600 uppercase tracking-widest mb-4">Bảng giá</div>
+            <h2 className="font-display text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight max-w-xl">
+              Giá minh bạch, không bất ngờ
             </h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 items-start">
+          <div className="grid md:grid-cols-3 gap-6">
             {pricing.map((plan, i) => (
               <div
                 key={plan.name}
-                className={`relative rounded-3xl p-8 transition-all duration-700 ${pricingSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'} ${plan.highlight
-                  ? 'bg-gradient-to-b from-rose-600 to-pink-700 text-white shadow-2xl shadow-rose-500/30 scale-105'
-                  : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800'
+                className={`relative rounded-2xl p-8 transition-all duration-700 ${pricingSection.inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'} ${plan.highlight
+                  ? 'bg-neutral-900 text-white ring-1 ring-neutral-800'
+                  : 'bg-white border border-neutral-200'
                 }`}
-                style={{ transitionDelay: `${i * 120}ms` }}
+                style={{ transitionDelay: `${i * 100}ms` }}
               >
                 {plan.highlight && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-black px-4 py-1.5 rounded-full shadow-lg">
-                    ⭐ Phổ biến nhất
+                  <div className="absolute -top-3 left-6 bg-rose-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wide uppercase">
+                    Phổ biến nhất
                   </div>
                 )}
-                <h3 className={`text-xl font-black mb-1 ${plan.highlight ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{plan.name}</h3>
-                <p className={`text-sm mb-4 ${plan.highlight ? 'text-rose-200' : 'text-neutral-500 dark:text-neutral-400'}`}>{plan.desc}</p>
+
                 <div className="mb-6">
-                  <span className={`text-4xl font-black ${plan.highlight ? 'text-white' : 'text-neutral-900 dark:text-white'}`}>{plan.price}</span>
-                  {plan.price !== 'Liên hệ' && <span className={`text-sm ml-1 ${plan.highlight ? 'text-rose-200' : 'text-neutral-500 dark:text-neutral-400'}`}>₫{plan.period}</span>}
+                  <div className={`text-xs font-semibold uppercase tracking-widest mb-3 ${plan.highlight ? 'text-neutral-400' : 'text-neutral-400'}`}>
+                    {plan.name}
+                  </div>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <span className={`text-4xl font-bold font-display ${plan.highlight ? 'text-white' : 'text-neutral-900'}`}>
+                      {plan.price === 'Liên hệ' ? plan.price : plan.price === '0' ? 'Miễn phí' : plan.price}
+                    </span>
+                    {plan.priceUnit && (
+                      <span className={`text-sm ${plan.highlight ? 'text-neutral-400' : 'text-neutral-400'}`}>{plan.priceUnit}</span>
+                    )}
+                  </div>
+                  <p className={`text-sm ${plan.highlight ? 'text-neutral-400' : 'text-neutral-500'}`}>{plan.desc}</p>
                 </div>
+
                 <ul className="space-y-3 mb-8">
                   {plan.features.map((feat) => (
-                    <li key={feat} className="flex items-center gap-2.5 text-sm">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${plan.highlight ? 'bg-white/20' : 'bg-emerald-50 dark:bg-emerald-900/30'}`}>
-                        <Check size={11} className={plan.highlight ? 'text-white' : 'text-emerald-600 dark:text-emerald-400'} />
-                      </div>
-                      <span className={plan.highlight ? 'text-rose-100' : 'text-neutral-700 dark:text-neutral-300'}>{feat}</span>
+                    <li key={feat} className="flex items-start gap-3 text-sm">
+                      <Check
+                        size={14}
+                        className={`mt-0.5 flex-shrink-0 ${plan.highlight ? 'text-rose-400' : 'text-neutral-900'}`}
+                        strokeWidth={2.5}
+                      />
+                      <span className={plan.highlight ? 'text-neutral-300' : 'text-neutral-600'}>{feat}</span>
                     </li>
                   ))}
                 </ul>
+
                 <Link
-                  to={plan.name === 'Enterprise' ? 'mailto:hello@kollab.app' : '/register'}
-                  className={`flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl font-bold text-sm transition-all ${plan.highlight
-                    ? 'bg-white text-rose-600 hover:bg-rose-50 shadow-lg hover:shadow-xl'
-                    : 'bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 hover:opacity-90'
+                  to={plan.name === 'Enterprise' ? '#' : '/register'}
+                  className={`flex items-center justify-center gap-2 w-full py-3 rounded-xl font-semibold text-sm transition-all ${plan.highlight
+                    ? 'bg-rose-600 hover:bg-rose-500 text-white'
+                    : 'bg-neutral-900 hover:bg-neutral-800 text-white'
                   }`}
                 >
                   {plan.cta}
-                  <ChevronRight size={16} />
+                  <ChevronRight size={15} />
                 </Link>
               </div>
             ))}
           </div>
+
+          <p className="mt-8 text-xs text-neutral-400 text-center">
+            Tất cả các gói đều bao gồm hỗ trợ kỹ thuật và cập nhật tính năng mới. Hủy bất kỳ lúc nào.
+          </p>
         </div>
       </section>
 
-      {/* ─── CTA BANNER ─────────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-900 to-purple-950 dark:from-neutral-950 dark:to-purple-950" />
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl" />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl sm:text-5xl font-black text-white mb-6 leading-tight">
-            Team của bạn xứng đáng có{' '}
-            <span className="bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">công cụ tốt hơn</span>
+      {/* CTA */}
+      <section className="py-28 border-t border-neutral-100">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
+            Sẵn sàng ship nhanh hơn?
           </h2>
-          <p className="text-neutral-400 text-lg mb-10 max-w-xl mx-auto">
-            Tham gia cùng 5.000+ team đang dùng Kollab để sprint thành công hơn mỗi ngày. Bắt đầu miễn phí, không cần thẻ tín dụng.
+          <p className="text-lg text-neutral-500 mb-10 max-w-lg mx-auto">
+            Tham gia cùng hơn 5.000 team đang dùng Kollab để quản lý Sprint hiệu quả mỗi ngày.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/register" className="group inline-flex items-center gap-2 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-bold px-10 py-4 rounded-2xl shadow-2xl shadow-rose-500/30 hover:shadow-rose-500/50 hover:scale-105 transition-all text-lg">
-              Bắt đầu ngay — Miễn phí
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 bg-neutral-900 hover:bg-neutral-800 text-white font-semibold px-8 py-4 rounded-xl text-sm transition-colors"
+            >
+              Bắt đầu miễn phí
+              <ArrowRight size={16} />
+            </Link>
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-900 font-medium px-6 py-4 rounded-xl text-sm border border-neutral-200 hover:border-neutral-300 transition-colors"
+            >
+              Đã có tài khoản? Đăng nhập
             </Link>
           </div>
-          <p className="mt-4 text-neutral-500 text-sm">Setup dưới 2 phút · Không cần thẻ tín dụng · Hủy bất kỳ lúc nào</p>
+          <p className="mt-6 text-xs text-neutral-400">
+            Miễn phí vĩnh viễn cho team nhỏ · Không cần thẻ tín dụng · Setup dưới 2 phút
+          </p>
         </div>
       </section>
 
-      {/* ─── FOOTER ─────────────────────────────────────────── */}
-      <footer className="bg-neutral-900 dark:bg-neutral-950 border-t border-neutral-800 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center">
-                  <Layers size={16} className="text-white" />
+      {/* FOOTER */}
+      <footer className="border-t border-neutral-100 py-12">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+            <div className="col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 rounded-lg bg-neutral-900 flex items-center justify-center">
+                  <Layers size={14} className="text-white" />
                 </div>
-                <span className="text-lg font-extrabold bg-gradient-to-r from-rose-400 to-pink-400 bg-clip-text text-transparent">Kollab</span>
+                <span className="font-bold tracking-tight text-neutral-900 font-display">Kollab</span>
               </div>
-              <p className="text-neutral-400 text-sm leading-relaxed">Nền tảng Agile & Scrum cho team Việt Nam phát triển phần mềm hiệu quả.</p>
+              <p className="text-sm text-neutral-500 leading-relaxed max-w-xs">
+                Nền tảng Agile & Scrum cho team Việt Nam phát triển phần mềm hiệu quả.
+              </p>
             </div>
             {[
               { title: 'Sản phẩm', links: ['Tính năng', 'Bảng giá', 'Changelog', 'Lộ trình'] },
@@ -659,20 +705,21 @@ export default function LandingPage() {
               { title: 'Công ty', links: ['Về chúng tôi', 'Liên hệ', 'Điều khoản', 'Bảo mật'] },
             ].map((col) => (
               <div key={col.title}>
-                <h4 className="text-sm font-bold text-white mb-3">{col.title}</h4>
-                <ul className="space-y-2">
+                <h4 className="text-xs font-semibold text-neutral-900 uppercase tracking-wider mb-4">{col.title}</h4>
+                <ul className="space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link}>
-                      <a href="#" className="text-sm text-neutral-400 hover:text-rose-400 transition-colors">{link}</a>
+                      <a href="#" className="text-sm text-neutral-500 hover:text-neutral-900 transition-colors">{link}</a>
                     </li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
-          <div className="border-t border-neutral-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-neutral-500 text-sm">© 2026 Kollab. Được xây dựng với ❤️ tại Việt Nam.</p>
-            <p className="text-neutral-600 text-xs">Made with React + Supabase + Tailwind CSS</p>
+
+          <div className="border-t border-neutral-100 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-neutral-400">© 2026 Kollab. Được xây dựng tại Việt Nam.</p>
+            <p className="text-xs text-neutral-300">React · TypeScript · Supabase · Tailwind CSS</p>
           </div>
         </div>
       </footer>
