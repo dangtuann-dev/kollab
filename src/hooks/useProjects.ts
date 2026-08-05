@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
+import { supabase, ensureUserProfile } from '../lib/supabase'
 import type { ProjectMember, UserRole } from '../types'
 import { useAuthStore, useProjectStore } from '../stores'
 import { useToast } from '../stores/toastStore'
@@ -55,6 +55,9 @@ export function useProjects() {
   const createProjectMutation = useMutation<any, Error, { name: string; description: string; start_date?: string; end_date?: string }>({
     mutationFn: async (vars) => {
       if (!user) throw new Error('You must be signed in to create projects')
+
+      // Ensure user profile exists in public.profiles table to satisfy foreign key constraint
+      await ensureUserProfile(user)
 
       const { data: project, error: projectError } = await ((supabase
         .from('projects') as any)

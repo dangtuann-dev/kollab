@@ -39,3 +39,31 @@ export async function signOut(): Promise<void> {
     throw error
   }
 }
+
+export async function ensureUserProfile(user: User): Promise<void> {
+  if (!user) return
+  try {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', user.id)
+      .maybeSingle()
+
+    if (!profile) {
+      const { error } = await (supabase
+        .from('profiles') as any)
+        .upsert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          email: user.email,
+          avatar_url: user.user_metadata?.avatar_url || null,
+        })
+      if (error) {
+        console.error('Failed to auto-create user profile:', error.message)
+      }
+    }
+  } catch (err) {
+    console.error('Error in ensureUserProfile:', err)
+  }
+}
+

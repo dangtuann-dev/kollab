@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../../lib/supabase'
+import { supabase, ensureUserProfile } from '../../lib/supabase'
 import { useAuthStore } from '../../stores'
 
 export function useAuth() {
@@ -14,6 +14,9 @@ export function useAuth() {
         const { data: { session }, error } = await supabase.auth.getSession()
         if (error) throw error
         setSession(session)
+        if (session?.user) {
+          ensureUserProfile(session.user)
+        }
       } catch (err) {
         console.error('Error getting initial session:', err)
         clearAuth()
@@ -28,7 +31,9 @@ export function useAuth() {
       (_event, session) => {
         setSession(session)
         setLoading(false)
-        if (!session) {
+        if (session?.user) {
+          ensureUserProfile(session.user)
+        } else {
           clearAuth()
           queryClient.clear()
         }

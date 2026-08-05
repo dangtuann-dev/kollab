@@ -66,6 +66,16 @@ CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
+-- Auto-backfill any existing auth users into public.profiles if missing
+INSERT INTO public.profiles (id, full_name, email, avatar_url)
+SELECT 
+    id, 
+    coalesce(raw_user_meta_data->>'full_name', split_part(email, '@', 1)), 
+    email, 
+    raw_user_meta_data->>'avatar_url'
+FROM auth.users
+ON CONFLICT (id) DO NOTHING;
+
 --------------------------------------------------------------------------------
 -- 2. Projects Table
 --------------------------------------------------------------------------------
@@ -470,6 +480,7 @@ ALTER TABLE public.activity_logs ENABLE ROW LEVEL SECURITY;
 -- 1. Profiles Policies
 CREATE POLICY "Allow public read access to profiles" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "Allow individual update to own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Allow individual insert to own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
 -- 2. Projects Policies
 CREATE POLICY "Allow members to view project" ON public.projects FOR SELECT USING (auth.role() = 'authenticated' AND (owner_id = auth.uid() OR public.is_project_member(id, auth.uid())));

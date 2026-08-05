@@ -415,3 +415,20 @@ BEGIN
     ORDER BY calendar.date_val;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+--------------------------------------------------------------------------------
+-- 8. Profile Auto-repair & RLS Insert Policy
+--------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "Allow individual insert to own profile" ON public.profiles;
+CREATE POLICY "Allow individual insert to own profile" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+
+-- Backfill missing profiles for existing auth users
+INSERT INTO public.profiles (id, full_name, email, avatar_url)
+SELECT 
+    id, 
+    coalesce(raw_user_meta_data->>'full_name', split_part(email, '@', 1)), 
+    email, 
+    raw_user_meta_data->>'avatar_url'
+FROM auth.users
+ON CONFLICT (id) DO NOTHING;
+
