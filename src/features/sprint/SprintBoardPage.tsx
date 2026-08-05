@@ -157,9 +157,9 @@ export const SprintBoardPage: React.FC = () => {
         <EmptyState
           title="Không có Sprint đang hoạt động"
           description={
-            role === 'scrum_master'
+            role === 'scrum_master' || role === 'product_owner'
               ? "Hiện tại không có sprint nào đang hoạt động. Đi tới backlog của dự án để lập kế hoạch và bắt đầu một sprint mới."
-              : "Hiện tại không có sprint nào đang hoạt động. Hãy yêu cầu Scrum Master của bạn kích hoạt một sprint."
+              : "Hiện tại không có sprint nào đang hoạt động. Hãy yêu cầu Scrum Master hoặc Product Owner của bạn kích hoạt một sprint."
           }
           action={
             <Link to={`/projects/${projectIdStr}/backlog`}>

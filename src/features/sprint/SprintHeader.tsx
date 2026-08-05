@@ -17,7 +17,7 @@ export const SprintHeader: React.FC<SprintHeaderProps> = ({
   onCompleteSprint,
 }) => {
   const { role } = useAuthStore()
-  const isSM = role === 'scrum_master'
+  const isSM = role === 'scrum_master' || role === 'product_owner'
 
   const totalStories = stories.length
   const completedStories = stories.filter((s) => s.status === 'done').length

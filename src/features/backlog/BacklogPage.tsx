@@ -46,7 +46,7 @@ export const BacklogPage: React.FC = () => {
   
   const { role } = useAuthStore()
   const isPO = role === 'product_owner'
-  const isSM = role === 'scrum_master'
+  const isSM = role === 'scrum_master' || role === 'product_owner'
 
   const { data: project, isLoading: loadingProject } = useProject(projectIdStr)
   const { sprints, updateSprint, isLoading: loadingSprints } = useSprint(projectIdStr)
