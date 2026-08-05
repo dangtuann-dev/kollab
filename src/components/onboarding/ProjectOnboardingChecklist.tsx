@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Sparkles, CheckCircle2, Circle, ArrowRight, X, ChevronDown, ChevronUp, Users, Play, ListPlus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useOnboardingStore } from '../../stores/onboardingStore'
+import { useToast } from '../../stores/toastStore'
 
 interface ProjectOnboardingChecklistProps {
   projectId: string
@@ -23,13 +24,13 @@ export const ProjectOnboardingChecklist: React.FC<ProjectOnboardingChecklistProp
   onOpenInviteMember,
 }) => {
   const navigate = useNavigate()
+  const toast = useToast()
   const { dismissedProjectGuides, dismissProjectGuide } = useOnboardingStore()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   const isDismissed = dismissedProjectGuides[projectId]
   if (isDismissed) return null
 
-  // Calculate completed steps
   const steps = [
     {
       id: 'story',
@@ -84,7 +85,12 @@ export const ProjectOnboardingChecklist: React.FC<ProjectOnboardingChecklistProp
       actionText: 'Xem Kanban',
       icon: <ArrowRight className="h-3.5 w-3.5" />,
       onClick: () => {
-        navigate(`/projects/${projectId}/board`)
+        if (hasActiveSprint) {
+          navigate(`/projects/${projectId}/board`)
+        } else {
+          toast.info('Dự án chưa có Sprint đang hoạt động. Hãy tạo và Bắt đầu Sprint ở trang Backlog trước!')
+          navigate(`/projects/${projectId}/backlog`)
+        }
       },
     },
   ]
