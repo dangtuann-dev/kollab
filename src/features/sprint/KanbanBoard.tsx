@@ -1,6 +1,16 @@
 import React, { useState } from 'react'
-import { DndContext, closestCenter, useDroppable, useDraggable } from '@dnd-kit/core'
-import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  DndContext,
+  closestCenter,
+  useDroppable,
+  useDraggable,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { AlertCircle, Calendar, Plus, Tag } from 'lucide-react'
 import type { Task, TaskStatus, Story } from '../../types'
@@ -25,22 +35,45 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
   const [quickTaskTitle, setQuickTaskTitle] = useState('')
   const [selectedStoryId, setSelectedStoryId] = useState('')
   const [isAdding, setIsAdding] = useState(false)
+  const [activeTask, setActiveTask] = useState<Task | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    })
+  )
 
   const columns: { id: TaskStatus; name: string; accentColor: string; bgClass: string; borderClass: string }[] = [
     { id: 'todo', name: 'Cần làm (To Do)', accentColor: 'bg-indigo-500', bgClass: 'bg-indigo-50/20', borderClass: 'border-indigo-150' },
     { id: 'in_progress', name: 'Đang làm (In Progress)', accentColor: 'bg-amber-500', bgClass: 'bg-amber-50/20', borderClass: 'border-amber-150' },
-    { id: 'done', name: 'Hoàn thành (Done)', accentColor: 'bg-success-500', bgClass: 'bg-success-50/20', borderClass: 'border-success-150' },
+    { id: 'done', name: 'Hoàn thành (Done)', accentColor: 'bg-emerald-500', bgClass: 'bg-emerald-50/20', borderClass: 'border-emerald-150' },
   ]
 
-  
   React.useEffect(() => {
     if (stories.length > 0 && !selectedStoryId) {
       setSelectedStoryId(stories[0].id)
     }
   }, [stories, selectedStoryId])
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const taskId = event.active.id as string
+    const foundTask = tasks.find((t) => t.id === taskId)
+    if (foundTask) {
+      setActiveTask(foundTask)
+    }
+  }
+
   const handleDragEnd = React.useCallback((event: DragEndEvent) => {
     const { active, over } = event
+    setActiveTask(null)
     if (!over) return
 
     const taskId = active.id as string
@@ -65,7 +98,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     setIsAdding(false)
   }
 
-  
   const getWIPWarnings = () => {
     const inProgressTasks = tasks.filter((t) => t.status === 'in_progress')
     const userTaskCounts: Record<string, { name: string; count: number }> = {}
@@ -85,17 +117,18 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   const wipWarnings = getWIPWarnings()
 
-  
   const DroppableColumn: React.FC<{
     col: typeof columns[0]
     children: React.ReactNode
     count: number
   }> = ({ col, children, count }) => {
-    const { setNodeRef } = useDroppable({ id: col.id })
+    const { setNodeRef, isOver } = useDroppable({ id: col.id })
     return (
       <div
         ref={setNodeRef}
-        className={`flex-1 min-w-[280px] ${col.bgClass} border ${col.borderClass} rounded-2xl p-4 flex flex-col gap-4 min-h-[500px] shadow-sm`}
+        className={`flex-1 min-w-[280px] ${col.bgClass} border ${col.borderClass} ${
+          isOver ? 'ring-2 ring-primary-400 bg-primary-50/30' : ''
+        } rounded-2xl p-4 flex flex-col gap-4 min-h-[500px] shadow-sm transition-colors`}
       >
         <div className="flex items-center justify-between border-b border-neutral-150 pb-3">
           <div className="flex items-center gap-2">
@@ -107,23 +140,19 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
           </span>
         </div>
 
-        <div className="flex-1 flex flex-col gap-3 overflow-y-auto max-h-[65vh] pr-1">
+        <div className="flex-1 flex flex-col gap-3 items-stretch justify-start overflow-y-auto max-h-[65vh] pr-1">
           {children}
         </div>
       </div>
     )
   }
 
-  const DraggableTaskCard: React.FC<{ task: Task }> = ({ task }) => {
-    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-      id: task.id,
-    })
-
-    const style = {
-      transform: CSS.Transform.toString(transform),
-      opacity: isDragging ? 0.4 : 1,
-    }
-
+  // Pure Presentational Component for Task Card UI
+  const TaskCardUI: React.FC<{ task: Task; isOverlay?: boolean; isDragging?: boolean }> = ({
+    task,
+    isOverlay,
+    isDragging,
+  }) => {
     const priorityColors = {
       critical: 'bg-rose-50 text-rose-700 border-rose-100',
       high: 'bg-orange-50 text-orange-700 border-orange-100',
@@ -135,19 +164,18 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
     return (
       <div
-        ref={setNodeRef}
-        style={style}
-        onClick={() => onOpenDetails(task)}
-        {...attributes}
-        {...listeners}
-        className={`p-3.5 bg-white border border-neutral-200 rounded-xl shadow-xs hover:shadow-md hover:border-neutral-300 transition-all duration-200 flex flex-col gap-3 group relative cursor-grab active:cursor-grabbing ${
-          isDragging ? 'rotate-1 shadow-lg border-primary-400 z-55' : ''
+        className={`h-auto w-full shrink-0 p-3.5 bg-white border border-neutral-200 rounded-xl flex flex-col gap-3 transition-all duration-200 select-none ${
+          isOverlay
+            ? 'shadow-xl border-primary-500 rotate-2 scale-102 cursor-grabbing z-50'
+            : isDragging
+            ? 'opacity-30 border-dashed border-primary-400'
+            : 'shadow-xs hover:shadow-md hover:border-neutral-300 cursor-grab active:cursor-grabbing'
         }`}
       >
         <div className="flex flex-col gap-1">
           {task.user_story && (
             <span className="text-[9px] font-bold text-neutral-400 tracking-wider">
-              {task.user_story.title.substring(0, 30)}...
+              {task.user_story.title.length > 30 ? `${task.user_story.title.substring(0, 30)}...` : task.user_story.title}
             </span>
           )}
           <h4 className="text-xs font-bold text-neutral-850 group-hover:text-primary-600 transition-colors leading-snug">
@@ -208,6 +236,29 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     )
   }
 
+  const DraggableTaskCard: React.FC<{ task: Task }> = ({ task }) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+      id: task.id,
+    })
+
+    const style = {
+      transform: CSS.Translate.toString(transform),
+    }
+
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        onClick={() => onOpenDetails(task)}
+        {...attributes}
+        {...listeners}
+        className="w-full h-auto shrink-0"
+      >
+        <TaskCardUI task={task} isDragging={isDragging} />
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col gap-5 font-sans">
       {/* WIP Warnings Banner */}
@@ -225,7 +276,13 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
       )}
 
       {/* Kanban Drag and Drop Context */}
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveTask(null)}
+      >
         <div className="flex flex-col lg:flex-row gap-5 items-stretch min-h-[500px]">
           {columns.map((col) => {
             const colTasks = tasks.filter((t) => t.status === col.id)
@@ -233,7 +290,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             return (
               <DroppableColumn key={col.id} col={col} count={colTasks.length}>
                 {colTasks.length === 0 ? (
-                  <div className="border border-dashed border-neutral-300 rounded-xl py-12 text-center text-[11px] text-neutral-450 bg-white/40 flex-1 flex flex-col items-center justify-center">
+                  <div className="border border-dashed border-neutral-300 rounded-xl py-12 text-center text-[11px] text-neutral-450 bg-white/40 flex-1 flex flex-col items-center justify-center min-h-[120px]">
                     Kéo thả công việc vào đây
                   </div>
                 ) : (
@@ -305,6 +362,11 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
             )
           })}
         </div>
+
+        {/* Drag Overlay for smooth preview */}
+        <DragOverlay>
+          {activeTask ? <TaskCardUI task={activeTask} isOverlay /> : null}
+        </DragOverlay>
       </DndContext>
     </div>
   )
