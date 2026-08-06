@@ -1,7 +1,17 @@
 import React, { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { DndContext, closestCenter, useDroppable, useDraggable } from '@dnd-kit/core'
-import type { DragEndEvent } from '@dnd-kit/core'
+import {
+  DndContext,
+  closestCenter,
+  useDroppable,
+  useDraggable,
+  DragOverlay,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import type { DragStartEvent, DragEndEvent } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import { Plus, Trash2, Heart, Pencil, Check, X, ArrowLeft, Lightbulb, RefreshCw, Smile, Award } from 'lucide-react'
 import { Button } from '../../components/ui/Button'
@@ -18,7 +28,6 @@ interface RetroNote {
   likedBy: string[]
 }
 
-
 const DroppableColumn: React.FC<{
   id: 'went_well' | 'improve' | 'action_items'
   title: string
@@ -30,11 +39,13 @@ const DroppableColumn: React.FC<{
   onNewNoteChange: (val: string) => void
   onAddNote: () => void
 }> = ({ title, colorClass, headerBg, icon, children, newNoteValue, onNewNoteChange, onAddNote, id }) => {
-  const { setNodeRef } = useDroppable({ id })
+  const { setNodeRef, isOver } = useDroppable({ id })
   return (
     <div
       ref={setNodeRef}
-      className="flex-1 min-w-[280px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-sm overflow-hidden flex flex-col min-h-[500px]"
+      className={`flex-1 min-w-[280px] bg-white dark:bg-neutral-900 border ${
+        isOver ? 'ring-2 ring-primary-400 border-primary-300' : 'border-neutral-200 dark:border-neutral-800'
+      } rounded-2xl shadow-sm overflow-hidden flex flex-col min-h-[500px] transition-colors`}
     >
       <div className={`h-1 w-full ${colorClass}`} />
       <div className={`p-4 border-b border-neutral-100 dark:border-neutral-800 flex items-center justify-between ${headerBg}`}>
@@ -59,18 +70,134 @@ const DroppableColumn: React.FC<{
         />
         <button
           onClick={onAddNote}
-          className="p-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors"
+          className="p-1.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors shrink-0"
         >
           <Plus className="h-4 w-4" />
         </button>
       </div>
 
-      <div className="flex-1 p-3 flex flex-col gap-3 overflow-y-auto">
+      <div className="flex-1 p-3 flex flex-col gap-3 items-stretch justify-start overflow-y-auto">
         {children}
       </div>
     </div>
   )
 }
+
+const RetroNoteUI: React.FC<{
+  note: RetroNote
+  userId?: string
+  editingNoteId?: string | null
+  editingContent?: string
+  onEditChange?: (val: string) => void
+  onStartEdit?: (id: string, content: string) => void
+  onCancelEdit?: () => void
+  onSaveEdit?: (id: string) => void
+  onDeleteNote?: (id: string) => void
+  onLikeNote?: (id: string) => void
+  isOverlay?: boolean
+  isDragging?: boolean
+}> = ({
+  note,
+  userId,
+  editingNoteId,
+  editingContent = '',
+  onEditChange,
+  onStartEdit,
+  onCancelEdit,
+  onSaveEdit,
+  onDeleteNote,
+  onLikeNote,
+  isOverlay,
+  isDragging,
+}) => {
+  const isAuthor = note.authorId === userId
+  const hasLiked = note.likedBy.includes(userId || '')
+
+  const cardBorders = {
+    went_well: 'border-l-4 border-l-emerald-500 border-neutral-200 dark:border-neutral-800 bg-emerald-50/10 dark:bg-emerald-950/20 hover:bg-emerald-50/20',
+    improve: 'border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-800 bg-amber-50/10 dark:bg-amber-950/20 hover:bg-amber-50/20',
+    action_items: 'border-l-4 border-l-indigo-500 border-neutral-200 dark:border-neutral-800 bg-indigo-50/10 dark:bg-indigo-950/20 hover:bg-indigo-50/20',
+  }[note.columnId]
+
+  return (
+    <div
+      className={`h-auto w-full shrink-0 p-3.5 border rounded-xl flex flex-col gap-2.5 transition-all duration-200 group relative select-none ${cardBorders} ${
+        isOverlay
+          ? 'shadow-xl rotate-2 scale-102 cursor-grabbing z-50 bg-white dark:bg-neutral-900 border-primary-500'
+          : isDragging
+          ? 'opacity-30 border-dashed border-primary-400'
+          : 'shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing'
+      }`}
+    >
+      {editingNoteId === note.id ? (
+        <div className="flex flex-col gap-2">
+          <textarea
+            rows={2}
+            value={editingContent}
+            onChange={(e) => onEditChange?.(e.target.value)}
+            className="w-full text-xs border border-neutral-300 dark:border-neutral-700 rounded p-1.5 focus:outline-none bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100"
+          />
+          <div className="flex justify-end gap-1.5">
+            <button
+              onClick={onCancelEdit}
+              className="p-1 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => onSaveEdit?.(note.id)}
+              className="p-1 text-emerald-500 hover:text-emerald-700"
+            >
+              <Check className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="flex-1">
+            <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium">
+              {note.content}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-neutral-100/80 dark:border-neutral-800 text-[10px]">
+            <span className="text-neutral-450 dark:text-neutral-500 font-semibold">{note.authorName}</span>
+            <div className="flex items-center gap-2">
+              {isAuthor && (
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => onStartEdit?.(note.id, note.content)}
+                    className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 p-0.5"
+                  >
+                    <Pencil className="h-3 w-3" />
+                  </button>
+                  <button
+                    onClick={() => onDeleteNote?.(note.id)}
+                    className="text-neutral-400 hover:text-danger-600 p-0.5"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+              <button
+                onClick={() => onLikeNote?.(note.id)}
+                className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border transition-all ${
+                  hasLiked
+                    ? 'bg-rose-50 text-rose-600 border-rose-200 font-bold dark:bg-rose-950/60 dark:border-rose-800'
+                    : 'bg-neutral-50 text-neutral-500 border-neutral-200 hover:border-neutral-300 dark:bg-neutral-800 dark:border-neutral-700'
+                }`}
+              >
+                <Heart className={`h-3 w-3 ${hasLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
+                <span>{note.likes}</span>
+              </button>
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
+
 const DraggableNote: React.FC<{
   note: RetroNote
   userId?: string
@@ -99,92 +226,30 @@ const DraggableNote: React.FC<{
   })
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    opacity: isDragging ? 0.5 : 1,
+    transform: CSS.Translate.toString(transform),
   }
-
-  const isAuthor = note.authorId === userId
-  const hasLiked = note.likedBy.includes(userId || '')
-
-  const cardBorders = {
-    went_well: 'border-l-4 border-l-emerald-500 border-neutral-200 dark:border-neutral-800 bg-emerald-50/10 dark:bg-emerald-950/20 hover:bg-emerald-50/20',
-    improve: 'border-l-4 border-l-amber-500 border-neutral-200 dark:border-neutral-800 bg-amber-50/10 dark:bg-amber-950/20 hover:bg-amber-50/20',
-    action_items: 'border-l-4 border-l-indigo-500 border-neutral-200 dark:border-neutral-800 bg-indigo-50/10 dark:bg-indigo-950/20 hover:bg-indigo-50/20',
-  }[note.columnId]
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`p-3.5 border rounded-xl flex flex-col gap-2.5 transition-all duration-200 group relative ${cardBorders} ${
-        isDragging ? 'shadow-lg rotate-1 z-50 cursor-grabbing' : 'shadow-sm hover:shadow-md cursor-grab'
-      }`}
+      {...attributes}
+      {...listeners}
+      className="w-full h-auto shrink-0"
     >
-      {editingNoteId === note.id ? (
-        <div className="flex flex-col gap-2">
-          <textarea
-            rows={2}
-            value={editingContent}
-            onChange={(e) => onEditChange(e.target.value)}
-            className="w-full text-xs border border-neutral-300 dark:border-neutral-700 rounded p-1.5 focus:outline-none bg-white dark:bg-neutral-900 text-neutral-800 dark:text-neutral-100"
-          />
-          <div className="flex justify-end gap-1.5">
-            <button
-              onClick={onCancelEdit}
-              className="p-1 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-            <button
-              onClick={() => onSaveEdit(note.id)}
-              className="p-1 text-emerald-500 hover:text-emerald-700"
-            >
-              <Check className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div {...attributes} {...listeners} className="flex-1">
-            <p className="text-xs text-neutral-800 dark:text-neutral-200 leading-relaxed font-medium select-none">
-              {note.content}
-            </p>
-          </div>
-
-          <div className="flex items-center justify-between pt-2 border-t border-neutral-100/80 dark:border-neutral-800 text-[10px]">
-            <span className="text-neutral-450 dark:text-neutral-500 font-semibold">{note.authorName}</span>
-            <div className="flex items-center gap-2">
-              {isAuthor && (
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={() => onStartEdit(note.id, note.content)}
-                    className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 p-0.5"
-                  >
-                    <Pencil className="h-3 w-3" />
-                  </button>
-                  <button
-                    onClick={() => onDeleteNote(note.id)}
-                    className="text-neutral-400 hover:text-danger-600 p-0.5"
-                  >
-                    <Trash2 className="h-3 w-3" />
-                  </button>
-                </div>
-              )}
-              <button
-                onClick={() => onLikeNote(note.id)}
-                className={`flex items-center gap-1 px-1.5 py-0.5 rounded-full border transition-all ${
-                  hasLiked
-                    ? 'bg-rose-50 text-rose-600 border-rose-200 font-bold dark:bg-rose-950/60 dark:border-rose-800'
-                    : 'bg-neutral-50 text-neutral-500 border-neutral-200 hover:border-neutral-300 dark:bg-neutral-800 dark:border-neutral-700'
-                }`}
-              >
-                <Heart className={`h-3 w-3 ${hasLiked ? 'fill-rose-500 text-rose-500' : ''}`} />
-                <span>{note.likes}</span>
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+      <RetroNoteUI
+        note={note}
+        userId={userId}
+        editingNoteId={editingNoteId}
+        editingContent={editingContent}
+        onEditChange={onEditChange}
+        onStartEdit={onStartEdit}
+        onCancelEdit={onCancelEdit}
+        onSaveEdit={onSaveEdit}
+        onDeleteNote={onDeleteNote}
+        onLikeNote={onLikeNote}
+        isDragging={isDragging}
+      />
     </div>
   )
 }
@@ -195,6 +260,21 @@ export const Retrospective: React.FC = () => {
   const toast = useToast()
   const { user } = useAuthStore()
   const projectIdStr = projectId || ''
+  const [activeNote, setActiveNote] = useState<RetroNote | null>(null)
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    })
+  )
 
   const [notes, setNotes] = useState<RetroNote[]>(() => {
     const saved = localStorage.getItem(`retro-notes-${projectIdStr}`)
@@ -240,8 +320,17 @@ export const Retrospective: React.FC = () => {
     localStorage.setItem(`retro-notes-${projectIdStr}`, JSON.stringify(updated))
   }
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const noteId = event.active.id as string
+    const found = notes.find((n) => n.id === noteId)
+    if (found) {
+      setActiveNote(found)
+    }
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
+    setActiveNote(null)
     if (!over) return
 
     const noteId = active.id as string
@@ -347,7 +436,13 @@ export const Retrospective: React.FC = () => {
       </div>
 
       {/* Retro Board Columns */}
-      <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+        onDragCancel={() => setActiveNote(null)}
+      >
         <div className="flex flex-col md:flex-row gap-6 items-stretch">
           {/* Column 1: Went Well */}
           <DroppableColumn
@@ -448,6 +543,11 @@ export const Retrospective: React.FC = () => {
               ))}
           </DroppableColumn>
         </div>
+
+        {/* Drag Overlay */}
+        <DragOverlay>
+          {activeNote ? <RetroNoteUI note={activeNote} userId={user?.id} isOverlay /> : null}
+        </DragOverlay>
       </DndContext>
     </div>
   )

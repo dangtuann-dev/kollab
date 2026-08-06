@@ -43,7 +43,7 @@ export const StoryCard: React.FC<StoryCardProps> = React.memo(({
   } = useSortable({ id: story.id, disabled: dragDisabled })
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
     position: 'relative' as const,
