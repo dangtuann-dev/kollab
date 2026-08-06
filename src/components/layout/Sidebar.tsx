@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useUiStore, useAuthStore, useProjectStore } from '../../stores'
 import { Avatar } from '../ui/Avatar'
+import { LogoIcon } from '../ui/Logo'
 import { cn } from '../../lib/utils'
 import { supabase } from '../../lib/supabase'
 
@@ -124,12 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isMobile, onClose }) => {
           onClick={onClose}
         >
           <div className="h-9 w-9 shrink-0">
-            <svg viewBox="0 0 100 100" className="h-full w-full">
-              <rect width="100" height="100" rx="22" fill="#09090b"/>
-              <path d="M32 25V75" stroke="#ffffff" strokeWidth="12" strokeLinecap="round"/>
-              <path d="M38 50L64 26" stroke="#ffffff" strokeWidth="11" strokeLinecap="round"/>
-              <path d="M48 41L68 74" stroke="#e11d48" strokeWidth="12" strokeLinecap="round"/>
-            </svg>
+            <LogoIcon />
           </div>
           {!isCollapsed && <span className="text-lg tracking-tight font-bold font-sans">Kollab</span>}
         </Link>

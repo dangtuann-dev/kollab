@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/authStore'
+import { LogoIcon } from '../../components/ui/Logo'
 import {
   Layers, Kanban, ListChecks, Users, BarChart3, Zap,
   ChevronRight, Check, Star, ArrowRight, Menu, X,
@@ -300,8 +301,8 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
 
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-neutral-900 flex items-center justify-center">
-              <Layers className="text-white" size={16} />
+            <div className="w-8 h-8 shrink-0">
+              <LogoIcon />
             </div>
             <span className="text-base font-bold tracking-tight text-neutral-900 font-display">Kollab</span>
           </Link>
@@ -689,9 +690,9 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 rounded-lg bg-neutral-900 flex items-center justify-center">
-                  <Layers size={14} className="text-white" />
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-7 h-7 shrink-0">
+                  <LogoIcon />
                 </div>
                 <span className="font-bold tracking-tight text-neutral-900 font-display">Kollab</span>
               </div>

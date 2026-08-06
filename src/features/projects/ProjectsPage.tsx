@@ -7,6 +7,7 @@ import { ProjectCard } from './ProjectCard'
 import { ProjectFormModal } from './ProjectFormModal'
 import { Button } from '../../components/ui/Button'
 import { Input } from '../../components/ui/Input'
+import { LogoIcon } from '../../components/ui/Logo'
 import { EmptyState } from '../../components/shared/EmptyState'
 import { SkeletonGrid } from '../../components/shared/LoadingSkeleton'
 import { supabase } from '../../lib/supabase'
@@ -54,12 +55,7 @@ export const ProjectsPage: React.FC = () => {
         <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 shrink-0">
-              <svg viewBox="0 0 100 100" className="h-full w-full">
-                <rect width="100" height="100" rx="22" fill="#09090b"/>
-                <path d="M32 25V75" stroke="#ffffff" stroke-width="12" stroke-linecap="round"/>
-                <path d="M38 50L64 26" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
-                <path d="M48 41L68 74" stroke="#e11d48" stroke-width="12" stroke-linecap="round"/>
-              </svg>
+              <LogoIcon />
             </div>
             <div>
               <h1 className="text-xl font-bold text-neutral-900 tracking-tight">Không gian làm việc Kollab</h1>
