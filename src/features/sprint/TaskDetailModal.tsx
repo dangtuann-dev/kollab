@@ -40,10 +40,10 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  // Autosave timer
+  
   const saveTimeoutRef = useRef<any>(null)
 
-  // Initialize values
+  
   useEffect(() => {
     if (task) {
       setTitle(task.title || '')
@@ -58,14 +58,14 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   }, [task])
 
-  // Get project members
+  
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     enabled: false,
   })
   const members: ProjectMember[] = (project as any)?.members || []
 
-  // Load Comments
+  
   const { data: comments = [], isLoading: loadingComments } = useQuery({
     queryKey: ['comments', task.id],
     queryFn: async () => {
@@ -83,7 +83,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     enabled: isOpen && activeTab === 'comments',
   })
 
-  // Load Activity Logs
+  
   const { data: activities = [], isLoading: loadingActivities } = useQuery({
     queryKey: ['activities', task.id],
     queryFn: async () => {
@@ -101,7 +101,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     enabled: isOpen && activeTab === 'activity',
   })
 
-  // Mutate task helper
+  
   const mutateTaskDetails = async (fields: any) => {
     try {
       const { error } = await (supabase
@@ -115,7 +115,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   }
 
-  // Handle title edit on blur or Enter
+  
   const handleTitleBlur = () => {
     if (title.trim() && title !== task.title) {
       mutateTaskDetails({ title: title.trim() })
@@ -129,7 +129,7 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   }
 
-  // Debounced description saving
+  
   const handleDescriptionChange = (val: string) => {
     setDescription(val)
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
@@ -138,14 +138,14 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }, 1000)
   }
 
-  // Clear timeout on unmount
+  
   useEffect(() => {
     return () => {
       if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
     }
   }, [])
 
-  // Comments
+  
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newCommentText.trim() || !user) return
@@ -168,12 +168,12 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   }
 
-  // File Upload
+  
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // 10MB limit
+    
     if (file.size > 10 * 1024 * 1024) {
       toast.error('Dung lượng file tối đa là 10MB')
       return
@@ -205,7 +205,6 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
     }
   }
 
-  // Sanitize / parse markdown logic
   const parseMarkdown = (text: string) => {
     if (!text) return '<p class="text-xs text-neutral-400">Không có mô tả.</p>'
     return text
@@ -222,7 +221,6 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({
         if (line.startsWith('- ') || line.startsWith('* ')) {
           return `<li class="text-xs text-neutral-700 list-disc ml-4 my-0.5">${line.slice(2)}</li>`
         }
-        // Link rendering
         const linkRegex = /\[(.*?)\]\((.*?)\)/g
         if (linkRegex.test(line)) {
           const renderedLine = line.replace(linkRegex, '<a href="$2" target="_blank" class="text-primary-600 font-bold hover:underline">$1</a>')

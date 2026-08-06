@@ -67,7 +67,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
 
   return (
     <div className="flex flex-col gap-6 w-full font-sans">
-      {/* Header controls & capacity recommendation */}
+      {}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-primary-50/60 dark:bg-neutral-800/60 border border-primary-200/60 dark:border-neutral-700 p-4 rounded-2xl no-print">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl bg-primary-600 text-white flex items-center justify-center shrink-0 shadow-sm">
@@ -110,9 +110,9 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
         </div>
       </div>
 
-      {/* 1. Metric Cards Grid */}
+      {}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Tỉ lệ hoàn thành */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-neutral-500 dark:text-neutral-400">Tỉ lệ hoàn thành</span>
@@ -142,7 +142,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
           )}
         </div>
 
-        {/* Velocity */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-neutral-500 dark:text-neutral-400">Velocity (Năng suất)</span>
@@ -170,7 +170,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
           )}
         </div>
 
-        {/* Lead time trung bình */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-neutral-500 dark:text-neutral-400">Lead time trung bình</span>
@@ -197,7 +197,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
           )}
         </div>
 
-        {/* Carryover stories */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-4 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-neutral-500 dark:text-neutral-400">Stories Carryover</span>
@@ -215,9 +215,9 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
         </div>
       </div>
 
-      {/* 2. SparkLine Chart & Top Contributors */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Story Lead Time SparkLine */}
+        {}
         <div className="lg:col-span-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div className="flex items-center justify-between mb-3">
             <div>
@@ -265,7 +265,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
           </div>
         </div>
 
-        {/* Top Contributors */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col justify-between">
           <div>
             <h3 className="text-sm font-bold text-neutral-850 dark:text-neutral-100">Top Đóng góp</h3>
@@ -292,9 +292,9 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
         </div>
       </div>
 
-      {/* 3. Completed vs Incompleted Stories Lists */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Completed Stories */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
             <div className="flex items-center gap-2">
@@ -327,7 +327,7 @@ export const SprintSummary: React.FC<SprintSummaryProps> = ({
           </div>
         </div>
 
-        {/* Incompleted / Carryover Stories */}
+        {}
         <div className="bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl p-5 shadow-xs flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-neutral-100 dark:border-neutral-800 pb-3">
             <div className="flex items-center gap-2">

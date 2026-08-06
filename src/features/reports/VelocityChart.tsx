@@ -59,12 +59,12 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data, projectName 
     )
   }
 
-  // Calculate average completed points
+  
   const totalCompleted = data.reduce((sum, d) => sum + d.completedPoints, 0)
   const avgVelocity = data.length > 0 ? totalCompleted / data.length : 0
 
   const handleExportCSV = () => {
-    // Generate CSV content
+    
     const headers = ['Sprint', 'Start Date', 'End Date', 'Committed Points', 'Completed Points']
     const rows = data.map((d) => [
       d.name,
@@ -75,14 +75,14 @@ export const VelocityChart: React.FC<VelocityChartProps> = ({ data, projectName 
     ])
 
     const csvContent =
-      '\uFEFF' + // UTF-8 BOM for Vietnamese character encoding in Excel
+      '\uFEFF' + 
       [headers.join(','), ...rows.map((row) => row.map((val) => `"${val}"`).join(','))].join('\n')
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     
-    // Clean project name for filename
+    
     const safeProjName = projectName.toLowerCase().replace(/[^a-z0-9]/g, '_')
     link.setAttribute('href', url)
     link.setAttribute('download', `velocity_${safeProjName}.csv`)

@@ -27,7 +27,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
 
   return (
     <header className="sticky top-0 z-30 h-16 w-full bg-white/80 dark:bg-neutral-900/80 backdrop-blur-md border-b border-neutral-200/60 dark:border-neutral-800 px-4 md:px-6 flex items-center justify-between font-sans">
-      {/* Left side */}
+      {}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenMobileMenu}
@@ -36,7 +36,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
           <Menu className="h-6 w-6" />
         </button>
 
-        {/* Breadcrumb */}
+        {}
         <div className="flex items-center gap-1.5 text-sm font-medium text-neutral-500 dark:text-neutral-400 select-none">
           <Link
             to="/projects"
@@ -57,9 +57,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
         </div>
       </div>
 
-      {/* Right side */}
+      {}
       <div className="flex items-center gap-3">
-        {/* Search trigger button */}
+        {}
         <button
           onClick={onOpenSearch}
           className="flex items-center gap-2 border border-neutral-200/60 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/80 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all rounded-xl px-3 py-1.5 text-xs text-neutral-450 dark:text-neutral-400 font-medium focus:outline-none select-none hover:shadow-xs group no-print"
@@ -73,16 +73,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenMobileMenu, onOpenSearch }
           </kbd>
         </button>
 
-        {/* Help Guide Button */}
+        {}
         <HelpGuideButton />
 
-        {/* Dark Mode Theme Toggle */}
+        {}
         <ThemeToggle />
 
-        {/* Notification Bell */}
+        {}
         <NotificationBell />
 
-        {/* Profile Dropdown */}
+        {}
         <div className="relative">
           <button
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}

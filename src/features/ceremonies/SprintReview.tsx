@@ -22,7 +22,7 @@ export const SprintReview: React.FC = () => {
   const [checkedCriteria, setCheckedCriteria] = useState<Record<string, boolean>>({})
   const [isCompleting, setIsCompleting] = useState(false)
 
-  // Fetch user stories
+  
   const { data: stories, isLoading: loadingStories } = useQuery({
     queryKey: ['project-stories-review', projectIdStr],
     queryFn: async () => {
@@ -38,7 +38,7 @@ export const SprintReview: React.FC = () => {
 
   const activeSprints = sprints.filter(s => s.status !== 'completed')
 
-  // Auto-select sprint
+  
   React.useEffect(() => {
     if (activeSprints.length > 0 && !selectedSprintId) {
       setSelectedSprintId(activeSprints[0].id)

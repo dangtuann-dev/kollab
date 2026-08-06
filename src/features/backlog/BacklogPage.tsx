@@ -30,7 +30,7 @@ import { Spinner } from '../../components/ui/Spinner'
 import { ProjectOnboardingChecklist } from '../../components/onboarding/ProjectOnboardingChecklist'
 import type { Story, ProjectMember, Sprint } from '../../types'
 
-// Droppable container wrapper
+
 const DroppableColumn: React.FC<{ id: string; children: React.ReactNode; className?: string }> = ({ id, children, className }) => {
   const { setNodeRef } = useDroppable({ id })
   return (
@@ -144,7 +144,7 @@ export const BacklogPage: React.FC = () => {
 
   const activeSprints = sprints.filter((s) => s.status !== 'completed')
 
-  // Auto-select first active sprint if none selected
+  
   useEffect(() => {
     if (activeSprints.length > 0 && !selectedSprintId) {
       setSelectedSprintId(activeSprints[0].id)
@@ -195,18 +195,18 @@ export const BacklogPage: React.FC = () => {
     const activeId = active.id as string
     const overId = over.id as string
 
-    // Find the story being dragged
+    
     const activeStory = stories.find((s) => s.id === activeId)
     if (!activeStory) return
 
     const activeContainer = activeStory.sprint_id ? 'sprint' : 'backlog'
 
-    // Determine target container
+    
     let targetContainer: 'backlog' | 'sprint' | null = null
     if (overId === 'backlog' || overId === 'sprint') {
       targetContainer = overId
     } else {
-      // dropped over a card, find its container
+      
       const overStory = stories.find((s) => s.id === overId)
       if (overStory) {
         targetContainer = overStory.sprint_id ? 'sprint' : 'backlog'
@@ -215,7 +215,7 @@ export const BacklogPage: React.FC = () => {
 
     if (!targetContainer) return
 
-    // If container changed
+    
     if (activeContainer !== targetContainer) {
       const targetSprintId = targetContainer === 'sprint' ? selectedSprint?.id || null : null
       try {
@@ -224,7 +224,7 @@ export const BacklogPage: React.FC = () => {
         console.error('Lỗi khi di chuyển story:', err)
       }
     } else if (targetContainer === 'backlog' && !isDragDisabled) {
-      // Reordering inside backlog
+      
       const oldIndex = backlogStories.findIndex((s) => s.id === activeId)
       const newIndex = backlogStories.findIndex((s) => s.id === overId)
 
@@ -376,7 +376,7 @@ export const BacklogPage: React.FC = () => {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* Cột Trái - Product Backlog */}
+          {}
           <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 min-h-[500px]">
             <div className="flex items-center justify-between border-b border-neutral-100 pb-3">
               <h3 className="text-sm font-bold text-neutral-800">Yêu cầu sản phẩm (Product Backlog)</h3>
@@ -415,7 +415,7 @@ export const BacklogPage: React.FC = () => {
             </SortableContext>
           </div>
 
-          {/* Cột Phải - Sprint Backlog */}
+          {}
           <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm flex flex-col gap-4 min-h-[500px]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-neutral-100 pb-3 gap-2">
               <div className="flex items-center gap-2 flex-wrap">

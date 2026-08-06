@@ -40,12 +40,12 @@ export const NotificationBell: React.FC = () => {
 
       {isOpen && (
         <>
-          {/* Overlay to close */}
+          {}
           <div className="fixed inset-0 z-20" onClick={() => setIsOpen(false)} />
 
-          {/* Dropdown Card */}
+          {}
           <div className="absolute right-0 mt-2.5 w-80 bg-white border border-neutral-200/80 rounded-2xl shadow-xl z-30 overflow-hidden animate-slide-up origin-top-right">
-            {/* Header */}
+            {}
             <div className="flex items-center justify-between px-4 py-3 bg-neutral-50/50 border-b border-neutral-150">
               <span className="text-xs font-bold text-neutral-850">Thông báo</span>
               {unreadCount > 0 && (
@@ -59,7 +59,7 @@ export const NotificationBell: React.FC = () => {
               )}
             </div>
 
-            {/* List */}
+            {}
             <div className="max-h-72 overflow-y-auto divide-y divide-neutral-100">
               {notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-8 px-4 text-center gap-2">

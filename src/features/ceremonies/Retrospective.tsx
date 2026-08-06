@@ -18,7 +18,7 @@ interface RetroNote {
   likedBy: string[]
 }
 
-// Droppable Column Component
+
 const DroppableColumn: React.FC<{
   id: 'went_well' | 'improve' | 'action_items'
   title: string
@@ -71,8 +71,6 @@ const DroppableColumn: React.FC<{
     </div>
   )
 }
-
-// Draggable Note Card Component
 const DraggableNote: React.FC<{
   note: RetroNote
   userId?: string

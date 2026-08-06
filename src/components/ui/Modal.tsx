@@ -64,7 +64,7 @@ export const Modal: React.FC<ModalProps> = ({
           sizes[size]
         )}
       >
-        {/* Header */}
+        {}
         <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-neutral-100 dark:border-neutral-800 shrink-0">
           <h3 className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-100 truncate">{title}</h3>
           <button
@@ -75,12 +75,12 @@ export const Modal: React.FC<ModalProps> = ({
           </button>
         </div>
 
-        {/* Body */}
+        {}
         <div className="px-5 sm:px-6 py-5 overflow-y-auto flex-1">
           {children}
         </div>
 
-        {/* Footer */}
+        {}
         {footer && (
           <div className="flex items-center justify-end gap-3 px-5 sm:px-6 py-3.5 border-t border-neutral-100 dark:border-neutral-800 bg-neutral-50/60 dark:bg-neutral-950/40 shrink-0">
             {footer}

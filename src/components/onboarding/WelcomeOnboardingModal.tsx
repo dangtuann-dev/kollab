@@ -94,7 +94,7 @@ export const WelcomeOnboardingModal: React.FC = () => {
       size="lg"
     >
       <div className="relative pt-2 pb-1 px-1">
-        {/* Step Indicator Pills */}
+        {}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-1.5">
             {slides.map((_, idx) => (

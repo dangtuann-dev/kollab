@@ -22,7 +22,7 @@ export const DailyStandup: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0])
   const [isSubmitLoading, setIsSubmitLoading] = useState(false)
 
-  // Fetch standup logs for the selected date
+  
   const { data: standups, isLoading: loadingStandups } = useQuery({
     queryKey: ['standup-logs', projectIdStr, selectedDate],
     queryFn: async () => {
@@ -44,10 +44,10 @@ export const DailyStandup: React.FC = () => {
     enabled: !!projectIdStr && !!selectedDate,
   })
 
-  // Find if user already posted for selectedDate
+  
   const myLogForDate = standups?.find(s => s.user_id === user?.id)
 
-  // Pre-fill form if editing current day's log
+  
   useEffect(() => {
     if (selectedDate === new Date().toISOString().split('T')[0] && myLogForDate) {
       setYesterday(myLogForDate.yesterday)
@@ -79,7 +79,7 @@ export const DailyStandup: React.FC = () => {
 
     try {
       if (myLogForDate) {
-        // Update
+        
         const { error } = await (supabase
           .from('standup_logs') as any)
           .update({
@@ -92,7 +92,7 @@ export const DailyStandup: React.FC = () => {
         if (error) throw error
         toast.success('Cập nhật bản tin Daily Standup thành công!')
       } else {
-        // Insert
+        
         const { error } = await (supabase
           .from('standup_logs') as any)
           .insert(payload)
@@ -113,7 +113,7 @@ export const DailyStandup: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div className="flex items-center gap-3">
           <button

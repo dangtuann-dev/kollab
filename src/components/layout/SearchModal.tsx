@@ -31,7 +31,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Debounce query (300ms)
+  
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedQuery(query)
@@ -39,7 +39,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     return () => clearTimeout(handler)
   }, [query])
 
-  // Auto focus input on modal open
+  
   useEffect(() => {
     if (isOpen) {
       setQuery('')
@@ -51,7 +51,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     }
   }, [isOpen])
 
-  // Fetch results via Supabase RPC if we have a projectId
+  
   const { data: serverResults, isLoading } = useQuery<SearchResult[]>({
     queryKey: ['global-search', projectId, debouncedQuery],
     queryFn: async () => {
@@ -72,7 +72,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     enabled: !!projectId && debouncedQuery.trim().length >= 2,
   })
 
-  // Local project search for projects listed in store
+  
   const localProjectResults: SearchResult[] =
     debouncedQuery.trim().length >= 2
       ? projects
@@ -87,7 +87,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
           }))
       : []
 
-  // Combine results (deduplicate)
+  
   const combinedResults: SearchResult[] = []
   const addedIds = new Set<string>()
 
@@ -105,7 +105,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     })
   }
 
-  // Handle navigate
+  
   const handleItemClick = (item: SearchResult) => {
     onClose()
     if (item.type === 'project') {
@@ -116,8 +116,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
       navigate(`/projects/${item.project_id}/board`)
     }
   }
-
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!isOpen) return
@@ -145,12 +143,10 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, combinedResults, selectedIndex])
 
-  // Reset index when query changes
   useEffect(() => {
     setSelectedIndex(0)
   }, [debouncedQuery])
 
-  // Keyword highlighting
   const highlightText = (text: string, highlight: string) => {
     if (!highlight.trim()) return <span>{text}</span>
     const regex = new RegExp(`(${highlight.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi')
@@ -170,7 +166,6 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose }) => 
     )
   }
 
-  // Grouped results
   const projectsGroup = combinedResults.filter((r) => r.type === 'project')
   const storiesGroup = combinedResults.filter((r) => r.type === 'user_story')
   const tasksGroup = combinedResults.filter((r) => r.type === 'task')

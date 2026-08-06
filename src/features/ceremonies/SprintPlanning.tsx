@@ -15,7 +15,7 @@ interface MemberAvailability {
   avatarUrl: string | null
   dailyHours: number
   sprintDays: number
-  focusFactor: number // percentage
+  focusFactor: number 
 }
 
 export const SprintPlanning: React.FC = () => {
@@ -31,7 +31,7 @@ export const SprintPlanning: React.FC = () => {
   const [membersAvailability, setMembersAvailability] = useState<MemberAvailability[]>([])
   const [isSaving, setIsSaving] = useState(false)
 
-  // Fetch project details & members
+  
   const { data: projectData, isLoading: loadingProject } = useQuery({
     queryKey: ['project-planning', projectIdStr],
     queryFn: async () => {
@@ -59,7 +59,7 @@ export const SprintPlanning: React.FC = () => {
     enabled: !!projectIdStr,
   })
 
-  // Fetch user stories
+  
   const { data: storiesData, isLoading: loadingStories } = useQuery({
     queryKey: ['project-stories-planning', projectIdStr],
     queryFn: async () => {
@@ -75,7 +75,7 @@ export const SprintPlanning: React.FC = () => {
 
   const activeSprints = sprints.filter(s => s.status !== 'completed')
 
-  // Auto-select sprint
+  
   useEffect(() => {
     if (activeSprints.length > 0 && !selectedSprintId) {
       setSelectedSprintId(activeSprints[0].id)
@@ -85,7 +85,7 @@ export const SprintPlanning: React.FC = () => {
   const apiSprints = sprints as any[]
   const selectedSprint = apiSprints.find(s => s.id === selectedSprintId) || activeSprints[0]
 
-  // Setup team member list
+  
   useEffect(() => {
     const project = projectData as any
     if (project?.project_members) {
@@ -113,7 +113,7 @@ export const SprintPlanning: React.FC = () => {
     )
   }
 
-  // Calculations
+  
   const calculateMemberCapacityHours = (m: MemberAvailability) => {
     return (m.dailyHours * m.sprintDays * m.focusFactor) / 100
   }
@@ -163,7 +163,7 @@ export const SprintPlanning: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 font-sans">
-      {/* Header */}
+      {}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-neutral-200 pb-5">
         <div className="flex items-center gap-3">
           <button

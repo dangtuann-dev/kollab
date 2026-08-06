@@ -16,7 +16,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
             currentTheme = parsed.state.theme
           }
         } catch {
-          // ignore parse error
+          
         }
       }
       if (!currentTheme) {

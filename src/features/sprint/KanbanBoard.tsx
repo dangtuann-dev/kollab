@@ -32,7 +32,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     { id: 'done', name: 'Hoàn thành (Done)', accentColor: 'bg-success-500', bgClass: 'bg-success-50/20', borderClass: 'border-success-150' },
   ]
 
-  // Setup default story choice
+  
   React.useEffect(() => {
     if (stories.length > 0 && !selectedStoryId) {
       setSelectedStoryId(stories[0].id)
@@ -65,7 +65,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     setIsAdding(false)
   }
 
-  // Work In Progress (WIP) Warnings: Alert if any developer has > 3 tasks in 'in_progress'
+  
   const getWIPWarnings = () => {
     const inProgressTasks = tasks.filter((t) => t.status === 'in_progress')
     const userTaskCounts: Record<string, { name: string; count: number }> = {}
@@ -85,7 +85,7 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
 
   const wipWarnings = getWIPWarnings()
 
-  // Droppable Column Component
+  
   const DroppableColumn: React.FC<{
     col: typeof columns[0]
     children: React.ReactNode
@@ -114,7 +114,6 @@ export const KanbanBoard: React.FC<KanbanBoardProps> = ({
     )
   }
 
-  // Draggable Task Card Component
   const DraggableTaskCard: React.FC<{ task: Task }> = ({ task }) => {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
       id: task.id,
