@@ -118,23 +118,13 @@ export const ProjectsPage: React.FC = () => {
             description={
               searchQuery
                 ? `Không thể tìm thấy bất kỳ dự án nào khớp với "${searchQuery}". Hãy thử điều chỉnh từ khóa.`
-                : "Bắt đầu bằng cách bấm nút bên dưới để tự động tạo 4 dự án mẫu thực tế vào Database hoặc tạo dự án mới."
+                : "Bắt đầu bằng cách tạo không gian làm việc dự án agile đầu tiên của bạn. Bạn sẽ có thể mời các lập trình viên và quản lý sprint."
             }
             action={
               !searchQuery && (
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4">
-                  <Button
-                    onClick={seedSampleProjects}
-                    isLoading={isSeeding}
-                    leftIcon={<Sparkles className="h-4.5 w-4.5 text-amber-300" />}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md px-5"
-                  >
-                    Tạo 4 dự án mẫu vào Database
-                  </Button>
-                  <Button onClick={() => setIsModalOpen(true)} variant="secondary" leftIcon={<Plus className="h-4.5 w-4.5" />}>
-                    Tạo dự án trống
-                  </Button>
-                </div>
+                <Button onClick={() => setIsModalOpen(true)} leftIcon={<Plus className="h-4.5 w-4.5" />}>
+                  Tạo dự án đầu tiên
+                </Button>
               )
             }
           />
