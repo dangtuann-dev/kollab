@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Plus, Search, LogOut } from 'lucide-react'
+import { Plus, Search, LogOut, Sparkles } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useProjects, useDeleteProject } from '../../hooks/useProjects'
+import { useSeedSampleData } from '../../hooks/useSeedSampleData'
 import { useAuthStore, useOnboardingStore } from '../../stores'
 import { ProjectCard } from './ProjectCard'
 import { ProjectFormModal } from './ProjectFormModal'
@@ -19,6 +20,7 @@ export const ProjectsPage: React.FC = () => {
   const { user } = useAuthStore()
   const { projects, isLoading } = useProjects()
   const { deleteProject } = useDeleteProject()
+  const { seedSampleProjects, isSeeding } = useSeedSampleData()
   const { hasSeenWelcomeModal, openWelcomeModal } = useOnboardingStore()
   const [searchQuery, setSearchQuery] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -80,20 +82,32 @@ export const ProjectsPage: React.FC = () => {
             />
           </div>
 
-          <OnboardingTooltip
-            storageKey="create_project_btn"
-            title="Tạo dự án mới"
-            content="Nhấn vào đây để khởi tạo dự án Agile mới và bắt đầu quản lý nhóm làm việc."
-            position="bottom"
-          >
+          <div className="flex items-center gap-3">
             <Button
-              onClick={() => setIsModalOpen(true)}
-              leftIcon={<Plus className="h-4.5 w-4.5" />}
-              className="shadow-sm w-full"
+              variant="secondary"
+              onClick={seedSampleProjects}
+              isLoading={isSeeding}
+              leftIcon={<Sparkles className="h-4 w-4 text-amber-500" />}
+              className="border-amber-300 hover:bg-amber-50 text-amber-800"
             >
-              Dự án mới
+              Thêm 4 dự án mẫu
             </Button>
-          </OnboardingTooltip>
+
+            <OnboardingTooltip
+              storageKey="create_project_btn"
+              title="Tạo dự án mới"
+              content="Nhấn vào đây để khởi tạo dự án Agile mới và bắt đầu quản lý nhóm làm việc."
+              position="bottom"
+            >
+              <Button
+                onClick={() => setIsModalOpen(true)}
+                leftIcon={<Plus className="h-4.5 w-4.5" />}
+                className="shadow-sm w-full"
+              >
+                Dự án mới
+              </Button>
+            </OnboardingTooltip>
+          </div>
         </div>
 
         {isLoading ? (
@@ -104,13 +118,23 @@ export const ProjectsPage: React.FC = () => {
             description={
               searchQuery
                 ? `Không thể tìm thấy bất kỳ dự án nào khớp với "${searchQuery}". Hãy thử điều chỉnh từ khóa.`
-                : "Bắt đầu bằng cách tạo không gian làm việc dự án agile đầu tiên của bạn. Bạn sẽ có thể mời các lập trình viên và quản lý sprint."
+                : "Bắt đầu bằng cách bấm nút bên dưới để tự động tạo 4 dự án mẫu thực tế vào Database hoặc tạo dự án mới."
             }
             action={
               !searchQuery && (
-                <Button onClick={() => setIsModalOpen(true)} leftIcon={<Plus className="h-4.5 w-4.5" />}>
-                  Tạo dự án đầu tiên
-                </Button>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4">
+                  <Button
+                    onClick={seedSampleProjects}
+                    isLoading={isSeeding}
+                    leftIcon={<Sparkles className="h-4.5 w-4.5 text-amber-300" />}
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md px-5"
+                  >
+                    Tạo 4 dự án mẫu vào Database
+                  </Button>
+                  <Button onClick={() => setIsModalOpen(true)} variant="secondary" leftIcon={<Plus className="h-4.5 w-4.5" />}>
+                    Tạo dự án trống
+                  </Button>
+                </div>
               )
             }
           />
@@ -133,4 +157,5 @@ export const ProjectsPage: React.FC = () => {
   )
 }
 export default ProjectsPage
+
 
